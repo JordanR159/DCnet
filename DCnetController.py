@@ -2,9 +2,12 @@ from ryu.base import app_manager
 from ryu.ofproto import ofproto_v1_3, nicira_ext
 from ryu.controller.handler import MAIN_DISPATCHER, set_ev_cls
 from ryu.topology import event
+from ryu.app.wsgi import WSGIApplication
+from DCnetRestAPIManager import DCnetRestAPIManager
 
 class   DCnetController (app_manager.RyuApp):
     OFP_VERSIONS = [ofproto_v1_3.OFP_VERSION]
+    _CONTEXTS = {'wsgi' : WSGIApplication}
 
     def __init__ (self, *args, **kwargs):
         super(DCnetController, self).__init__(*args, **kwargs)
@@ -29,6 +32,10 @@ class   DCnetController (app_manager.RyuApp):
         self.vms = [{ 'mac' : '00:00:98:00:00:00', 'edge' : 'edge00', 'rmac' : 'dc:dc:dc:00:00:00', 'port' : 1},
                     { 'mac' : '00:00:98:00:00:01', 'edge' : 'edge01', 'rmac' : 'dc:dc:dc:00:01:00', 'port' : 1},
                     { 'mac' : '00:00:98:00:00:02', 'edge' : 'edge10', 'rmac' : 'dc:dc:dc:01:00:00', 'port' : 1}]
+
+        # Register Rest API manager
+        wsgi = kwargs['wsgi']
+        wsgi.register(DCnetRestAPIManager, {'controller' : self})
 
     # Handle a new switch joining
     @set_ev_cls (event.EventSwitchEnter, MAIN_DISPATCHER)
