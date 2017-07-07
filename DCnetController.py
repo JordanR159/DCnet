@@ -26,9 +26,9 @@ class   DCnetController (app_manager.RyuApp):
         self.radix = 4
 
         # VMs in the DC
-        self.vms = [ { 'ip' : '10.0.0.1', 'mac' : 'd4:ae:52:c9:a8:34', 'edge' : 'edge00', 'rmac' : 'dc:dc:dc:00:00:00', 'port' : 1},
-                     { 'ip' : '10.0.0.2', 'mac' : 'd4:ae:52:c9:ab:16', 'edge' : 'edge01', 'rmac' : 'dc:dc:dc:00:01:00', 'port' : 1},
-                     { 'ip' : '10.0.0.3', 'mac' : 'd4:ae:52:c8:c3:61', 'edge' : 'edge10', 'rmac' : 'dc:dc:dc:01:00:00', 'port' : 1}]
+        self.vms = [{ 'mac' : '00:00:98:00:00:00', 'edge' : 'edge00', 'rmac' : 'dc:dc:dc:00:00:00', 'port' : 1},
+                    { 'mac' : '00:00:98:00:00:01', 'edge' : 'edge01', 'rmac' : 'dc:dc:dc:00:01:00', 'port' : 1},
+                    { 'mac' : '00:00:98:00:00:02', 'edge' : 'edge10', 'rmac' : 'dc:dc:dc:01:00:00', 'port' : 1}]
 
     # Handle a new switch joining
     @set_ev_cls (event.EventSwitchEnter, MAIN_DISPATCHER)
@@ -129,6 +129,20 @@ class   DCnetController (app_manager.RyuApp):
         pod = self.switchDB[ip]['pod']
         column = self.switchDB[ip]['column']
 
+        # If the ethernet destination is an RMAC use it to forward the packet
+        for i in range(0, self.radix/2):
+
+            match = parser.OFPMatch(eth_dst='dc:dc:dc:{0:02x}:{1:02x}:{2:02x}'.format(pod, column, i))
+            action = parser.OFPActionOutput(i+1)
+            instr = parser.OFPInstructionActions(ofp.OFPIT_APPLY_ACTIONS, [action])
+            flowmod = parser.OFPFlowMod(datapath=dp,
+                                       table_id=0,
+                                       priority=1000,
+                                       match=match,
+                                       instructions=[instr])
+
+            dp.send_msg(flowmod)
+
         for v in self.vms:
 
             # Flows destined to a VM under this switch
@@ -138,19 +152,6 @@ class   DCnetController (app_manager.RyuApp):
                 match = parser.OFPMatch(eth_dst=v['mac'])
                 action = parser.OFPActionOutput(v['port'])
                 instr = parser.OFPInstructionActions(ofp.OFPIT_APPLY_ACTIONS, [action])
-                flowmod = parser.OFPFlowMod(datapath=dp,
-                                            table_id=0,
-                                            priority=1000,
-                                            match=match,
-                                            instructions=[instr])
-
-                dp.send_msg(flowmod)
-
-                # If the Ethernet destination is the RMAC, restore the MAC and forward
-                match = parser.OFPMatch(eth_dst=v['rmac'])
-                action1 = parser.OFPActionSetField(eth_dst=v['mac'])
-                action2 = parser.OFPActionOutput(v['port'])
-                instr = parser.OFPInstructionActions(ofp.OFPIT_APPLY_ACTIONS, [action1, action2])
                 flowmod = parser.OFPFlowMod(datapath=dp,
                                             table_id=0,
                                             priority=1000,
