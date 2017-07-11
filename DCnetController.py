@@ -28,10 +28,22 @@ class   DCnetController (app_manager.RyuApp):
         # Radix of switches in the DC
         self.radix = 4
 
+        # Servers in the DC
+        self.servers = {}
+        self.servers['srv000'] = { 'rmac' : 'dc:dc:dc:00:00:00', 'edge' : 'edge00', 'port' : 1 }
+        self.servers['srv010'] = { 'rmac' : 'dc:dc:dc:00:01:00', 'edge' : 'edge01', 'port' : 1 }
+        self.servers['srv100'] = { 'rmac' : 'dc:dc:dc:01:00:00', 'edge' : 'edge10', 'port' : 1 }
+
+        # VMs in the DC
+        self.vms = {}
+
+        self.nextuid = 0
+        """
         # VMs in the DC
         self.vms = [{ 'mac' : '00:00:98:00:00:00', 'edge' : 'edge00', 'rmac' : 'dc:dc:dc:00:00:00', 'port' : 1},
                     { 'mac' : '00:00:98:00:00:01', 'edge' : 'edge01', 'rmac' : 'dc:dc:dc:00:01:00', 'port' : 1},
                     { 'mac' : '00:00:98:00:00:02', 'edge' : 'edge10', 'rmac' : 'dc:dc:dc:01:00:00', 'port' : 1}]
+        """
 
         # Register the Rest API Manager
         wsgi = kwargs['wsgi']
@@ -51,6 +63,8 @@ class   DCnetController (app_manager.RyuApp):
             print 'Level: ', self.switchDB[ip]['level']
             print 'Pod: ', self.switchDB[ip]['pod']
             print 'Column: ', self.switchDB[ip]['column']
+
+            self.switchDB[ip]['object'] = switch
 
             # Depending on its position, add flows in it
             if self.switchDB[ip]['level'] == 0:
@@ -144,13 +158,14 @@ class   DCnetController (app_manager.RyuApp):
             action = parser.OFPActionOutput(i+1)
             instr = parser.OFPInstructionActions(ofp.OFPIT_APPLY_ACTIONS, [action])
             flowmod = parser.OFPFlowMod(datapath=dp,
-                                       table_id=0,
-                                       priority=1000,
-                                       match=match,
-                                       instructions=[instr])
+                                        table_id=0,
+                                        priority=1000,
+                                        match=match,
+                                        instructions=[instr])
 
             dp.send_msg(flowmod)
 
+        """
         for v in self.vms:
 
             # Flows destined to a VM under this switch
@@ -187,4 +202,56 @@ class   DCnetController (app_manager.RyuApp):
                                             match=match,
                                             instructions=[instr])
 
+                dp.send_msg(flowmod)
+        """
+
+    def create_vm (self, srvname):
+
+        if srvname not in self.servers.keys():
+            return None
+
+        uid = self.nextuid
+        self.nextuid = self.nextuid + 1
+        self.vms[uid] = {'mac' : '98:98:98:00:00:{0:02x}'.format(uid), 'server' : srvname}
+        vm = self.vms[uid]
+
+        for s in self.switchDB.values():
+
+            print s
+            if s['level'] != 2:
+                continue
+
+            dp = s['object'].dp
+            ofp = dp.ofproto
+            parser = dp.ofproto_parser
+
+            if self.servers[srvname]['edge'] == s['name']:
+
+                match = parser.OFPMatch(eth_dst=vm['mac'])
+                action = parser.OFPActionOutput(self.servers[srvname]['port'])
+                instr = parser.OFPInstructionActions(ofp.OFPIT_APPLY_ACTIONS, [action])
+                flowmod = parser.OFPFlowMod(datapath=dp,
+                                            table_id=0,
+                                            priority=1000,
+                                            match=match,
+                                            instructions=[instr])
+                dp.send_msg(flowmod)
+            else:
+
+                match = parser.OFPMatch(eth_dst=vm['mac'])
+                action1 = parser.OFPActionSetField(eth_dst=self.servers[srvname]['rmac'])
+                action2 = parser.NXActionBundle(algorithm=nicira_ext.NX_BD_ALG_HRW,
+                                                fields=nicira_ext.NX_HASH_FIELDS_SYMMETRIC_L4,
+                                                basis=0,
+                                                slave_type=nicira_ext.NXM_OF_IN_PORT,
+                                                n_slaves=self.radix/2,
+                                                ofs_nbits=0,
+                                                dst=0,
+                                                slaves=range(1+(self.radix/2), 1+self.radix))
+                instr = parser.OFPInstructionActions(ofp.OFPIT_APPLY_ACTIONS, [action1, action2])
+                flowmod = parser.OFPFlowMod(datapath=dp,
+                                            table_id=0,
+                                            priority=1000,
+                                            match=match,
+                                            instructions=[instr])
                 dp.send_msg(flowmod)
