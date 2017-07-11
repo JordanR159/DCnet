@@ -33,9 +33,10 @@ class   DCnetController (app_manager.RyuApp):
                     { 'mac' : '00:00:98:00:00:01', 'edge' : 'edge01', 'rmac' : 'dc:dc:dc:00:01:00', 'port' : 1},
                     { 'mac' : '00:00:98:00:00:02', 'edge' : 'edge10', 'rmac' : 'dc:dc:dc:01:00:00', 'port' : 1}]
 
-        # Register Rest API manager
+        # Register the Rest API Manager
         wsgi = kwargs['wsgi']
-        wsgi.register(DCnetRestAPIManager, {'controller' : self})
+	print wsgi
+        print wsgi.register(DCnetRestAPIManager, { 'controller' : self })
 
     # Handle a new switch joining
     @set_ev_cls (event.EventSwitchEnter, MAIN_DISPATCHER)
