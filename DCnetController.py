@@ -14,16 +14,18 @@ class   DCnetController (app_manager.RyuApp):
 
         # All the switches in the DC and their positions
         self.switchDB = {}
-        self.switchDB['128.10.135.31'] = { 'name' : 'core0', 'level' : 0, 'pod' : 0, 'column' : 0 }
-        self.switchDB['128.10.135.32'] = { 'name' : 'core1', 'level' : 0, 'pod' : 0, 'column' : 1 }
-        self.switchDB['128.10.135.33'] = { 'name' : 'aggr00', 'level' : 1, 'pod' : 0, 'column' : 0 }
-        self.switchDB['128.10.135.34'] = { 'name' : 'aggr01', 'level' : 1, 'pod' : 0, 'column' : 1 }
-        self.switchDB['128.10.135.35'] = { 'name' : 'edge00', 'level' : 2, 'pod' : 0, 'column' : 0 }
-        self.switchDB['128.10.135.36'] = { 'name' : 'edge01', 'level' : 2, 'pod' : 0, 'column' : 1 }
-        self.switchDB['128.10.135.37'] = { 'name' : 'aggr10', 'level' : 1, 'pod' : 1, 'column' : 0 }
-        self.switchDB['128.10.135.38'] = { 'name' : 'aggr11', 'level' : 1, 'pod' : 1, 'column' : 1 }
-        self.switchDB['128.10.135.39'] = { 'name' : 'edge10', 'level' : 2, 'pod' : 1, 'column' : 0 }
-        self.switchDB['128.10.135.40'] = { 'name' : 'edge11', 'level' : 2, 'pod' : 1, 'column' : 1 }
+        self.switchDB['128.10.135.31'] = { 'name' : 'core0', 'level' : 0, 'pod' : 0, 'column' : 0, 'joined' : 0 }
+        self.switchDB['128.10.135.32'] = { 'name' : 'core1', 'level' : 0, 'pod' : 0, 'column' : 1, 'joined' : 0}
+        self.switchDB['128.10.135.33'] = { 'name' : 'aggr00', 'level' : 1, 'pod' : 0, 'column' : 0, 'joined' : 0 }
+        self.switchDB['128.10.135.34'] = { 'name' : 'aggr01', 'level' : 1, 'pod' : 0, 'column' : 1, 'joined' : 0 }
+        self.switchDB['128.10.135.35'] = { 'name' : 'edge00', 'level' : 2, 'pod' : 0, 'column' : 0, 'joined' : 0 }
+        self.switchDB['128.10.135.36'] = { 'name' : 'edge01', 'level' : 2, 'pod' : 0, 'column' : 1, 'joined' : 0 }
+        self.switchDB['128.10.135.37'] = { 'name' : 'aggr10', 'level' : 1, 'pod' : 1, 'column' : 0, 'joined' : 0 }
+        self.switchDB['128.10.135.38'] = { 'name' : 'aggr11', 'level' : 1, 'pod' : 1, 'column' : 1, 'joined' : 0 }
+        self.switchDB['128.10.135.39'] = { 'name' : 'edge10', 'level' : 2, 'pod' : 1, 'column' : 0, 'joined' : 0 }
+        self.switchDB['128.10.135.40'] = { 'name' : 'edge11', 'level' : 2, 'pod' : 1, 'column' : 1, 'joined' : 0 }
+
+        self.n_joined = 0
 
         # Radix of switches in the DC
         self.radix = 4
@@ -31,8 +33,13 @@ class   DCnetController (app_manager.RyuApp):
         # Servers in the DC
         self.servers = {}
         self.servers['srv000'] = { 'rmac' : 'dc:dc:dc:00:00:00', 'edge' : 'edge00', 'port' : 1 }
+        self.servers['srv001'] = { 'rmac' : 'dc:dc:dc:00:00:01', 'edge' : 'edge00', 'port' : 2 }
         self.servers['srv010'] = { 'rmac' : 'dc:dc:dc:00:01:00', 'edge' : 'edge01', 'port' : 1 }
+        self.servers['srv011'] = { 'rmac' : 'dc:dc:dc:00:01:01', 'edge' : 'edge01', 'port' : 2 }
         self.servers['srv100'] = { 'rmac' : 'dc:dc:dc:01:00:00', 'edge' : 'edge10', 'port' : 1 }
+        self.servers['srv101'] = { 'rmac' : 'dc:dc:dc:01:00:01', 'edge' : 'edge10', 'port' : 2 }
+        self.servers['srv110'] = { 'rmac' : 'dc:dc:dc:01:01:00', 'edge' : 'edge11', 'port' : 1 }
+        self.servers['srv111'] = { 'rmac' : 'dc:dc:dc:01:01:01', 'edge' : 'edge11', 'port' : 2 }
 
         # VMs in the DC
         self.vms = {}
@@ -73,6 +80,19 @@ class   DCnetController (app_manager.RyuApp):
                 self.add_flows_aggr(switch)
             elif self.switchDB[ip]['level'] == 2:
                 self.add_flows_edge(switch)
+
+            self.switchDB[ip]['joined'] = 1
+            self.n_joined = self.n_joined + 1
+
+        if self.n_joined == 10:
+            self.create_vm("srv000")
+            self.create_vm("srv001")
+            self.create_vm("srv010")
+            self.create_vm("srv011")
+            self.create_vm("srv100")
+            self.create_vm("srv001")
+            self.create_vm("srv110")
+            self.create_vm("srv111")
 
     # Add flows in a core switch
     def add_flows_core (self, switch=None):
