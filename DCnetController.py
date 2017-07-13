@@ -255,3 +255,5 @@ class   DCnetController (app_manager.RyuApp):
                                             match=match,
                                             instructions=[instr])
                 dp.send_msg(flowmod)
+
+        return uid
