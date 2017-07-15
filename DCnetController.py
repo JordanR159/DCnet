@@ -298,5 +298,7 @@ class   DCnetController (app_manager.RyuApp):
             flowmod = parser.OFPFlowMod(datapath=dp,
                                         table_id=0,
                                         match=match,
+                                        out_port=ofp.OFPP_ANY,
+                                        out_group=ofp.OFPG_ANY,
                                         command=ofp.OFPFC_DELETE)
             dp.send_msg(flowmod)
