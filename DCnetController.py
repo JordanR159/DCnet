@@ -32,14 +32,14 @@ class   DCnetController (app_manager.RyuApp):
 
         # Servers in the DC
         self.servers = {}
-        self.servers['srv000'] = { 'rmac' : 'dc:dc:dc:00:00:00', 'edge' : 'edge00', 'port' : 1 }
-        self.servers['srv001'] = { 'rmac' : 'dc:dc:dc:00:00:01', 'edge' : 'edge00', 'port' : 2 }
-        self.servers['srv010'] = { 'rmac' : 'dc:dc:dc:00:01:00', 'edge' : 'edge01', 'port' : 1 }
-        self.servers['srv011'] = { 'rmac' : 'dc:dc:dc:00:01:01', 'edge' : 'edge01', 'port' : 2 }
-        self.servers['srv100'] = { 'rmac' : 'dc:dc:dc:01:00:00', 'edge' : 'edge10', 'port' : 1 }
-        self.servers['srv101'] = { 'rmac' : 'dc:dc:dc:01:00:01', 'edge' : 'edge10', 'port' : 2 }
-        self.servers['srv110'] = { 'rmac' : 'dc:dc:dc:01:01:00', 'edge' : 'edge11', 'port' : 1 }
-        self.servers['srv111'] = { 'rmac' : 'dc:dc:dc:01:01:01', 'edge' : 'edge11', 'port' : 2 }
+        self.servers['dcnet-srv000'] = { 'rmac' : 'dc:dc:dc:00:00:00', 'edge' : 'edge00', 'port' : 1, 'ip' : '128.10.135.41' }
+        self.servers['dcnet-srv001'] = { 'rmac' : 'dc:dc:dc:00:00:01', 'edge' : 'edge00', 'port' : 2 }
+        self.servers['dcnet-srv010'] = { 'rmac' : 'dc:dc:dc:00:01:00', 'edge' : 'edge01', 'port' : 1, 'ip' : '128.10.135.42' }
+        self.servers['dcnet-srv011'] = { 'rmac' : 'dc:dc:dc:00:01:01', 'edge' : 'edge01', 'port' : 2 }
+        self.servers['dcnet-srv100'] = { 'rmac' : 'dc:dc:dc:01:00:00', 'edge' : 'edge10', 'port' : 1, 'ip' : '128.10.135.43' }
+        self.servers['dcnet-srv101'] = { 'rmac' : 'dc:dc:dc:01:00:01', 'edge' : 'edge10', 'port' : 2 }
+        self.servers['dcnet-srv110'] = { 'rmac' : 'dc:dc:dc:01:01:00', 'edge' : 'edge11', 'port' : 1 }
+        self.servers['dcnet-srv111'] = { 'rmac' : 'dc:dc:dc:01:01:01', 'edge' : 'edge11', 'port' : 2 }
 
         # VMs in the DC
         self.vms = {}
@@ -85,14 +85,14 @@ class   DCnetController (app_manager.RyuApp):
             self.n_joined = self.n_joined + 1
 
         if self.n_joined == 10:
-            self.create_vm("srv000")
-            self.create_vm("srv001")
-            self.create_vm("srv010")
-            self.create_vm("srv011")
-            self.create_vm("srv100")
-            self.create_vm("srv001")
-            self.create_vm("srv110")
-            self.create_vm("srv111")
+            self.create_vm("dcnet-srv000")
+            self.create_vm("dcnet-srv001")
+            self.create_vm("dcnet-srv010")
+            self.create_vm("dcnet-srv011")
+            self.create_vm("dcnet-srv100")
+            self.create_vm("dcnet-srv001")
+            self.create_vm("dcnet-srv110")
+            self.create_vm("dcnet-srv111")
 
     # Add flows in a core switch
     def add_flows_core (self, switch=None):
@@ -277,3 +277,26 @@ class   DCnetController (app_manager.RyuApp):
                 dp.send_msg(flowmod)
 
         return uid
+
+    def delete_vm (self, uid):
+
+        if uid not in self.vms.keys():
+            return None
+
+        server = self.vms[uid]['server']
+
+        for s in self.switchDB.values():
+
+            if s['level'] != 2:
+                continue
+
+            dp = s['object'].dp
+            ofp = dp.ofproto
+            parser = dp.ofproto_parser
+
+            match = parser.OFPMatch(eth_dst=self.vms[uid]['mac'])
+            flowmod = parser.OFPFlowMod(datapath=dp,
+                                        table_id=0,
+                                        match=match,
+                                        command=ofp.OFPFC_DELETE)
+            dp.send_msg(flowmod)
