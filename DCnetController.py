@@ -81,18 +81,21 @@ class   DCnetController (app_manager.RyuApp):
             elif self.switchDB[ip]['level'] == 2:
                 self.add_flows_edge(switch)
 
+        if self.switchDB[ip]['joined'] == 0:
             self.switchDB[ip]['joined'] = 1
             self.n_joined = self.n_joined + 1
 
-        if self.n_joined == 10:
-            self.create_vm("dcnet-srv000")
-            self.create_vm("dcnet-srv001")
-            self.create_vm("dcnet-srv010")
-            self.create_vm("dcnet-srv011")
-            self.create_vm("dcnet-srv100")
-            self.create_vm("dcnet-srv001")
-            self.create_vm("dcnet-srv110")
-            self.create_vm("dcnet-srv111")
+            self.create_vm(srvname="dcnet-srv000", uid=0, switch=self.switchDB[ip])
+            self.create_vm(srvname="dcnet-srv001", uid=1, switch=self.switchDB[ip])
+            self.create_vm(srvname="dcnet-srv010", uid=2, switch=self.switchDB[ip])
+            self.create_vm(srvname="dcnet-srv011", uid=3, switch=self.switchDB[ip])
+            self.create_vm(srvname="dcnet-srv100", uid=4, switch=self.switchDB[ip])
+            self.create_vm(srvname="dcnet-srv101", uid=5, switch=self.switchDB[ip])
+            self.create_vm(srvname="dcnet-srv110", uid=6, switch=self.switchDB[ip])
+            self.create_vm(srvname="dcnet-srv111", uid=7, switch=self.switchDB[ip])
+        else:
+            for vm in self.vms.values():
+                self.create_vm(srvname=vm['server'], uid=vm['uid'], switch=self.switchDB[ip])
 
     # Add flows in a core switch
     def add_flows_core (self, switch=None):
@@ -225,17 +228,23 @@ class   DCnetController (app_manager.RyuApp):
                 dp.send_msg(flowmod)
         """
 
-    def create_vm (self, srvname):
+    def create_vm (self, srvname, uid=None, switch=None):
 
         if srvname not in self.servers.keys():
             return None
 
-        uid = self.nextuid
-        self.nextuid = self.nextuid + 1
-        self.vms[uid] = {'mac' : '98:98:98:00:00:{0:02x}'.format(uid), 'server' : srvname}
+        if uid == None or uid not in self.vms.keys():
+            uid = self.nextuid
+            self.nextuid = self.nextuid + 1
+            self.vms[uid] = {'uid' : uid, 'mac' : '98:98:98:00:00:{0:02x}'.format(uid), 'server' : srvname}
         vm = self.vms[uid]
 
-        for s in self.switchDB.values():
+        if switch == None:
+            switches = self.switchDB.values()
+        else:
+            switches = [switch]
+
+        for s in switches:
 
             print s
             if s['level'] != 2:
