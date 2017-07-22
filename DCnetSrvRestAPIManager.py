@@ -47,7 +47,8 @@ class   DCnetSrvRestAPIManager (ControllerBase):
         qmpport = self.controller.qmpport
         self.controller.qmpport = self.controller.qmpport + 1
 
-        proc = subprocess.Popen(['qemu-system-x86_64',
+        proc = subprocess.Popen(['qemu-system-x86_64', '-enable-kvm',
+                                 '-hda', './tiny-core-linux.img',
                                  '-device', 'virtio-net,netdev=net0,mac={0}'.format(mac),
                                  '-netdev', 'tap,id=net0,ifname={0}'.format(tap),
                                  '-serial', 'pty',
