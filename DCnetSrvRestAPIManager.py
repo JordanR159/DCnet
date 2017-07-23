@@ -23,6 +23,9 @@ class   DCnetSrvRestAPIManager (ControllerBase):
         if 'uid' not in data.keys():
             return Response(status=400)
 
+        incoming = 0
+        if 'incoming' in data.keys():
+            incoming = data['incoming']
         uid = data['uid']
 
         if uid in self.controller.vms.keys():
@@ -47,12 +50,24 @@ class   DCnetSrvRestAPIManager (ControllerBase):
         qmpport = self.controller.qmpport
         self.controller.qmpport = self.controller.qmpport + 1
 
-        proc = subprocess.Popen(['qemu-system-x86_64', '-enable-kvm',
-                                 '-hda', './tiny-core-linux.img',
-                                 '-device', 'virtio-net,netdev=net0,mac={0}'.format(mac),
-                                 '-netdev', 'tap,id=net0,ifname={0}'.format(tap),
-                                 '-serial', 'pty',
-                                 '-qmp', 'tcp:localhost:{0},server,nowait'.format(qmpport)])
+        if incoming == 0:
+            proc = subprocess.Popen(['qemu-system-x86_64', '-enable-kvm',
+                                     '-hda', './tiny-core-linux.img',
+                                     '-device', 'virtio-net,netdev=net0,mac={0}'.format(mac),
+                                     '-netdev', 'tap,id=net0,ifname={0}'.format(tap),
+                                     '-serial', 'pty',
+                                     '-qmp', 'tcp:localhost:{0},server,nowait'.format(qmpport)])
+        else:
+            incport = self.controller.incport
+            self.controller.incport = self.controller.incport + 1
+            proc = subprocess.Popen(['qemu-system-x86_64', '-enable-kvm',
+                                     '-hda', './tiny-core-linux.img',
+                                     '-device', 'virtio-net,netdev=net0,mac={0}'.format(mac),
+                                     '-netdev', 'tap,id=net0,ifname={0}'.format(tap),
+                                     '-serial', 'pty',
+                                     '-qmp', 'tcp:localhost:{0},server,nowait'.format(qmpport),
+                                     '-incoming', 'tcp:[dc98::9898:9800:{0}]:{1},server,nowait'.format(self.controller.uid, incport)])
+
         time.sleep(1)
         proc.poll()
         if(proc.returncode == 1):
@@ -98,6 +113,8 @@ class   DCnetSrvRestAPIManager (ControllerBase):
                "pid" : proc.pid }
         if serial != None:
             vm['serial'] = serial
+        if incoming != 0:
+            vm['incport'] = incport
         self.controller.vms[uid] = vm
 
         return Response(content_type='application/json', body=json.dumps(vm))

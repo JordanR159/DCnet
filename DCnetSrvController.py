@@ -23,6 +23,7 @@ class   DCnetSrvController (app_manager.RyuApp):
 
         self.next_ofport = 3
         self.qmpport = 18000
+	self.incport = 19000
 
 	wsgi = kwargs['wsgi']
 	wsgi.register(DCnetSrvRestAPIManager, {'controller' : self})
@@ -179,6 +180,7 @@ class   DCnetSrvController (app_manager.RyuApp):
         eth = None
         ip = None
         icmp = None
+
         # Extract protocols from the packet
         for p in pkt.protocols:
             if p.protocol_name == 'ethernet':
