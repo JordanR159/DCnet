@@ -157,3 +157,67 @@ class   DCnetSrvRestAPIManager (ControllerBase):
         del(self.controller.vms[uid])
 
         return Response(content_type='application/json',body='{}')
+
+    @route ('DCnetSrv', '/DCnetSrv/migrate-vm', methods=['PUT'], requirements={})
+    def migrate_vm (self, req):
+
+        try:
+            data = req.json if req.body else {}
+        except ValueError:
+            return Response(status=400)
+
+        if 'uid' not in data.keys() or 'dst' not in data.keys() or 'port' not in data.keys():
+            return Response(status=400)
+
+        uid = data['uid']
+        dst = data['dst']
+        port = data['port']
+
+        if uid not in self.controller.vms.keys():
+            return Response(status=400)
+
+        vm = self.controller.vms[uid]
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            s.connect(('127.0.0.1', vm['qmpport']))
+        except socket.error:
+            return Response(status=400)
+
+        f = s.makefile()
+        f.readline()
+
+        s.send('{"execute" : "qmp_capabilities" }')
+        f.readline()
+
+        s.send('{"execute" : "migrate", "arguments" : { "uri" : "tcp:[dc98::9898:9800:%s]:%s" }}' % (dst, port))
+        f.readline()
+
+        line = f.readline()
+        print 'migrate response: ', line
+
+        while(1):
+            s.send('{"execute" : "query-migrate"}')
+            line = f.readline()
+            resp = json.loads(line)
+            if resp['return']['status'] == 'failed' or resp['return']['status'] == 'completed':
+                break
+
+        if resp['return']['status'] == 'completed':
+
+            s.send('{"execute" : "quit"}')
+
+            proc = subprocess.Popen(['ovs-vsctl', 'del-port', self.controller.srvname, vm['tap']])
+            proc.wait()
+
+            proc = subprocess.Popen(['ip', 'link', 'del', vm['tap']])
+            proc.wait()
+
+            self.controller.delete_vm(vm['mac'], vm['port'])
+
+            del(self.controller.vms[uid])
+        else:
+            return Response(status=500)
+
+        s.close()
+
+        return Response(content_type='application/json', body='{}')
