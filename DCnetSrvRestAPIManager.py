@@ -56,6 +56,7 @@ class   DCnetSrvRestAPIManager (ControllerBase):
                                      '-device', 'virtio-net,netdev=net0,mac={0}'.format(mac),
                                      '-netdev', 'tap,id=net0,ifname={0}'.format(tap),
                                      '-serial', 'pty',
+                                     '-display', 'none',
                                      '-qmp', 'tcp:localhost:{0},server,nowait'.format(qmpport)])
         else:
             incport = self.controller.incport
@@ -65,6 +66,7 @@ class   DCnetSrvRestAPIManager (ControllerBase):
                                      '-device', 'virtio-net,netdev=net0,mac={0}'.format(mac),
                                      '-netdev', 'tap,id=net0,ifname={0}'.format(tap),
                                      '-serial', 'pty',
+                                     '-display', 'none',
                                      '-qmp', 'tcp:localhost:{0},server,nowait'.format(qmpport),
                                      '-incoming', 'tcp:[dc98::9898:9800:{0}]:{1},server,nowait'.format(self.controller.uid, incport)])
 
