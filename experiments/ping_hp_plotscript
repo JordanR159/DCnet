@@ -1,0 +1,6 @@
+set title "Effect of rewriting on Ping RTT in HP OpenFlow enabled switches"
+set xlabel "Ping data size (bytes)"
+set ylabel "Ping RTT (ms)"
+set key top left
+plot "ping_hp_output/plotdata" u 1:2 title 'Without rewriting' w lp pt 6 lw 1.5, \
+     "ping_hp_output/plotdata" u 1:3 title 'With rewriting' w lp pt 8 lw 1.5
