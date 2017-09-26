@@ -250,6 +250,9 @@ class   DCnetController (app_manager.RyuApp):
             if s['level'] != 2:
                 continue
 
+            if 'object' not in s.keys():
+                continue
+
             dp = s['object'].dp
             ofp = dp.ofproto
             parser = dp.ofproto_parser
@@ -297,6 +300,9 @@ class   DCnetController (app_manager.RyuApp):
         for s in self.switchDB.values():
 
             if s['level'] != 2:
+                continue
+
+            if 'object' not in s.keys():
                 continue
 
             dp = s['object'].dp
