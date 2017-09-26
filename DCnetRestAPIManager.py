@@ -183,7 +183,9 @@ class   DCnetRestAPIManager (ControllerBase):
         if code != 200:
             return Response(status=500)
 
-        #self.controller.vms[uid] = data
+        self.controller.vms[uid] = data
+
+	self.controller.create_tmp_vm(uid=uid, src=src, dst=dst)
 
         #self.controller.delete_vm(uid)
         #self.controller.create_vm(uid=uid, srvname=dst, switch=None)

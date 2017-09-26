@@ -290,6 +290,45 @@ class   DCnetController (app_manager.RyuApp):
 
         return uid
 
+    def create_tmp_vm (self, uid, src, dst):
+
+        swname = self.servers[src]['edge']
+
+        edge = None
+        for s in self.switchDB.values():
+            if s['name'] == swname:
+                edge = s
+                break
+
+        if edge == None:
+            return
+
+        if 'object' not in edge.keys():
+            return
+
+        dp = edge['object'].dp
+        ofp = dp.ofproto
+        parser = dp.ofproto_parser
+
+        match = parser.OFPMatch(eth_type=0x86dd,
+                                ipv6_dst='dc98::9898:9800:{0:02x}'.format(uid))
+        action1 = parser.OFPActionSetField(eth_dst=self.servers[dst]['rmac'])
+        action2 = parser.NXActionBundle(algorithm=nicira_ext.NX_BD_ALG_HRW,
+                                        fields=nicira_ext.NX_HASH_FIELDS_SYMMETRIC_L4,
+                                        basis=0,
+                                        slave_type=nicira_ext.NXM_OF_IN_PORT,
+                                        n_slaves=self.radix/2,
+                                        ofs_nbits=0,
+                                        dst=0,
+                                        slaves=range(1+(self.radix/2), 1+self.radix))
+        instr = parser.OFPInstructionActions(ofp.OFPIT_APPLY_ACTIONS, [action1, action2])
+        flowmod = parser.OFPFlowMod(datapath=dp,
+                                    table_id=0,
+                                    priority=1001,
+                                    match=match,
+                                    instructions=[instr])
+        dp.send_msg(flowmod)
+
     def delete_vm (self, uid):
 
         if uid not in self.vms.keys():
