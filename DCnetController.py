@@ -4,6 +4,7 @@ from ryu.controller.handler import MAIN_DISPATCHER, set_ev_cls
 from ryu.topology import event
 from ryu.app.wsgi import WSGIApplication
 from DCnetRestAPIManager import DCnetRestAPIManager
+import time
 
 class   DCnetController (app_manager.RyuApp):
     OFP_VERSIONS = [ofproto_v1_3.OFP_VERSION]
@@ -228,7 +229,7 @@ class   DCnetController (app_manager.RyuApp):
                 dp.send_msg(flowmod)
         """
 
-    def create_vm (self, srvname, uid=None, switch=None):
+    def create_vm (self, srvname, uid=None, switch=None, slp=0):
 
         if srvname not in self.servers.keys():
             return None
@@ -243,6 +244,10 @@ class   DCnetController (app_manager.RyuApp):
             switches = self.switchDB.values()
         else:
             switches = [switch]
+
+        print 'controller.create_vm :: sleeping for', slp
+        time.sleep(slp)
+        print 'controller.create_vm :: out of sleep'
 
         for s in switches:
 
@@ -327,6 +332,33 @@ class   DCnetController (app_manager.RyuApp):
                                     priority=1001,
                                     match=match,
                                     instructions=[instr])
+        dp.send_msg(flowmod)
+
+    def delete_tmp_vm (self, uid, src):
+
+        swname = self.servers[src]['edge']
+
+        edge = None
+        for s in self.switchDB.values():
+            if s['name'] == swname:
+                edge = s
+                break
+
+        if edge == None or 'object' not in edge.keys():
+            return
+
+        dp = edge['object'].dp
+        ofp = dp.ofproto
+        parser = dp.ofproto_parser
+
+        match = parser.OFPMatch(eth_type=0x86dd,
+                                ipv6_dst='dc98::9898:9800:{0:02x}'.format(uid))
+        flowmod = parser.OFPFlowMod(datapath=dp,
+                                    table_id=0,
+                                    match=match,
+                                    out_port=ofp.OFPP_ANY,
+                                    out_group=ofp.OFPG_ANY,
+                                    command=ofp.OFPFC_DELETE)
         dp.send_msg(flowmod)
 
     def delete_vm (self, uid):

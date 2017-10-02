@@ -5,6 +5,7 @@ import json
 import pycurl
 import StringIO
 import socket
+import time
 
 class   DCnetRestAPIManager (ControllerBase):
 
@@ -137,7 +138,7 @@ class   DCnetRestAPIManager (ControllerBase):
         src = vm['server']
 
         # Spawn a green-thread to handle migration related connection
-        hub.spawn(self.migrate_thread)
+        hub.spawn(self.migrate_thread, vm, src, dst)
         hub.sleep(0)
 
         # Generate a request for the destination server
@@ -183,16 +184,17 @@ class   DCnetRestAPIManager (ControllerBase):
         if code != 200:
             return Response(status=500)
 
-        self.controller.vms[uid] = data
+        #self.controller.vms[uid] = data
 
-	self.controller.create_tmp_vm(uid=uid, src=src, dst=dst)
+	#self.controller.create_tmp_vm(uid=uid, src=src, dst=dst)
 
         #self.controller.delete_vm(uid)
         #self.controller.create_vm(uid=uid, srvname=dst, switch=None)
 
     # Migration green-thread that handles connecting related to migration
-    def migrate_thread (self, vm):
+    def migrate_thread (self, vm, src, dst):
 
+        # Open a socket to accept connection from source hypervisor
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         s.bind(('',22000))
@@ -202,5 +204,35 @@ class   DCnetRestAPIManager (ControllerBase):
         hub.sleep(0)
 
         (c, caddr) = s.accept()
+        print 'migrate_thread :: incoming connection from', caddr
 
         s.close()
+
+        while(1):
+            msg = c.recv(10)
+            if msg == '':
+                break
+            if msg == 'VMSTOP':
+                print 'CORRECT'
+
+            # VM is stopped, add the redirect rule in source ToR
+            self.controller.create_tmp_vm(uid=vm['uid'], src=src, dst=dst)
+
+            # Send a request to dst hypervisor OVS to add rule for migrating VM
+            cu = pycurl.Curl()
+            cu.setopt(cu.URL, "http://{0}:8080/DCnetSrv/migrate-vm".format(self.controller.servers[dst]['ip']))
+            cu.setopt(cu.PUT, True)
+            body = json.dumps({ "uid" : vm['uid'], "incoming" : 1})
+            size = len(body)
+            cu.setopt(cu.READFUNCTION, StringIO.StringIO(body).read)
+            cu.setopt(cu.INFILESIZE, size)
+            buff = StringIO.StringIO()
+            cu.setopt(cu.WRITEDATA, buff)
+
+            cu.perform()
+
+            c.send('OK')
+
+        self.controller.delete_vm(vm['uid'])
+        self.controller.create_vm(uid=vm['uid'], srvname=dst, switch=None, slp=0)
+        self.controller.delete_tmp_vm(uid=vm['uid'], src=src)
