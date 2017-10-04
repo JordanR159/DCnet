@@ -129,6 +129,14 @@ class   DCnetRestAPIManager (ControllerBase):
         uid = data['uid']
         dst = data['dst']
 
+        optimize = 0
+        if 'optimize' in data.keys():
+            optimize = data['optimize']
+
+        n_tor = 0
+        if 'n_tor' in data.keys():
+            n_tor = data['n_tor']
+
         if uid not in self.controller.vms.keys():
             return Response(status=400)
 
@@ -138,7 +146,7 @@ class   DCnetRestAPIManager (ControllerBase):
         src = vm['server']
 
         # Spawn a green-thread to handle migration related connection
-        hub.spawn(self.migrate_thread, vm, src, dst)
+        hub.spawn(self.migrate_thread, vm, src, dst, optimize, n_tor)
         hub.sleep(0)
 
         # Generate a request for the destination server
@@ -184,7 +192,7 @@ class   DCnetRestAPIManager (ControllerBase):
         if code != 200:
             return Response(status=500)
 
-        #self.controller.vms[uid] = data
+        self.controller.vms[uid] = data
 
 	#self.controller.create_tmp_vm(uid=uid, src=src, dst=dst)
 
@@ -192,7 +200,7 @@ class   DCnetRestAPIManager (ControllerBase):
         #self.controller.create_vm(uid=uid, srvname=dst, switch=None)
 
     # Migration green-thread that handles connecting related to migration
-    def migrate_thread (self, vm, src, dst):
+    def migrate_thread (self, vm, src, dst, optimize, n_tor):
 
         # Open a socket to accept connection from source hypervisor
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -214,9 +222,10 @@ class   DCnetRestAPIManager (ControllerBase):
                 break
             if msg == 'VMSTOP':
                 print 'CORRECT'
+            else:
+                continue
 
-            # VM is stopped, add the redirect rule in source ToR
-            self.controller.create_tmp_vm(uid=vm['uid'], src=src, dst=dst)
+            t1 = time.time()
 
             # Send a request to dst hypervisor OVS to add rule for migrating VM
             cu = pycurl.Curl()
@@ -231,8 +240,19 @@ class   DCnetRestAPIManager (ControllerBase):
 
             cu.perform()
 
-            c.send('OK')
+            if optimize != 0:
+                # Add redirect rule in the source toR
+                self.controller.create_tmp_vm(uid=vm['uid'], src=src, dst=dst)
+            else:
+                self.controller.delete_vm(vm['uid'])
+                self.controller.create_vm(uid=vm['uid'], srvname=dst, switch=None, slp=n_tor)
 
-        self.controller.delete_vm(vm['uid'])
-        self.controller.create_vm(uid=vm['uid'], srvname=dst, switch=None, slp=0)
-        self.controller.delete_tmp_vm(uid=vm['uid'], src=src)
+            t2 = time.time()
+
+            c.send('OK')
+            print 'migrate_thread :: downtime ', t2-t1
+
+        if optimize != 0:
+            self.controller.delete_vm(vm['uid'])
+            self.controller.create_vm(uid=vm['uid'], srvname=dst, switch=None, slp=n_tor)
+            self.controller.delete_tmp_vm(uid=vm['uid'], src=src)

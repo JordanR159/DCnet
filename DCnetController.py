@@ -25,8 +25,13 @@ class   DCnetController (app_manager.RyuApp):
         self.switchDB['128.10.135.38'] = { 'name' : 'aggr11', 'level' : 1, 'pod' : 1, 'column' : 1, 'joined' : 0 }
         self.switchDB['128.10.135.39'] = { 'name' : 'edge10', 'level' : 2, 'pod' : 1, 'column' : 0, 'joined' : 0 }
         self.switchDB['128.10.135.40'] = { 'name' : 'edge11', 'level' : 2, 'pod' : 1, 'column' : 1, 'joined' : 0 }
+        self.switchDB['128.10.135.41'] = { 'name' : 'dummy' }
+        self.switchDB['128.10.135.42'] = { 'name' : 'dummy' }
+        self.switchDB['128.10.135.43'] = { 'name' : 'dummy' }
 
         self.n_joined = 0
+
+        self.dummy_list = []
 
         # Radix of switches in the DC
         self.radix = 4
@@ -67,6 +72,12 @@ class   DCnetController (app_manager.RyuApp):
 
         # Check if the switch is in our database of switches
         if ip in self.switchDB.keys():
+
+            if self.switchDB[ip]['name'] == 'dummy':
+                print 'Dummy switch connected!!!'
+                self.dummy_list.append(switch)
+                return
+
             print 'Switch ', ip, 'connected!!'
             print 'Level: ', self.switchDB[ip]['level']
             print 'Pod: ', self.switchDB[ip]['pod']
@@ -245,13 +256,35 @@ class   DCnetController (app_manager.RyuApp):
         else:
             switches = [switch]
 
-        print 'controller.create_vm :: sleeping for', slp
-        time.sleep(slp)
-        print 'controller.create_vm :: out of sleep'
+        #print 'controller.create_vm :: sleeping for', slp
+        #time.sleep(slp)
+        #print 'controller.create_vm :: out of sleep'
+
+        n = len(self.dummy_list)
+        for i in range(0, slp):
+            s = self.dummy_list[i % n]
+
+            print 'create_vm :: adding flow to dummy', s
+            dp = s.dp
+            ofp = dp.ofproto
+            parser = dp.ofproto_parser
+
+            match = parser.OFPMatch(eth_dst=vm['mac'])
+            action = parser.OFPActionOutput(1)
+            instr = parser.OFPInstructionActions(ofp.OFPIT_APPLY_ACTIONS, [action])
+            flowmod = parser.OFPFlowMod(datapath=dp,
+                                        table_id=0,
+                                        priority=1000,
+                                        match=match,
+                                        instructions=[instr])
+            dp.send_msg(flowmod)
 
         for s in switches:
 
             print s
+            if s['name'] == 'dummy':
+                continue
+
             if s['level'] != 2:
                 continue
 
@@ -369,6 +402,9 @@ class   DCnetController (app_manager.RyuApp):
         server = self.vms[uid]['server']
 
         for s in self.switchDB.values():
+
+            if s['name'] == 'dummy':
+                continue
 
             if s['level'] != 2:
                 continue
