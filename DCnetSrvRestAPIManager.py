@@ -58,7 +58,8 @@ class   DCnetSrvRestAPIManager (ControllerBase):
         proc.wait()
 
         # Add rules related to this VM to the local OVS
-        self.controller.create_vm(mac, port)
+        if incoming == 0:
+            self.controller.create_vm(mac, port)
 
         # Generate the QMP port for QEMU Machine Protocol
         qmpport = self.controller.qmpport
@@ -198,11 +199,25 @@ class   DCnetSrvRestAPIManager (ControllerBase):
         except ValueError:
             return Response(status=400)
 
-        # UID of the VM, destination server and destination port must be present in the request
-        if 'uid' not in data.keys() or 'dst' not in data.keys() or 'port' not in data.keys():
+        if 'uid' not in data.keys():
             return Response(status=400)
 
+        incoming = 0
+        if 'incoming' in data.keys():
+            incoming = data['incoming']
+
+        # UID of the VM, destination server and destination port must be present in the request
+        if incoming == 0:
+            if 'dst' not in data.keys() or 'port' not in data.keys():
+                return Response(status=400)
+
         uid = data['uid']
+
+        if incoming == 1:
+            vm = self.controller.vms[uid]
+            self.controller.create_vm(vm['mac'], vm['port'])
+            return Response(status=200)
+
         dst = data['dst']
         port = data['port']
 
@@ -265,6 +280,8 @@ class   DCnetSrvRestAPIManager (ControllerBase):
                 break
 
         if resp['return']['status'] == 'completed':
+
+            print 'migrate_thread :: migration stats: ', resp
 
             # Quit the Qemu instance
             s.send('{"execute" : "quit"}')
