@@ -219,6 +219,7 @@ class   DCnetRestAPIManager (ControllerBase):
         while(1):
             msg = c.recv(10)
             if msg == '':
+                print 'migrate_thread :: close connection ', time.time()
                 break
             if msg == 'VMSTOP':
                 print 'CORRECT'
@@ -238,21 +239,27 @@ class   DCnetRestAPIManager (ControllerBase):
             buff = StringIO.StringIO()
             cu.setopt(cu.WRITEDATA, buff)
 
-            cu.perform()
+            #cu.perform()
 
             if optimize != 0:
                 # Add redirect rule in the source toR
                 self.controller.create_tmp_vm(uid=vm['uid'], src=src, dst=dst)
             else:
-                self.controller.delete_vm(vm['uid'])
+                #self.controller.delete_vm(vm['uid'])
                 self.controller.create_vm(uid=vm['uid'], srvname=dst, switch=None, slp=n_tor)
 
+            cu.perform()
+
             t2 = time.time()
+            time.sleep(0.01)
 
             c.send('OK')
             print 'migrate_thread :: downtime ', t2-t1
+            print 'migrate_thread t1 t2: ', t1, t2
 
         if optimize != 0:
-            self.controller.delete_vm(vm['uid'])
+            print 'migrate_thread :: adding rules to ToRs in the background'
+            #self.controller.delete_vm(vm['uid'])
             self.controller.create_vm(uid=vm['uid'], srvname=dst, switch=None, slp=n_tor)
+            time.sleep(1)
             self.controller.delete_tmp_vm(uid=vm['uid'], src=src)

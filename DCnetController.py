@@ -129,6 +129,8 @@ class   DCnetController (app_manager.RyuApp):
                                         instructions=[instr])
 
             dp.send_msg(flowmod)
+            barrier = parser.OFPBarrierRequest(dp)
+            dp.send_msg(barrier)
 
     # Add flows in an aggregate switch
     def add_flows_aggr (self, switch=None):
@@ -155,6 +157,8 @@ class   DCnetController (app_manager.RyuApp):
                                         instructions=[instr])
 
             dp.send_msg(flowmod)
+            barrier = parser.OFPBarrierRequest(dp)
+            dp.send_msg(barrier)
 
         # Handle flows that are destined to other pods
         # ECMP the flow towards the core switches
@@ -175,6 +179,8 @@ class   DCnetController (app_manager.RyuApp):
                                     instructions=[instr])
 
         dp.send_msg(flowmod)
+        barrier = parser.OFPBarrierRequest(dp)
+        dp.send_msg(barrier)
 
     # Add flows in an edge switch
     def add_flows_edge (self, switch=None):
@@ -199,46 +205,8 @@ class   DCnetController (app_manager.RyuApp):
                                         instructions=[instr])
 
             dp.send_msg(flowmod)
-
-        """
-        for v in self.vms:
-
-            # Flows destined to a VM under this switch
-            if v['edge'] == self.switchDB[ip]['name']:
-
-                # If the Ethernet destination is the MAC of the VM just forward it
-                match = parser.OFPMatch(eth_dst=v['mac'])
-                action = parser.OFPActionOutput(v['port'])
-                instr = parser.OFPInstructionActions(ofp.OFPIT_APPLY_ACTIONS, [action])
-                flowmod = parser.OFPFlowMod(datapath=dp,
-                                            table_id=0,
-                                            priority=1000,
-                                            match=match,
-                                            instructions=[instr])
-
-                dp.send_msg(flowmod)
-            else: # For VMs not under this switch
-
-                # Rewrite the Ethernet destination with the RMAC and ECMP towards the aggregates
-                match = parser.OFPMatch(eth_dst=v['mac'])
-                action1 = parser.OFPActionSetField(eth_dst=v['rmac'])
-                action2 = parser.NXActionBundle(algorithm=nicira_ext.NX_BD_ALG_HRW,
-                                                fields=nicira_ext.NX_HASH_FIELDS_SYMMETRIC_L4,
-                                                basis=0,
-                                                slave_type=nicira_ext.NXM_OF_IN_PORT,
-                                                n_slaves=self.radix/2,
-                                                ofs_nbits=0,
-                                                dst=0,
-                                                slaves=range(1+(self.radix/2), self.radix+1))
-                instr = parser.OFPInstructionActions(ofp.OFPIT_APPLY_ACTIONS, [action1, action2])
-                flowmod = parser.OFPFlowMod(datapath=dp,
-                                            table_id=0,
-                                            priority=1000,
-                                            match=match,
-                                            instructions=[instr])
-
-                dp.send_msg(flowmod)
-        """
+            barrier = parser.OFPBarrierRequest(dp)
+            dp.send_msg(barrier)
 
     def create_vm (self, srvname, uid=None, switch=None, slp=0):
 
@@ -264,7 +232,7 @@ class   DCnetController (app_manager.RyuApp):
         for i in range(0, slp):
             s = self.dummy_list[i % n]
 
-            print 'create_vm :: adding flow to dummy', s
+            #print 'create_vm :: adding flow to dummy', s
             dp = s.dp
             ofp = dp.ofproto
             parser = dp.ofproto_parser
@@ -278,6 +246,8 @@ class   DCnetController (app_manager.RyuApp):
                                         match=match,
                                         instructions=[instr])
             dp.send_msg(flowmod)
+            #barrier = parser.OFPBarrierRequest(dp)
+            #dp.send_msg(barrier)
 
         for s in switches:
 
@@ -306,6 +276,8 @@ class   DCnetController (app_manager.RyuApp):
                                             match=match,
                                             instructions=[instr])
                 dp.send_msg(flowmod)
+                barrier = parser.OFPBarrierRequest(dp)
+                dp.send_msg(barrier)
             else:
 
                 match = parser.OFPMatch(eth_dst=vm['mac'])
@@ -325,6 +297,8 @@ class   DCnetController (app_manager.RyuApp):
                                             match=match,
                                             instructions=[instr])
                 dp.send_msg(flowmod)
+                barrier = parser.OFPBarrierRequest(dp)
+                dp.send_msg(barrier)
 
         return uid
 
@@ -350,8 +324,9 @@ class   DCnetController (app_manager.RyuApp):
 
         match = parser.OFPMatch(eth_type=0x86dd,
                                 ipv6_dst='dc98::9898:9800:{0:02x}'.format(uid))
-        action1 = parser.OFPActionSetField(eth_dst=self.servers[dst]['rmac'])
-        action2 = parser.NXActionBundle(algorithm=nicira_ext.NX_BD_ALG_HRW,
+        action2 = parser.OFPActionSetField(eth_dst=self.servers[dst]['rmac'])
+        action1 = parser.OFPActionSetField(in_port_nxm=1)
+        action3 = parser.NXActionBundle(algorithm=nicira_ext.NX_BD_ALG_HRW,
                                         fields=nicira_ext.NX_HASH_FIELDS_SYMMETRIC_L4,
                                         basis=0,
                                         slave_type=nicira_ext.NXM_OF_IN_PORT,
@@ -359,13 +334,15 @@ class   DCnetController (app_manager.RyuApp):
                                         ofs_nbits=0,
                                         dst=0,
                                         slaves=range(1+(self.radix/2), 1+self.radix))
-        instr = parser.OFPInstructionActions(ofp.OFPIT_APPLY_ACTIONS, [action1, action2])
+        instr = parser.OFPInstructionActions(ofp.OFPIT_APPLY_ACTIONS, [action1, action2, action3])
         flowmod = parser.OFPFlowMod(datapath=dp,
                                     table_id=0,
                                     priority=1001,
                                     match=match,
                                     instructions=[instr])
         dp.send_msg(flowmod)
+        barrier = parser.OFPBarrierRequest(dp)
+        dp.send_msg(barrier)
 
     def delete_tmp_vm (self, uid, src):
 
@@ -393,6 +370,8 @@ class   DCnetController (app_manager.RyuApp):
                                     out_group=ofp.OFPG_ANY,
                                     command=ofp.OFPFC_DELETE)
         dp.send_msg(flowmod)
+        barrier = parser.OFPBarrierRequest(dp)
+        dp.send_msg(barrier)
 
     def delete_vm (self, uid):
 
@@ -424,3 +403,5 @@ class   DCnetController (app_manager.RyuApp):
                                         out_group=ofp.OFPG_ANY,
                                         command=ofp.OFPFC_DELETE)
             dp.send_msg(flowmod)
+            barrier = parser.OFPBarrierRequest(dp)
+            dp.send_msg(barrier)
