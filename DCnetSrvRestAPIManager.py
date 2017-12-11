@@ -161,6 +161,15 @@ class   DCnetSrvRestAPIManager (ControllerBase):
         if uid not in self.controller.vms.keys():
             return Response(status=400)
 
+        delete_rule = 0
+        if 'delete_rule' in data.keys():
+            delete_rule = data['delete_rule']
+
+        # If we only need to delete rule, delete it and return
+        if delete_rule == 1:
+            self.controller.delete_vm(self.controller.vms[uid]['mac'], self.controller.vms[uid]['port'])
+            return Response(status=200)
+
         # Establish a connection with the QMP server associated with the VM
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
