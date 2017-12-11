@@ -23,6 +23,7 @@ class   DCnetRestAPIManager (ControllerBase):
         except ValueError:
             return Response(status=400)
 
+        print 'PUT Data: ', data
         # The request should contain name of server to host the VM
         if 'server' not in data.keys():
             return Response(status=400)
@@ -194,11 +195,6 @@ class   DCnetRestAPIManager (ControllerBase):
 
         self.controller.vms[uid] = data
 
-	#self.controller.create_tmp_vm(uid=uid, src=src, dst=dst)
-
-        #self.controller.delete_vm(uid)
-        #self.controller.create_vm(uid=uid, srvname=dst, switch=None)
-
     # Migration green-thread that handles connecting related to migration
     def migrate_thread (self, vm, src, dst, optimize, n_tor):
 
@@ -228,38 +224,51 @@ class   DCnetRestAPIManager (ControllerBase):
 
             t1 = time.time()
 
-            # Send a request to dst hypervisor OVS to add rule for migrating VM
-            cu = pycurl.Curl()
-            cu.setopt(cu.URL, "http://{0}:8080/DCnetSrv/migrate-vm".format(self.controller.servers[dst]['ip']))
-            cu.setopt(cu.PUT, True)
-            body = json.dumps({ "uid" : vm['uid'], "incoming" : 1})
-            size = len(body)
-            cu.setopt(cu.READFUNCTION, StringIO.StringIO(body).read)
-            cu.setopt(cu.INFILESIZE, size)
-            buff = StringIO.StringIO()
-            cu.setopt(cu.WRITEDATA, buff)
+            # A request to src hypervisor to delete rule for migrating VM
+            cu_src = pycurl.Curl()
+            cu_src.setopt(cu_src.URL, "http://{0}:8080/DCnetSrv/delete-vm".format(self.controller.servers[src]['ip']))
+            cu_src.setopt(cu_src.PUT, True)
+            body1 = json.dumps({ "uid" : vm['uid'], "delete_rule" : 1})
+            size1 = len(body1)
+            cu_src.setopt(cu_src.READFUNCTION, StringIO.StringIO(body1).read)
+            cu_src.setopt(cu_src.INFILESIZE, size1)
+            buff1 = StringIO.StringIO()
+            cu_src.setopt(cu_src.WRITEDATA, buff1)
 
-            #cu.perform()
+            # Send a request to dst hypervisor OVS to add rule for migrating VM
+            cu_dst = pycurl.Curl()
+            cu_dst.setopt(cu_dst.URL, "http://{0}:8080/DCnetSrv/migrate-vm".format(self.controller.servers[dst]['ip']))
+            cu_dst.setopt(cu_dst.PUT, True)
+            body2 = json.dumps({ "uid" : vm['uid'], "incoming" : 1})
+            size2 = len(body2)
+            cu_dst.setopt(cu_dst.READFUNCTION, StringIO.StringIO(body2).read)
+            cu_dst.setopt(cu_dst.INFILESIZE, size2)
+            buff2 = StringIO.StringIO()
+            cu_dst.setopt(cu_dst.WRITEDATA, buff2)
 
             if optimize != 0:
                 # Add redirect rule in the source toR
+                cu_dst.perform()
                 self.controller.create_tmp_vm(uid=vm['uid'], src=src, dst=dst)
+                cu_src.perform()
+                c.send('OK')
             else:
                 #self.controller.delete_vm(vm['uid'])
+                cu_src.perform()
+                cu_dst.perform()
+                c.send('OK')
                 self.controller.create_vm(uid=vm['uid'], srvname=dst, switch=None, slp=n_tor)
-
-            cu.perform()
 
             t2 = time.time()
             time.sleep(0.01)
 
-            c.send('OK')
             print 'migrate_thread :: downtime ', t2-t1
             print 'migrate_thread t1 t2: ', t1, t2
+            c.close()
+            break
 
         if optimize != 0:
             print 'migrate_thread :: adding rules to ToRs in the background'
-            #self.controller.delete_vm(vm['uid'])
             self.controller.create_vm(uid=vm['uid'], srvname=dst, switch=None, slp=n_tor)
             time.sleep(1)
-            self.controller.delete_tmp_vm(uid=vm['uid'], src=src)
+            #self.controller.delete_tmp_vm(uid=vm['uid'], src=src)
