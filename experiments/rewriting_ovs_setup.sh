@@ -78,10 +78,11 @@ sudo ovs-ofctl add-flow dcnet-srv100 priority=1000,ipv6,actions=output:1 -O open
 
 echo "nebula105"
 # Rules in nebula105 (dcnet-edge00)
-# direct rules for n111, n112, n113
+# direct rules for umac: n111, n112, n113; rmac: n111
 ssh nebula105 "sudo ovs-ofctl add-flow dcnet-edge00 priority=1001,eth_dst=$n111_umac,actions=output:1 -O openflow13"
 ssh nebula105 "sudo ovs-ofctl add-flow dcnet-edge00 priority=1001,eth_dst=$n112_umac,actions=output:3 -O openflow13"
 ssh nebula105 "sudo ovs-ofctl add-flow dcnet-edge00 priority=1001,eth_dst=$n113_umac,actions=output:3 -O openflow13"
+ssh nebula105 "sudo ovs-ofctl add-flow dcnet-edge00 priority=1001,eth_dst=$n111_rmac,actions=output:1 -O openflow13"
 # rewriting rules for n112, n113
 ssh nebula105 "sudo ovs-ofctl add-flow dcnet-edge00 priority=1001,eth_dst=$n112_fmac,actions=set_field:$n112_rmac-\>eth_dst,output:3 -O openflow13"
 ssh nebula105 "sudo ovs-ofctl add-flow dcnet-edge00 priority=1001,eth_dst=$n113_fmac,actions=set_field:$n113_rmac-\>eth_dst,output:3 -O openflow13"
@@ -92,16 +93,20 @@ echo "nebula106"
 ssh nebula106 "sudo ovs-ofctl add-flow dcnet-edge01 priority=1001,eth_dst=$n111_umac,actions=output:3 -O openflow13"
 ssh nebula106 "sudo ovs-ofctl add-flow dcnet-edge01 priority=1001,eth_dst=$n112_umac,actions=output:1 -O openflow13"
 ssh nebula106 "sudo ovs-ofctl add-flow dcnet-edge01 priority=1001,eth_dst=$n113_umac,actions=output:3 -O openflow13"
+ssh nebula106 "sudo ovs-ofctl add-flow dcnet-edge01 priority=1001,eth_dst=$n112_rmac,actions=output:1 -O openflow13"
 # Rewriting rules for n111, n113
-ssh nebula106 "sudo ovs-ofctl add-flow dcnet-edge01 priority=1001,eth_dst=$n111_fmac,actions=set_field:$n111_umac-\>eth_dst,output:3 -O openflow13"
-ssh nebula106 "sudo ovs-ofctl add-flow dcnet-edge01 priority=1001,eth_dst=$n113_fmac,actions=set_field:$n113_umac-\>eth_dst,output:3 -O openflow13"
+ssh nebula106 "sudo ovs-ofctl add-flow dcnet-edge01 priority=1001,eth_dst=$n111_fmac,actions=set_field:$n111_rmac-\>eth_dst,output:3 -O openflow13"
+ssh nebula106 "sudo ovs-ofctl add-flow dcnet-edge01 priority=1001,eth_dst=$n113_fmac,actions=set_field:$n113_rmac-\>eth_dst,output:3 -O openflow13"
 
 echo "nebula103"
 # Rules in nebula103 (dcnet-aggr00)
-# direct rules for n111, n112, n113
+# direct rules for n111, n112, n113 umac and rmac
 ssh nebula103 "sudo ovs-ofctl add-flow dcnet-aggr00 priority=1001,eth_dst=$n111_umac,actions=output:1 -O openflow13"
 ssh nebula103 "sudo ovs-ofctl add-flow dcnet-aggr00 priority=1001,eth_dst=$n112_umac,actions=output:2 -O openflow13"
 ssh nebula103 "sudo ovs-ofctl add-flow dcnet-aggr00 priority=1001,eth_dst=$n113_umac,actions=output:3 -O openflow13"
+ssh nebula103 "sudo ovs-ofctl add-flow dcnet-aggr00 priority=1001,eth_dst=$n111_rmac,actions=output:1 -O openflow13"
+ssh nebula103 "sudo ovs-ofctl add-flow dcnet-aggr00 priority=1001,eth_dst=$n112_rmac,actions=output:2 -O openflow13"
+ssh nebula103 "sudo ovs-ofctl add-flow dcnet-aggr00 priority=1001,eth_dst=$n113_rmac,actions=output:3 -O openflow13"
 
 echo "nebula101"
 # Rules in nebula101 (dcnet-core0)
@@ -109,6 +114,9 @@ echo "nebula101"
 ssh nebula101 "sudo ovs-ofctl add-flow dcnet-core0 priority=1001,eth_dst=$n111_umac,actions=output:1 -O openflow13"
 ssh nebula101 "sudo ovs-ofctl add-flow dcnet-core0 priority=1001,eth_dst=$n112_umac,actions=output:1 -O openflow13"
 ssh nebula101 "sudo ovs-ofctl add-flow dcnet-core0 priority=1001,eth_dst=$n113_umac,actions=output:2 -O openflow13"
+ssh nebula101 "sudo ovs-ofctl add-flow dcnet-core0 priority=1001,eth_dst=$n111_rmac,actions=output:1 -O openflow13"
+ssh nebula101 "sudo ovs-ofctl add-flow dcnet-core0 priority=1001,eth_dst=$n112_rmac,actions=output:1 -O openflow13"
+ssh nebula101 "sudo ovs-ofctl add-flow dcnet-core0 priority=1001,eth_dst=$n113_rmac,actions=output:2 -O openflow13"
 
 echo "nebula107"
 # Rules in nebula107 (dcnet-aggr10)
@@ -116,6 +124,9 @@ echo "nebula107"
 ssh nebula107 "sudo ovs-ofctl add-flow dcnet-aggr10 priority=1001,eth_dst=$n111_umac,actions=output:3 -O openflow13"
 ssh nebula107 "sudo ovs-ofctl add-flow dcnet-aggr10 priority=1001,eth_dst=$n112_umac,actions=output:3 -O openflow13"
 ssh nebula107 "sudo ovs-ofctl add-flow dcnet-aggr10 priority=1001,eth_dst=$n113_umac,actions=output:1 -O openflow13"
+ssh nebula107 "sudo ovs-ofctl add-flow dcnet-aggr10 priority=1001,eth_dst=$n111_rmac,actions=output:3 -O openflow13"
+ssh nebula107 "sudo ovs-ofctl add-flow dcnet-aggr10 priority=1001,eth_dst=$n112_rmac,actions=output:3 -O openflow13"
+ssh nebula107 "sudo ovs-ofctl add-flow dcnet-aggr10 priority=1001,eth_dst=$n113_rmac,actions=output:1 -O openflow13"
 
 echo "nebula109"
 # Rules in nebula109 (dcnet-edge10)
@@ -123,8 +134,9 @@ echo "nebula109"
 ssh nebula109 "sudo ovs-ofctl add-flow dcnet-edge10 priority=1001,eth_dst=$n111_umac,actions=output:3 -O openflow13"
 ssh nebula109 "sudo ovs-ofctl add-flow dcnet-edge10 priority=1001,eth_dst=$n112_umac,actions=output:3 -O openflow13"
 ssh nebula109 "sudo ovs-ofctl add-flow dcnet-edge10 priority=1001,eth_dst=$n113_umac,actions=output:1 -O openflow13"
+ssh nebula109 "sudo ovs-ofctl add-flow dcnet-edge10 priority=1001,eth_dst=$n113_rmac,actions=output:1 -O openflow13"
 # Rewriting rules for n111, n112
-ssh nebula109 "sudo ovs-ofctl add-flow dcnet-edge10 priority=1001,eth_dst=$n111_fmac,actions=set_field:$n111_umac-\>eth_dst,output:3 -O openflow13"
-ssh nebula109 "sudo ovs-ofctl add-flow dcnet-edge10 priority=1001,eth_dst=$n112_fmac,actions=set_field:$n112_umac-\>eth_dst,output:3 -O openflow13"
+ssh nebula109 "sudo ovs-ofctl add-flow dcnet-edge10 priority=1001,eth_dst=$n111_fmac,actions=set_field:$n111_rmac-\>eth_dst,output:3 -O openflow13"
+ssh nebula109 "sudo ovs-ofctl add-flow dcnet-edge10 priority=1001,eth_dst=$n112_fmac,actions=set_field:$n112_rmac-\>eth_dst,output:3 -O openflow13"
 
 exit
