@@ -29,6 +29,7 @@ n113_fmac=99:99:99:00:00:04
 ssh nebula111 "sudo ip link set hyp down"
 ssh nebula111 "sudo ip link set hyp up"
 ssh nebula111 "sudo ifconfig hyp mtu 9000"
+ssh nebula111 "sudo ifconfig hyp-conn mtu 9000"
 ssh nebula111 "sudo ip -6 addr add dc98::9898:9800:0/64 dev hyp"
 ssh nebula111 "sudo ip -6 addr add dc99::9999:9900:0/64 dev hyp"
 ssh nebula111 "sudo ip -6 neigh add dev hyp dc98::9898:9800:2 lladdr $n112_umac"
@@ -40,6 +41,7 @@ ssh nebula111 "sudo ip -6 neigh add dev hyp dc99::9999:9900:4 lladdr $n113_fmac"
 ssh nebula112 "sudo ip link set hyp down"
 ssh nebula112 "sudo ip link set hyp up"
 ssh nebula112 "sudo ifconfig hyp mtu 9000"
+ssh nebula112 "sudo ifconfig hyp-conn mtu 9000"
 ssh nebula112 "sudo ip -6 addr add dc98::9898:9800:2/64 dev hyp"
 ssh nebula112 "sudo ip -6 addr add dc99::9999:9900:2/64 dev hyp"
 ssh nebula112 "sudo ip -6 neigh add dev hyp dc98::9898:9800:0 lladdr $n111_umac"
@@ -51,6 +53,7 @@ ssh nebula112 "sudo ip -6 neigh add dev hyp dc99::9999:9900:4 lladdr $n113_fmac"
 sudo ip link set hyp down
 sudo ip link set hyp up
 sudo ifconfig hyp mtu 9000
+sudo ifconfig hyp-conn mtu 9000
 sudo ip -6 addr add dc98::9898:9800:4/64 dev hyp
 sudo ip -6 addr add dc99::9999:9900:4/64 dev hyp
 sudo ip -6 neigh add dev hyp dc98::9898:9800:0 lladdr $n111_umac
