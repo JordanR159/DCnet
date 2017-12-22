@@ -1,0 +1,15 @@
+set style data histogram
+set style histogram cluster gap 1
+set style fill solid
+set boxwidth 0.9
+set xtics format ""
+set grid ytics
+set xlabel "Added delay in RTT in one of the TCP flows (us)"
+set ylabel "TCP throughput (Mbps)"
+set key top left
+
+set terminal postscript eps size 6.4,4.8 enhanced color font 'Helvetica,25'
+set output "tcp_control1_plot.eps"
+
+plot "plotdata" u 2:xtic(1) title "TCP throughput with no delay" lc rgb "red",\
+     "plotdata" u 3 title "TCP throughput with delay" lc rgb "blue"
