@@ -1,0 +1,17 @@
+set xlabel 'Time (s)'
+set ylabel 'Throughput (Mbps)'
+set key top left
+set grid xtics
+set yrange [475:503]
+set label "Delay = 200 us" at 11,476 rotate by 90
+set label "Delay = 400 us" at 21,476 rotate by 90
+set label "Delay = 600 us" at 31,476 rotate by 90
+set label "Delay = 800 us" at 41,476 rotate by 90
+set label "Delay = 1000 us" at 51,476 rotate by 90
+set label "Delay = 1200 us" at 61,476 rotate by 90
+
+set terminal postscript eps size 6.4,4.8 enhanced color font 'Helvetica,25'
+set output "tcp_control2_plot.eps"
+
+plot "plotdata_nodelay" u 1 title 'TCP throughput with no delay in RTT' w l lt 1 lw 3 lc rgb "red",\
+     "plotdata_delay" u 1 title 'TCP throughput with delay in RTT' w l lt 1 lw 3 lc rgb "blue"

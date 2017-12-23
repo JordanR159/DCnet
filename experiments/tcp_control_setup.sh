@@ -18,6 +18,7 @@
 # All the qdiscs at all interfaces are set to 'pfifo limit 1000'
 # except at n107 rename71 (name will differ), for which it is 'pfifo limit 500'
 # and n106 enp1s0f2, for which it is netem and variable delay
+
 # First run rewriting_ovs_setup
 ./rewriting_ovs_setup.sh
 
