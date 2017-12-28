@@ -1,0 +1,16 @@
+set style data histogram
+set style histogram cluster gap 1
+set style fill solid
+set boxwidth 0.9
+set xtics format ""
+set grid ytics
+set xlabel "MTU for end hosts (bytes)"
+set ylabel "TCP throughput (Mbps)"
+set key top left
+set yrange [460:502]
+
+set terminal postscript eps size 6.4,4.8 enhanced color font 'Helvetica,25'
+set output "tcp_ovs1_plot.eps"
+
+plot "plotdata" u 2:xtic(1) title "TCP throughput with no rewriting" lc rgb "red",\
+     "plotdata" u 3 title "TCP throughput with rewriting" lc rgb "blue"
