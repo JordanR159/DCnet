@@ -10,6 +10,7 @@
 #include <netinet/ip6.h>
 #include <netinet/icmp6.h>
 #include <netpacket/packet.h>
+#include <pthread.h>
 
 /* DCnet host/VM prefix	*/
 uint8_t	DCnet_ip6_prefix[] = {0xdc, 0x98, 0, 0, 0, 0, 0, 0,
@@ -42,7 +43,9 @@ void	*rep_thr_func (void *);
 #define	IC_DLEN_DEF	100
 #define	IPG_DEF		1000
 
-char	*usage = "%s -i <ping interval (ms)> -n <no. of pings> -d <ICMP data size>\n";
+char	*usage = "%s -i <ping interval (ms)> -n <no. of pings> -d <ICMP data size> -o <output file>\n";
+
+#define	cond_fprintf(file, ...)	{ if(file) { fprintf(file, __VA_ARGS__); } }
 
 /*---------------------------------------------------------------------------------------
  * main  -  Main function, creates request and reply threads
@@ -71,7 +74,7 @@ int	main (
 	}
 
 	for(i = 0; i < 3; i++) {
-		if(!strncmp(hostname, DCnet_srvnames[i], strlen(DCnet_srvnames[i]))) {
+		if(!strncmp(hostname, DCnet_srvnames[i], 9)) {
 			break;
 		}
 	}
@@ -168,21 +171,21 @@ int	main (
 	/* Calculate the number of lost responses */
 	lost = 0;
 	for(i = 5; i < req_arg.n_ping; i++) {
-		fprintf(opfile, "%d ", i);
+		cond_fprintf(opfile, "%d ", i);
 		if(req_times[i].tv_sec != 0) {
-			fprintf(opfile, "%ld,%ld ", req_times[i].tv_sec, req_times[i].tv_usec);
+			cond_fprintf(opfile, "%ld,%ld ", req_times[i].tv_sec, req_times[i].tv_usec);
 			if(rep_times[i].tv_sec == 0) {
-				fprintf(opfile, "-1,-1 -1\n");
+				cond_fprintf(opfile, "-1,-1 -1\n");
 				lost++;
 			}
 			else {
-				fprintf(opfile, "%ld,%ld ", rep_times[i].tv_sec, rep_times[i].tv_usec);
+				cond_fprintf(opfile, "%ld,%ld ", rep_times[i].tv_sec, rep_times[i].tv_usec);
 				timersub(&rep_times[i], &req_times[i], &td);
-				fprintf(opfile, "%f\n", ((float)(td.tv_sec*1000000 + td.tv_usec))/1000);
+				cond_fprintf(opfile, "%f\n", ((float)(td.tv_sec*1000000 + td.tv_usec))/1000);
 			}
 		}
 		else {
-			fprintf(opfile, "-1,-1 -1,-1, -1\n");
+			cond_fprintf(opfile, "-1,-1 -1,-1, -1\n");
 		}
 	}
 
