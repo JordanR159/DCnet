@@ -1,7 +1,7 @@
 set xlabel "Number of (emulated) ToR switches"
 set ylabel "Number of lost Echo Responses"
 set xrange [0:11000]
-set yrange [-50:]
+set yrange [-50:2000]
 set key top left
 
 set terminal postscript eps size 6.4,4.8 enhanced color font 'Helvetica,25'
