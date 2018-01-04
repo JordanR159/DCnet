@@ -5,7 +5,13 @@ rm -rf vmmig_ping_output
 mkdir -p vmmig_ping_output
 
 # Starting UID
-uid=18
+uid=8
+
+# Get the starting UID from command line if provided
+if [ $# -gt 0 ]
+then
+	uid=$1
+fi
 
 # No. of ToR switches
 tors=(1000 2000 3000 4000 5000 6000 7000 8000 9000 10000)
