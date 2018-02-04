@@ -1,7 +1,7 @@
 #!/bin/bash
 
-n103_p3=rename71
-n103_p4=rename72
+n103_p3=rename91
+n103_p4=rename92
 
 echo -e "\n\nnebula103 ports 3,4 : $n103_p3, $n103_p4."
 echo "Press ENTER if correct. If incorrect press Ctrl-C and correct the script."
