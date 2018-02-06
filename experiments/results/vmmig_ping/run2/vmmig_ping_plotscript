@@ -4,8 +4,8 @@ set xrange [0:11000]
 set yrange [-50:2000]
 set key top left
 
-set terminal postscript eps size 6.4,4.8 enhanced color font 'Helvetica,25'
+set terminal postscript eps size 6.4,4.8 enhanced color font 'Helvetica-Bold,27'
 set output "vmmig_ping_plot1.eps"
 
-plot "plotdata_noopt" u 1:7 title 'No Temporary Redirection Optimization' w lp lt 1 pt 7 lw 3 lc rgb "red",\
-     "plotdata_opt" u 1:7 title 'With Temporary Redirection Optimization' w lp lt 1 pt 5 lw 3 lc rgb "blue"
+plot "plotdata_noopt" u 1:7 title 'No Temp. Redirection Optimization' w lp lt 1 pt 7 lw 4 ps 3 lc rgb "red",\
+     "plotdata_opt" u 1:7 title 'With Temp. Redirection Optimization' w lp lt 1 pt 5 lw 4 ps 3 lc rgb "blue"

@@ -1,7 +1,9 @@
 set xlabel "Ping data size (bytes)"
 set ylabel "Ping RTT (ms)"
 set key top left
-set terminal postscript eps size 6.4,4.8 enhanced color font 'Helvetica,25'
+set key font 'Helvetica-Bold,30'
+
+set terminal postscript eps size 6.4,4.8 enhanced color font 'Helvetica-Bold,27'
 set output "ping_hp_plot.eps"
 plot "plotdata" u 1:2 title 'No rewriting' w lp pt 6 lw 3 lc rgb "red", \
      "plotdata" u 1:3 title 'With rewriting' w lp pt 8 lw 3 lc rgb "blue"
