@@ -12,5 +12,5 @@ set yrange [460:502]
 set terminal postscript eps size 6.4,4.8 enhanced color font 'Helvetica-Bold,27'
 set output "tcp_ovs1_plot.eps"
 
-plot "plotdata" u 2:xtic(1) title "TCP throughput with no rewriting" lc rgb "red",\
-     "plotdata" u 3 title "TCP throughput with rewriting" lc rgb "blue"
+plot "plotdata" u 2:xtic(1) title "TCP throughput with no rewriting" fillstyle pattern 1 lc rgb "red",\
+     "plotdata" u 3 title "TCP throughput with rewriting" fillstyle pattern 3 lc rgb "blue"
