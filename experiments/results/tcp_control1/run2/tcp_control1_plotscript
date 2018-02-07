@@ -12,5 +12,5 @@ set yrange [486:502]
 set terminal postscript eps size 6.4,4.8 enhanced color font 'Helvetica-Bold,27'
 set output "tcp_control1_plot.eps"
 
-plot "plotdata" u 2:xtic(1) title "TCP throughput with no delay" fillstyle pattern 1 lc rgb "red",\
+plot "plotdata" u 2:xtic(1) title "TCP throughput with no delay" fillstyle pattern 1 lw 3 lc rgb "red",\
      "plotdata" u 3 title "TCP throughput with delay" fillstyle pattern 3 lc rgb "blue"
