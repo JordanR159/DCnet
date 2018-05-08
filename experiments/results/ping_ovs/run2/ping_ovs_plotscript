@@ -2,6 +2,8 @@ set xlabel "Ping data size (bytes)"
 set ylabel "Ping RTT (ms)"
 set key top left
 set key font 'Helvetica-Bold,30'
+set xtics autofreq 3000
+set ytics autofreq 0.5
 
 set terminal postscript eps size 6.4,4.8 enhanced color font 'Helvetica-Bold,27'
 set output "ping_ovs_plot.eps"
