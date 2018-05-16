@@ -65,10 +65,15 @@ class   DCnetSrvRestAPIManager (ControllerBase):
         qmpport = self.controller.qmpport
         self.controller.qmpport = self.controller.qmpport + 1
 
+        # Create a copy of the linux image for this VM
+        image = '/home/rajas/nfs_files/tiny-core-linux-{0}.img'.format(uid)
+        proc = subprocess.Popen(['cp', './tiny-core-linux.img', image])
+        proc.wait()
+
         # Instantiate the VM
         if incoming == 0:
             proc = subprocess.Popen(['qemu-system-x86_64', '-enable-kvm',
-                                     '-hda', './tiny-core-linux.img',
+                                     '-hda', image,
                                      '-device', 'virtio-net,netdev=net0,mac={0}'.format(mac),
                                      '-netdev', 'tap,id=net0,ifname={0}'.format(tap),
                                      '-serial', 'pty',
@@ -78,7 +83,7 @@ class   DCnetSrvRestAPIManager (ControllerBase):
             incport = self.controller.incport
             self.controller.incport = self.controller.incport + 1
             proc = subprocess.Popen(['qemu-system-x86_64', '-enable-kvm',
-                                     '-hda', './tiny-core-linux.img',
+                                     '-hda', image,
                                      '-device', 'virtio-net,netdev=net0,mac={0}'.format(mac),
                                      '-netdev', 'tap,id=net0,ifname={0}'.format(tap),
                                      '-serial', 'pty',
@@ -196,6 +201,10 @@ class   DCnetSrvRestAPIManager (ControllerBase):
 
         # Delete the record of this VM
         del(self.controller.vms[uid])
+
+        # Delete the copy of the linux image
+        proc = subprocess.Popen(['rm', '-f', '/home/rajas/nfs_files/tiny-core-linux-{0}.img'.format(uid)])
+        proc.wait()
 
         return Response(content_type='application/json',body='{}')
 
