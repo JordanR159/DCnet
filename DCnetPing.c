@@ -60,7 +60,7 @@ int	main (
 	struct		req_thr_arg req_arg;	/* Request thread arg	*/
 	struct		timeval td;		/* Time difference	*/
 	char		hostname[256];		/* Hostname of src	*/
-	FILE		*opfile;		/* Output file		*/
+	FILE		*opfile = NULL;		/* Output file		*/
 	int		lost;			/* No. of lost replies	*/
 	int		opt;			/* getopt return value	*/
 	int		err;			/* Return value		*/
