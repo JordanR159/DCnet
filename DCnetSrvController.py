@@ -182,15 +182,18 @@ class   DCnetSrvController (app_manager.RyuApp):
         icmp = None
 
         # Extract protocols from the packet
-        for p in pkt.protocols:
-            if p.protocol_name == 'ethernet':
-                eth = p
-            elif p.protocol_name == 'ipv6':
-                ip = p
-            elif p.protocol_name == 'icmpv6':
-                if p.type_ == 135 and p.data != None and p.data.option != None:
-                    icmp = p
-                    nd = icmp.data
+        try:
+            for p in pkt.protocols:
+                if p.protocol_name == 'ethernet':
+                    eth = p
+                elif p.protocol_name == 'ipv6':
+                    ip = p
+                elif p.protocol_name == 'icmpv6':
+                    if p.type_ == 135 and p.data != None and p.data.option != None:
+                        icmp = p
+                        nd = icmp.data
+        except:
+            pass
 
         # If the packet is not a NS message, return
         if eth == None or ip == None or icmp == None:

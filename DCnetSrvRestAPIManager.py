@@ -65,15 +65,17 @@ class   DCnetSrvRestAPIManager (ControllerBase):
         qmpport = self.controller.qmpport
         self.controller.qmpport = self.controller.qmpport + 1
 
-        # Create a copy of the linux image for this VM
-        image = '/home/rajas/nfs_files/tiny-core-linux-{0}.img'.format(uid)
-        proc = subprocess.Popen(['cp', './tiny-core-linux.img', image])
-        proc.wait()
+        if incoming == 0:
+            # Create a copy of the linux image for this VM
+            image = '/home/rajas/nfs_files/ubuntu-dcnet-{0}.img'.format(uid)
+            proc = subprocess.Popen(['qemu-img', 'create', '-f', 'qcow2', '-b', '/home/rajas/nfs_files/ubuntu-dcnet.img', image])
+            proc.wait()
 
         # Instantiate the VM
         if incoming == 0:
             proc = subprocess.Popen(['qemu-system-x86_64', '-enable-kvm',
                                      '-hda', image,
+                                     '-m', '2048',
                                      '-device', 'virtio-net,netdev=net0,mac={0}'.format(mac),
                                      '-netdev', 'tap,id=net0,ifname={0}'.format(tap),
                                      '-serial', 'pty',
@@ -84,6 +86,7 @@ class   DCnetSrvRestAPIManager (ControllerBase):
             self.controller.incport = self.controller.incport + 1
             proc = subprocess.Popen(['qemu-system-x86_64', '-enable-kvm',
                                      '-hda', image,
+                                     '-m', '2048',
                                      '-device', 'virtio-net,netdev=net0,mac={0}'.format(mac),
                                      '-netdev', 'tap,id=net0,ifname={0}'.format(tap),
                                      '-serial', 'pty',
@@ -99,13 +102,15 @@ class   DCnetSrvRestAPIManager (ControllerBase):
         print 'proc returncode: ', proc.returncode
         time.sleep(2)
 
+        qemuProc = proc
+
         # Establish a connection with the QMP server
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         while True:
             try:
                 s.connect(('127.0.0.1', qmpport))
             except socket.error:
-                print 'soket Exception!'
+                print 'socket Exception!'
                 time.sleep(1)
                 continue
             break
@@ -203,7 +208,7 @@ class   DCnetSrvRestAPIManager (ControllerBase):
         del(self.controller.vms[uid])
 
         # Delete the copy of the linux image
-        proc = subprocess.Popen(['rm', '-f', '/home/rajas/nfs_files/tiny-core-linux-{0}.img'.format(uid)])
+        proc = subprocess.Popen(['rm', '-f', '/home/rajas/nfs_files/ubuntu-dcnet-{0}.img'.format(uid)])
         proc.wait()
 
         return Response(content_type='application/json',body='{}')
@@ -316,6 +321,10 @@ class   DCnetSrvRestAPIManager (ControllerBase):
             self.controller.delete_vm(vm['mac'], vm['port'])
 
             vm['migration'] = 'complete'
+
+            # Delete the record of the VM
+            del self.controller.vms[vm['uid']]
+
         else:
             vm['migration'] = 'failed'
 
