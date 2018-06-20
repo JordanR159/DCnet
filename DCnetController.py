@@ -251,7 +251,7 @@ class   DCnetController (app_manager.RyuApp):
 
         for s in switches:
 
-            print s
+            #print s
             if s['name'] == 'dummy':
                 continue
 
