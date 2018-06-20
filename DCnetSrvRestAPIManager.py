@@ -65,9 +65,8 @@ class   DCnetSrvRestAPIManager (ControllerBase):
         qmpport = self.controller.qmpport
         self.controller.qmpport = self.controller.qmpport + 1
 
+        image = '/home/rajas/nfs_files/ubuntu-dcnet-{0}.img'.format(uid)
         if incoming == 0:
-            # Create a copy of the linux image for this VM
-            image = '/home/rajas/nfs_files/ubuntu-dcnet-{0}.img'.format(uid)
             proc = subprocess.Popen(['qemu-img', 'create', '-f', 'qcow2', '-b', '/home/rajas/nfs_files/ubuntu-dcnet.img', image])
             proc.wait()
 
