@@ -202,6 +202,8 @@ class   DCnetSrvRestAPIManager (ControllerBase):
         # Remove the rules associated with this VM from the local OVS
         self.controller.delete_vm(self.controller.vms[uid]['mac'], self.controller.vms[uid]['port'])
 
+        os.waitpid(self.controller.vms[uid]['pid'], 0)
+
         # Delete the record of this VM
         del(self.controller.vms[uid])
 
