@@ -65,10 +65,12 @@ class   DCnetSrvRestAPIManager (ControllerBase):
         qmpport = self.controller.qmpport
         self.controller.qmpport = self.controller.qmpport + 1
 
-        # Create a copy of the linux image for this VM
         image = '/home/rajas/nfs_files/tiny-core-linux-{0}.img'.format(uid)
-        proc = subprocess.Popen(['cp', './tiny-core-linux.img', image])
-        proc.wait()
+
+        if incoming == 0:
+            # Create a copy of the image for this new VM
+            proc = subprocess.Popen(['cp', './tiny-core-linux.img', image])
+            proc.wait()
 
         # Instantiate the VM
         if incoming == 0:
@@ -316,6 +318,10 @@ class   DCnetSrvRestAPIManager (ControllerBase):
             self.controller.delete_vm(vm['mac'], vm['port'])
 
             vm['migration'] = 'complete'
+
+            os.waitpid(vm['pid'], 0)
+
+            del(self.controller.vms[vm['uid']])
         else:
             vm['migration'] = 'failed'
 
