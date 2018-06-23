@@ -1,7 +1,7 @@
 set xlabel "Ping Request Number"
 set ylabel "Response time (ms)"
 set key top left
-set yrange [-10:80]
+set yrange [-10:100]
 unset key
 
 set terminal postscript eps size 6.4,4.8 enhanced color font 'Helvetica-Bold,22'
