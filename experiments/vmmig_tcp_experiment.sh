@@ -27,7 +27,7 @@ sleep 2
 # Start the iperf client locally
 iperf3 -c dc98::9898:9800:${uid_hex} -O 10 -t 15 -i 0.25 > vmmig_tcp_output/rawop1 &
 
-sleep 12
+sleep 14
 
 # Migrate the VM with no optimization
 curl -X PUT -d "{ \"uid\":${uid}, \"dst\":\"dcnet-srv100\", \"optimize\":0, \"n_tor\":5000 }" http://nebula102:8080/DCnet/migrate-vm
@@ -57,7 +57,7 @@ sleep 2
 # Start the iperf client locally
 iperf3 -c dc98::9898:9800:${uid_hex} -O 10 -t 15 -i 0.25 > vmmig_tcp_output/rawop2 &
 
-sleep 12
+sleep 14
 
 # Migrate the VM with optimization
 curl -X PUT -d "{ \"uid\":${uid}, \"dst\":\"dcnet-srv100\", \"optimize\":1, \"n_tor\":5000 }" http://nebula102:8080/DCnet/migrate-vm
