@@ -5,6 +5,7 @@ import subprocess
 import json
 import socket
 import time
+import os
 
 class   DCnetSrvRestAPIManager (ControllerBase):
 
@@ -74,7 +75,7 @@ class   DCnetSrvRestAPIManager (ControllerBase):
         if incoming == 0:
             proc = subprocess.Popen(['qemu-system-x86_64', '-enable-kvm',
                                      '-hda', image,
-                                     '-m', '2048',
+                                     '-m', '1024',
                                      '-device', 'virtio-net,netdev=net0,mac={0}'.format(mac),
                                      '-netdev', 'tap,id=net0,ifname={0}'.format(tap),
                                      '-serial', 'pty',
@@ -85,7 +86,7 @@ class   DCnetSrvRestAPIManager (ControllerBase):
             self.controller.incport = self.controller.incport + 1
             proc = subprocess.Popen(['qemu-system-x86_64', '-enable-kvm',
                                      '-hda', image,
-                                     '-m', '2048',
+                                     '-m', '1024',
                                      '-device', 'virtio-net,netdev=net0,mac={0}'.format(mac),
                                      '-netdev', 'tap,id=net0,ifname={0}'.format(tap),
                                      '-serial', 'pty',
@@ -202,6 +203,9 @@ class   DCnetSrvRestAPIManager (ControllerBase):
 
         # Remove the rules associated with this VM from the local OVS
         self.controller.delete_vm(self.controller.vms[uid]['mac'], self.controller.vms[uid]['port'])
+
+        # Wait on the qemu process
+        os.waitpid(self.controller.vms[uid]['pid'], 0)
 
         # Delete the record of this VM
         del(self.controller.vms[uid])
@@ -320,6 +324,9 @@ class   DCnetSrvRestAPIManager (ControllerBase):
             self.controller.delete_vm(vm['mac'], vm['port'])
 
             vm['migration'] = 'complete'
+
+            # Wait on the qemu process
+            os.waitpid(vm['pid'], 0)
 
             # Delete the record of the VM
             del self.controller.vms[vm['uid']]
