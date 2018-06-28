@@ -7,7 +7,7 @@ set grid ytics
 set xlabel "Max. Segment Size (bytes)"
 set ylabel "TCP throughput (Mbps)"
 set key top left
-#set yrange [460:502]
+set yrange [840:1200]
 
 set terminal postscript eps size 6.4,4.8 enhanced color font 'Helvetica-Bold,27'
 set output "tcp_ovs1_trs_plot.eps"
