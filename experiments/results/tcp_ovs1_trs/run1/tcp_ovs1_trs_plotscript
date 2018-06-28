@@ -1,0 +1,16 @@
+set style data histogram
+set style histogram cluster gap 1
+set style fill solid
+set boxwidth 0.9
+set xtics format ""
+set grid ytics
+set xlabel "Max. Segment Size (bytes)"
+set ylabel "TCP throughput (Mbps)"
+set key top left
+#set yrange [460:502]
+
+set terminal postscript eps size 6.4,4.8 enhanced color font 'Helvetica-Bold,27'
+set output "tcp_ovs1_trs_plot.eps"
+
+plot "plotdata" u 2:xtic(1) title "TCP throughput with rewriting" fillstyle pattern 1 lw 3 lc rgb "red",\
+     "plotdata" u 3 title "TCP throughput with tunneling" fillstyle pattern 3 lc rgb "blue"
