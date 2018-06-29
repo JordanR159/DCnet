@@ -1,0 +1,175 @@
+-----------------------------------------------------------
+Server listening on 5201
+-----------------------------------------------------------
+Accepted connection from dc98::d4ae:52c9:a834, port 43552
+[  6] local dc98::d4ae:52c8:c361 port 5201 connected to dc98::d4ae:52c9:a834 port 55719
+[ ID] Interval           Transfer     Bandwidth       Jitter    Lost/Total Datagrams
+[  6]   0.00-1.00   sec  17.9 MBytes   150 Mbits/sec  0.001 ms  9670/385619 (2.5%)  
+[  6]   1.00-2.00   sec  19.0 MBytes   159 Mbits/sec  0.002 ms  3943/402549 (0.98%)  
+[  6]   2.00-3.00   sec  19.0 MBytes   160 Mbits/sec  0.001 ms  3606/403074 (0.89%)  
+[  6]   3.00-4.00   sec  19.0 MBytes   160 Mbits/sec  0.001 ms  2617/401717 (0.65%)  
+[  6]   4.00-5.00   sec  19.1 MBytes   160 Mbits/sec  0.001 ms  1107/401629 (0.28%)  
+[  6]   5.00-6.00   sec  19.0 MBytes   159 Mbits/sec  0.001 ms  3763/401691 (0.94%)  
+[  6]   6.00-7.00   sec  19.1 MBytes   160 Mbits/sec  0.001 ms  1933/401616 (0.48%)  
+[  6]   7.00-8.00   sec  19.1 MBytes   160 Mbits/sec  0.001 ms  1731/402525 (0.43%)  
+[  6]   8.00-9.00   sec  19.1 MBytes   160 Mbits/sec  0.001 ms  1794/402294 (0.45%)  
+[  6]   9.00-10.00  sec  19.1 MBytes   160 Mbits/sec  0.003 ms  2518/402050 (0.63%)  
+[  6]  10.00-11.00  sec  19.6 MBytes   164 Mbits/sec  0.001 ms  1684/412356 (0.41%)  
+[  6]  11.00-12.00  sec  19.5 MBytes   164 Mbits/sec  0.001 ms  4337/414035 (1%)  
+[  6]  12.00-13.00  sec  19.6 MBytes   165 Mbits/sec  0.001 ms  2588/413890 (0.63%)  
+[  6]  13.00-14.00  sec  19.5 MBytes   164 Mbits/sec  0.001 ms  4751/413589 (1.1%)  
+[  6]  14.00-15.00  sec  19.5 MBytes   164 Mbits/sec  0.001 ms  4254/413698 (1%)  
+[  6]  15.00-16.00  sec  19.6 MBytes   164 Mbits/sec  0.002 ms  3127/413606 (0.76%)  
+[  6]  16.00-17.00  sec  19.6 MBytes   165 Mbits/sec  0.006 ms  1167/413255 (0.28%)  
+[  6]  17.00-18.00  sec  19.6 MBytes   164 Mbits/sec  0.001 ms  3238/413677 (0.78%)  
+[  6]  18.00-19.00  sec  19.6 MBytes   165 Mbits/sec  0.001 ms  2710/414177 (0.65%)  
+[  6]  19.00-20.00  sec  19.6 MBytes   164 Mbits/sec  0.001 ms  4116/414236 (0.99%)  
+[  6]  20.00-21.00  sec  19.5 MBytes   164 Mbits/sec  0.001 ms  4474/413531 (1.1%)  
+[  6]  21.00-22.00  sec  19.6 MBytes   164 Mbits/sec  0.001 ms  4196/414259 (1%)  
+[  6]  22.00-23.00  sec  19.6 MBytes   165 Mbits/sec  0.001 ms  1761/413377 (0.43%)  
+[  6]  23.00-24.00  sec  19.6 MBytes   164 Mbits/sec  0.001 ms  3533/413787 (0.85%)  
+[  6]  24.00-25.00  sec  19.6 MBytes   165 Mbits/sec  0.002 ms  2088/413594 (0.5%)  
+[  6]  25.00-25.04  sec   828 KBytes   165 Mbits/sec  0.001 ms  0/16955 (0%)  
+- - - - - - - - - - - - - - - - - - - - - - - - -
+[ ID] Interval           Transfer     Bandwidth       Jitter    Lost/Total Datagrams
+[  6]   0.00-25.04  sec  0.00 Bytes  0.00 bits/sec  0.001 ms  80706/10226786 (0.79%)  
+-----------------------------------------------------------
+Server listening on 5201
+-----------------------------------------------------------
+Accepted connection from dc98::d4ae:52c9:a834, port 43556
+[  6] local dc98::d4ae:52c8:c361 port 5201 connected to dc98::d4ae:52c9:a834 port 49434
+[ ID] Interval           Transfer     Bandwidth       Jitter    Lost/Total Datagrams
+[  6]   0.00-1.00   sec  88.0 MBytes   738 Mbits/sec  0.002 ms  2739/310316 (0.88%)  
+[  6]   1.00-2.00   sec  91.5 MBytes   768 Mbits/sec  0.002 ms  3988/323839 (1.2%)  
+[  6]   2.00-3.00   sec  92.3 MBytes   774 Mbits/sec  0.003 ms  1394/323837 (0.43%)  
+[  6]   3.00-4.00   sec  92.1 MBytes   772 Mbits/sec  0.002 ms  1989/323839 (0.61%)  
+[  6]   4.00-5.00   sec  91.8 MBytes   770 Mbits/sec  0.003 ms  2900/323827 (0.9%)  
+[  6]   5.00-6.00   sec  91.6 MBytes   768 Mbits/sec  0.002 ms  3607/323815 (1.1%)  
+[  6]   6.00-7.00   sec  92.2 MBytes   773 Mbits/sec  0.002 ms  1573/323825 (0.49%)  
+[  6]   7.00-8.00   sec  92.3 MBytes   774 Mbits/sec  0.003 ms  1254/323844 (0.39%)  
+[  6]   8.00-9.00   sec  92.6 MBytes   777 Mbits/sec  0.003 ms  2/323829 (0.00062%)  
+[  6]   9.00-10.00  sec  91.9 MBytes   771 Mbits/sec  0.001 ms  2661/323827 (0.82%)  
+[  6]  10.00-11.00  sec  91.9 MBytes   771 Mbits/sec  0.002 ms  2612/323826 (0.81%)  
+[  6]  11.00-12.00  sec  92.1 MBytes   773 Mbits/sec  0.002 ms  1778/323806 (0.55%)  
+[  6]  12.00-13.00  sec  92.4 MBytes   775 Mbits/sec  0.003 ms  1023/323834 (0.32%)  
+[  6]  13.00-14.00  sec  91.9 MBytes   771 Mbits/sec  0.003 ms  2689/323838 (0.83%)  
+[  6]  14.00-15.00  sec  92.2 MBytes   774 Mbits/sec  0.002 ms  1437/323828 (0.44%)  
+[  6]  15.00-16.00  sec  92.0 MBytes   772 Mbits/sec  0.002 ms  2311/323836 (0.71%)  
+[  6]  16.00-17.00  sec  91.8 MBytes   770 Mbits/sec  0.003 ms  2826/323826 (0.87%)  
+[  6]  17.00-18.00  sec  92.3 MBytes   774 Mbits/sec  0.002 ms  1261/323813 (0.39%)  
+[  6]  18.00-19.00  sec  92.6 MBytes   777 Mbits/sec  0.002 ms  2/323812 (0.00062%)  
+[  6]  19.00-20.00  sec  92.2 MBytes   773 Mbits/sec  0.002 ms  1635/323850 (0.5%)  
+[  6]  20.00-21.00  sec  92.5 MBytes   776 Mbits/sec  0.002 ms  592/323830 (0.18%)  
+[  6]  21.00-22.00  sec  92.0 MBytes   771 Mbits/sec  0.003 ms  2398/323836 (0.74%)  
+[  6]  22.00-23.00  sec  92.1 MBytes   772 Mbits/sec  0.003 ms  2008/323823 (0.62%)  
+[  6]  23.00-24.00  sec  92.3 MBytes   775 Mbits/sec  0.002 ms  1078/323824 (0.33%)  
+[  6]  24.00-25.00  sec  92.3 MBytes   774 Mbits/sec  0.002 ms  1184/323770 (0.37%)  
+[  6]  25.00-25.04  sec  3.90 MBytes   777 Mbits/sec  0.002 ms  0/13617 (0%)  
+- - - - - - - - - - - - - - - - - - - - - - - - -
+[ ID] Interval           Transfer     Bandwidth       Jitter    Lost/Total Datagrams
+[  6]   0.00-25.04  sec  0.00 Bytes  0.00 bits/sec  0.002 ms  46941/8095767 (0.58%)  
+-----------------------------------------------------------
+Server listening on 5201
+-----------------------------------------------------------
+Accepted connection from dc98::d4ae:52c9:a834, port 43560
+[  6] local dc98::d4ae:52c8:c361 port 5201 connected to dc98::d4ae:52c9:a834 port 58788
+[ ID] Interval           Transfer     Bandwidth       Jitter    Lost/Total Datagrams
+[  6]   0.00-1.00   sec   108 MBytes   909 Mbits/sec  0.018 ms  0/75785 (0%)  
+[  6]   1.00-2.00   sec   113 MBytes   946 Mbits/sec  0.019 ms  0/78807 (0%)  
+[  6]   2.00-3.00   sec   113 MBytes   946 Mbits/sec  0.017 ms  0/78813 (0%)  
+[  6]   3.00-4.00   sec   113 MBytes   945 Mbits/sec  0.016 ms  0/78740 (0%)  
+[  6]   4.00-5.00   sec   113 MBytes   946 Mbits/sec  0.012 ms  0/78814 (0%)  
+[  6]   5.00-6.00   sec   113 MBytes   946 Mbits/sec  0.022 ms  0/78813 (0%)  
+[  6]   6.00-7.00   sec   113 MBytes   946 Mbits/sec  0.014 ms  0/78813 (0%)  
+[  6]   7.00-8.00   sec   113 MBytes   946 Mbits/sec  0.015 ms  0/78817 (0%)  
+[  6]   8.00-9.00   sec   113 MBytes   946 Mbits/sec  0.013 ms  0/78815 (0%)  
+[  6]   9.00-10.00  sec   113 MBytes   946 Mbits/sec  0.016 ms  0/78814 (0%)  
+[  6]  10.00-11.00  sec   113 MBytes   946 Mbits/sec  0.019 ms  0/78813 (0%)  
+[  6]  11.00-12.00  sec   113 MBytes   946 Mbits/sec  0.008 ms  0/78817 (0%)  
+[  6]  12.00-13.00  sec   113 MBytes   944 Mbits/sec  0.017 ms  0/78685 (0%)  
+[  6]  13.00-14.00  sec   113 MBytes   946 Mbits/sec  0.020 ms  0/78813 (0%)  
+[  6]  14.00-15.00  sec   113 MBytes   946 Mbits/sec  0.016 ms  0/78817 (0%)  
+[  6]  15.00-16.00  sec   113 MBytes   946 Mbits/sec  0.022 ms  0/78814 (0%)  
+[  6]  16.00-17.00  sec   113 MBytes   946 Mbits/sec  0.019 ms  0/78817 (0%)  
+[  6]  17.00-18.00  sec   113 MBytes   946 Mbits/sec  0.023 ms  0/78811 (0%)  
+[  6]  18.00-19.00  sec   113 MBytes   946 Mbits/sec  0.012 ms  0/78820 (0%)  
+[  6]  19.00-20.00  sec   113 MBytes   946 Mbits/sec  0.021 ms  0/78810 (0%)  
+[  6]  20.00-21.00  sec   113 MBytes   946 Mbits/sec  0.018 ms  0/78819 (0%)  
+[  6]  21.00-22.00  sec   113 MBytes   946 Mbits/sec  0.011 ms  0/78811 (0%)  
+[  6]  22.00-23.00  sec   113 MBytes   946 Mbits/sec  0.027 ms  0/78813 (0%)  
+[  6]  23.00-24.00  sec   113 MBytes   946 Mbits/sec  0.014 ms  0/78819 (0%)  
+[  6]  24.00-25.00  sec   113 MBytes   946 Mbits/sec  0.017 ms  0/78811 (0%)  
+[  6]  25.00-25.04  sec  4.65 MBytes   946 Mbits/sec  0.016 ms  0/3251 (0%)  
+- - - - - - - - - - - - - - - - - - - - - - - - -
+[ ID] Interval           Transfer     Bandwidth       Jitter    Lost/Total Datagrams
+[  6]   0.00-25.04  sec  0.00 Bytes  0.00 bits/sec  0.016 ms  0/1970372 (0%)  
+-----------------------------------------------------------
+Server listening on 5201
+-----------------------------------------------------------
+Accepted connection from dc98::d4ae:52c9:a834, port 43564
+[  6] local dc98::d4ae:52c8:c361 port 5201 connected to dc98::d4ae:52c9:a834 port 55317
+[ ID] Interval           Transfer     Bandwidth       Jitter    Lost/Total Datagrams
+[  6]   0.00-1.00   sec   111 MBytes   935 Mbits/sec  0.048 ms  0/29214 (0%)  
+[  6]   1.00-2.00   sec   117 MBytes   978 Mbits/sec  0.072 ms  0/30568 (0%)  
+[  6]   2.00-3.00   sec   117 MBytes   979 Mbits/sec  0.048 ms  0/30592 (0%)  
+[  6]   3.00-4.00   sec   117 MBytes   979 Mbits/sec  0.062 ms  0/30592 (0%)  
+[  6]   4.00-5.00   sec   117 MBytes   979 Mbits/sec  0.057 ms  0/30592 (0%)  
+[  6]   5.00-6.00   sec   117 MBytes   979 Mbits/sec  0.056 ms  0/30593 (0%)  
+[  6]   6.00-7.00   sec   117 MBytes   979 Mbits/sec  0.032 ms  0/30592 (0%)  
+[  6]   7.00-8.00   sec   117 MBytes   979 Mbits/sec  0.030 ms  0/30592 (0%)  
+[  6]   8.00-9.00   sec   117 MBytes   979 Mbits/sec  0.035 ms  0/30593 (0%)  
+[  6]   9.00-10.00  sec   117 MBytes   979 Mbits/sec  0.031 ms  0/30592 (0%)  
+[  6]  10.00-11.00  sec   117 MBytes   979 Mbits/sec  0.037 ms  0/30592 (0%)  
+[  6]  11.00-12.00  sec   117 MBytes   979 Mbits/sec  0.060 ms  0/30593 (0%)  
+[  6]  12.00-13.00  sec   117 MBytes   979 Mbits/sec  0.060 ms  0/30592 (0%)  
+[  6]  13.00-14.00  sec   117 MBytes   979 Mbits/sec  0.044 ms  0/30592 (0%)  
+[  6]  14.00-15.00  sec   117 MBytes   979 Mbits/sec  0.053 ms  0/30592 (0%)  
+[  6]  15.00-16.00  sec   117 MBytes   979 Mbits/sec  0.071 ms  0/30592 (0%)  
+[  6]  16.00-17.00  sec   117 MBytes   979 Mbits/sec  0.047 ms  0/30592 (0%)  
+[  6]  17.00-18.00  sec   117 MBytes   979 Mbits/sec  0.067 ms  0/30588 (0%)  
+[  6]  18.00-19.00  sec   117 MBytes   979 Mbits/sec  0.046 ms  0/30593 (0%)  
+[  6]  19.00-20.00  sec   117 MBytes   979 Mbits/sec  0.041 ms  0/30582 (0%)  
+[  6]  20.00-21.00  sec   116 MBytes   973 Mbits/sec  0.044 ms  0/30400 (0%)  
+[  6]  21.00-22.00  sec   117 MBytes   979 Mbits/sec  0.055 ms  0/30592 (0%)  
+[  6]  22.00-23.00  sec   117 MBytes   979 Mbits/sec  0.042 ms  0/30589 (0%)  
+[  6]  23.00-24.00  sec   117 MBytes   979 Mbits/sec  0.053 ms  0/30591 (0%)  
+[  6]  24.00-25.00  sec   117 MBytes   979 Mbits/sec  0.069 ms  0/30592 (0%)  
+[  6]  25.00-25.04  sec  4.53 MBytes   979 Mbits/sec  0.055 ms  0/1188 (0%)  
+- - - - - - - - - - - - - - - - - - - - - - - - -
+[ ID] Interval           Transfer     Bandwidth       Jitter    Lost/Total Datagrams
+[  6]   0.00-25.04  sec  0.00 Bytes  0.00 bits/sec  0.055 ms  0/764380 (0%)  
+-----------------------------------------------------------
+Server listening on 5201
+-----------------------------------------------------------
+Accepted connection from dc98::d4ae:52c9:a834, port 43568
+[  6] local dc98::d4ae:52c8:c361 port 5201 connected to dc98::d4ae:52c9:a834 port 33810
+[ ID] Interval           Transfer     Bandwidth       Jitter    Lost/Total Datagrams
+[  6]   0.00-1.00   sec   113 MBytes   944 Mbits/sec  0.080 ms  0/14755 (0%)  
+[  6]   1.00-2.00   sec   117 MBytes   982 Mbits/sec  0.076 ms  0/15341 (0%)  
+[  6]   2.00-3.00   sec   117 MBytes   982 Mbits/sec  0.077 ms  0/15348 (0%)  
+[  6]   3.00-4.00   sec   117 MBytes   982 Mbits/sec  0.073 ms  0/15341 (0%)  
+[  6]   4.00-5.00   sec   117 MBytes   983 Mbits/sec  0.075 ms  0/15353 (0%)  
+[  6]   5.00-6.00   sec   117 MBytes   982 Mbits/sec  0.081 ms  0/15351 (0%)  
+[  6]   6.00-7.00   sec   117 MBytes   983 Mbits/sec  0.080 ms  0/15364 (0%)  
+[  6]   7.00-8.00   sec   117 MBytes   982 Mbits/sec  0.072 ms  0/15341 (0%)  
+[  6]   8.00-9.00   sec   117 MBytes   982 Mbits/sec  0.075 ms  0/15352 (0%)  
+[  6]   9.00-10.00  sec   117 MBytes   982 Mbits/sec  0.079 ms  0/15351 (0%)  
+[  6]  10.00-11.00  sec   117 MBytes   982 Mbits/sec  0.082 ms  0/15348 (0%)  
+[  6]  11.00-12.00  sec   117 MBytes   982 Mbits/sec  0.095 ms  0/15341 (0%)  
+[  6]  12.00-13.00  sec   117 MBytes   982 Mbits/sec  0.082 ms  0/15349 (0%)  
+[  6]  13.00-14.00  sec   117 MBytes   983 Mbits/sec  0.082 ms  0/15357 (0%)  
+[  6]  14.00-15.00  sec   117 MBytes   983 Mbits/sec  0.080 ms  0/15352 (0%)  
+[  6]  15.00-16.00  sec   117 MBytes   982 Mbits/sec  0.068 ms  0/15346 (0%)  
+[  6]  16.00-17.00  sec   117 MBytes   982 Mbits/sec  0.098 ms  0/15345 (0%)  
+[  6]  17.00-18.00  sec   117 MBytes   982 Mbits/sec  0.070 ms  0/15350 (0%)  
+[  6]  18.00-19.00  sec   117 MBytes   982 Mbits/sec  0.097 ms  0/15346 (0%)  
+[  6]  19.00-20.00  sec   117 MBytes   981 Mbits/sec  0.086 ms  0/15336 (0%)  
+[  6]  20.00-21.00  sec   117 MBytes   982 Mbits/sec  0.081 ms  0/15337 (0%)  
+[  6]  21.00-22.00  sec   117 MBytes   982 Mbits/sec  0.079 ms  0/15340 (0%)  
+[  6]  22.00-23.00  sec   117 MBytes   982 Mbits/sec  0.065 ms  0/15349 (0%)  
+[  6]  23.00-24.00  sec   117 MBytes   982 Mbits/sec  0.095 ms  0/15341 (0%)  
+[  6]  24.00-25.00  sec   117 MBytes   982 Mbits/sec  0.074 ms  0/15343 (0%)  
+[  6]  25.00-25.04  sec  4.60 MBytes   984 Mbits/sec  0.081 ms  0/603 (0%)  
+- - - - - - - - - - - - - - - - - - - - - - - - -
+[ ID] Interval           Transfer     Bandwidth       Jitter    Lost/Total Datagrams
+[  6]   0.00-25.04  sec  0.00 Bytes  0.00 bits/sec  0.081 ms  0/383680 (0%)  
