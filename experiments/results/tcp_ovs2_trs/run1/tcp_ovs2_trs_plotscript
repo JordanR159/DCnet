@@ -1,0 +1,16 @@
+set style data histogram
+set style histogram cluster gap 1
+set style fill solid
+set boxwidth 0.9
+set xtics format ""
+set grid ytics
+set xlabel "TCP Payload (bytes)"
+set ylabel "Round-trip Time (us)"
+set key top left
+#set yrange [840:1200]
+
+set terminal postscript eps size 6.4,4.8 enhanced color font 'Helvetica-Bold,27'
+set output "tcp_ovs2_trs_plot.eps"
+
+plot "plotdata" u 2:xtic(1) title "with rewriting" fillstyle pattern 1 lw 3 lc rgb "red",\
+     "plotdata" u 3 title "with tunneling" fillstyle pattern 3 lc rgb "blue"
