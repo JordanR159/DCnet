@@ -1,0 +1,175 @@
+-----------------------------------------------------------
+Server listening on 5201
+-----------------------------------------------------------
+Accepted connection from dc91::9191:9100:0, port 45554
+[  6] local dc91::9191:9100:4 port 5201 connected to dc91::9191:9100:0 port 45760
+[ ID] Interval           Transfer     Bandwidth       Jitter    Lost/Total Datagrams
+[  6]   0.00-1.00   sec  11.5 MBytes  96.7 Mbits/sec  0.002 ms  1047/242761 (0.43%)  
+[  6]   1.00-2.00   sec  12.1 MBytes   101 Mbits/sec  0.003 ms  981/254286 (0.39%)  
+[  6]   2.00-3.00   sec  12.1 MBytes   101 Mbits/sec  0.002 ms  678/253885 (0.27%)  
+[  6]   3.00-4.00   sec  12.1 MBytes   102 Mbits/sec  0.002 ms  1628/255519 (0.64%)  
+[  6]   4.00-5.00   sec  12.2 MBytes   102 Mbits/sec  0.005 ms  784/255655 (0.31%)  
+[  6]   5.00-6.00   sec  12.4 MBytes   104 Mbits/sec  0.002 ms  673/260422 (0.26%)  
+[  6]   6.00-7.00   sec  12.4 MBytes   104 Mbits/sec  0.002 ms  935/260509 (0.36%)  
+[  6]   7.00-8.00   sec  12.4 MBytes   104 Mbits/sec  0.004 ms  658/260272 (0.25%)  
+[  6]   8.00-9.00   sec  12.4 MBytes   104 Mbits/sec  0.007 ms  988/260308 (0.38%)  
+[  6]   9.00-10.00  sec  12.4 MBytes   104 Mbits/sec  0.004 ms  1020/260424 (0.39%)  
+[  6]  10.00-11.00  sec  12.4 MBytes   104 Mbits/sec  0.006 ms  826/260388 (0.32%)  
+[  6]  11.00-12.00  sec  12.4 MBytes   104 Mbits/sec  0.003 ms  895/260645 (0.34%)  
+[  6]  12.00-13.00  sec  12.2 MBytes   103 Mbits/sec  0.002 ms  865/257173 (0.34%)  
+[  6]  13.00-14.00  sec  12.2 MBytes   102 Mbits/sec  0.003 ms  490/256732 (0.19%)  
+[  6]  14.00-15.00  sec  12.2 MBytes   102 Mbits/sec  0.004 ms  673/255967 (0.26%)  
+[  6]  15.00-16.00  sec  12.2 MBytes   102 Mbits/sec  0.005 ms  709/256571 (0.28%)  
+[  6]  16.00-17.00  sec  12.2 MBytes   102 Mbits/sec  0.001 ms  577/256776 (0.22%)  
+[  6]  17.00-18.00  sec  12.2 MBytes   102 Mbits/sec  0.004 ms  700/256753 (0.27%)  
+[  6]  18.00-19.00  sec  12.2 MBytes   102 Mbits/sec  0.010 ms  729/256668 (0.28%)  
+[  6]  19.00-20.00  sec  12.2 MBytes   102 Mbits/sec  0.002 ms  868/256599 (0.34%)  
+[  6]  20.00-21.00  sec  12.2 MBytes   102 Mbits/sec  0.007 ms  425/256350 (0.17%)  
+[  6]  21.00-22.00  sec  12.2 MBytes   102 Mbits/sec  0.002 ms  698/256807 (0.27%)  
+[  6]  22.00-23.00  sec  12.3 MBytes   103 Mbits/sec  0.005 ms  693/257928 (0.27%)  
+[  6]  23.00-24.00  sec  12.3 MBytes   103 Mbits/sec  0.002 ms  552/258540 (0.21%)  
+[  6]  24.00-25.00  sec  12.2 MBytes   102 Mbits/sec  0.003 ms  728/256282 (0.28%)  
+[  6]  25.00-25.04  sec   516 KBytes   105 Mbits/sec  0.002 ms  34/10610 (0.32%)  
+- - - - - - - - - - - - - - - - - - - - - - - - -
+[ ID] Interval           Transfer     Bandwidth       Jitter    Lost/Total Datagrams
+[  6]   0.00-25.04  sec  0.00 Bytes  0.00 bits/sec  0.002 ms  19854/6434830 (0.31%)  
+-----------------------------------------------------------
+Server listening on 5201
+-----------------------------------------------------------
+Accepted connection from dc91::9191:9100:0, port 45558
+[  6] local dc91::9191:9100:4 port 5201 connected to dc91::9191:9100:0 port 60736
+[ ID] Interval           Transfer     Bandwidth       Jitter    Lost/Total Datagrams
+[  6]   0.00-1.00   sec  67.3 MBytes   565 Mbits/sec  0.006 ms  464/235753 (0.2%)  
+[  6]   1.00-2.00   sec  71.0 MBytes   595 Mbits/sec  0.003 ms  0/248091 (0%)  
+[  6]   2.00-3.00   sec  71.4 MBytes   599 Mbits/sec  0.003 ms  0/249605 (0%)  
+[  6]   3.00-4.00   sec  70.5 MBytes   591 Mbits/sec  0.003 ms  0/246246 (0%)  
+[  6]   4.00-5.00   sec  70.3 MBytes   590 Mbits/sec  0.008 ms  254/245926 (0.1%)  
+[  6]   5.00-6.00   sec  71.8 MBytes   603 Mbits/sec  0.005 ms  0/251045 (0%)  
+[  6]   6.00-7.00   sec  71.8 MBytes   603 Mbits/sec  0.004 ms  0/251095 (0%)  
+[  6]   7.00-8.00   sec  71.8 MBytes   602 Mbits/sec  0.003 ms  0/250864 (0%)  
+[  6]   8.00-9.00   sec  71.8 MBytes   602 Mbits/sec  0.004 ms  0/250944 (0%)  
+[  6]   9.00-10.00  sec  71.7 MBytes   602 Mbits/sec  0.004 ms  37/250752 (0.015%)  
+[  6]  10.00-11.00  sec  71.8 MBytes   602 Mbits/sec  0.005 ms  0/250798 (0%)  
+[  6]  11.00-12.00  sec  71.7 MBytes   601 Mbits/sec  0.004 ms  61/250554 (0.024%)  
+[  6]  12.00-13.00  sec  71.8 MBytes   602 Mbits/sec  0.004 ms  0/250805 (0%)  
+[  6]  13.00-14.00  sec  71.8 MBytes   602 Mbits/sec  0.005 ms  0/250901 (0%)  
+[  6]  14.00-15.00  sec  71.8 MBytes   602 Mbits/sec  0.003 ms  0/250953 (0%)  
+[  6]  15.00-16.00  sec  72.0 MBytes   604 Mbits/sec  0.003 ms  0/251612 (0%)  
+[  6]  16.00-17.00  sec  72.0 MBytes   604 Mbits/sec  0.003 ms  0/251780 (0%)  
+[  6]  17.00-18.00  sec  72.1 MBytes   605 Mbits/sec  0.003 ms  0/251870 (0%)  
+[  6]  18.00-19.00  sec  72.0 MBytes   604 Mbits/sec  0.003 ms  0/251798 (0%)  
+[  6]  19.00-20.00  sec  72.0 MBytes   604 Mbits/sec  0.004 ms  0/251660 (0%)  
+[  6]  20.00-21.00  sec  71.9 MBytes   603 Mbits/sec  0.004 ms  0/251283 (0%)  
+[  6]  21.00-22.00  sec  71.9 MBytes   603 Mbits/sec  0.003 ms  0/251259 (0%)  
+[  6]  22.00-23.00  sec  71.9 MBytes   603 Mbits/sec  0.003 ms  0/251242 (0%)  
+[  6]  23.00-24.00  sec  72.0 MBytes   604 Mbits/sec  0.002 ms  0/251829 (0%)  
+[  6]  24.00-25.00  sec  71.9 MBytes   604 Mbits/sec  0.003 ms  0/251474 (0%)  
+[  6]  25.00-25.04  sec  2.91 MBytes   605 Mbits/sec  0.003 ms  0/10166 (0%)  
+- - - - - - - - - - - - - - - - - - - - - - - - -
+[ ID] Interval           Transfer     Bandwidth       Jitter    Lost/Total Datagrams
+[  6]   0.00-25.04  sec  0.00 Bytes  0.00 bits/sec  0.003 ms  816/6260305 (0.013%)  
+-----------------------------------------------------------
+Server listening on 5201
+-----------------------------------------------------------
+Accepted connection from dc91::9191:9100:0, port 45562
+[  6] local dc91::9191:9100:4 port 5201 connected to dc91::9191:9100:0 port 58514
+[ ID] Interval           Transfer     Bandwidth       Jitter    Lost/Total Datagrams
+[  6]   0.00-1.00   sec   103 MBytes   868 Mbits/sec  0.023 ms  0/72335 (0%)  
+[  6]   1.00-2.00   sec   108 MBytes   906 Mbits/sec  0.018 ms  0/75484 (0%)  
+[  6]   2.00-3.00   sec   108 MBytes   906 Mbits/sec  0.018 ms  0/75480 (0%)  
+[  6]   3.00-4.00   sec   108 MBytes   906 Mbits/sec  0.012 ms  0/75482 (0%)  
+[  6]   4.00-5.00   sec   108 MBytes   906 Mbits/sec  0.022 ms  0/75482 (0%)  
+[  6]   5.00-6.00   sec   108 MBytes   906 Mbits/sec  0.018 ms  0/75484 (0%)  
+[  6]   6.00-7.00   sec   108 MBytes   906 Mbits/sec  0.013 ms  0/75478 (0%)  
+[  6]   7.00-8.00   sec   108 MBytes   906 Mbits/sec  0.015 ms  0/75464 (0%)  
+[  6]   8.00-9.00   sec   108 MBytes   906 Mbits/sec  0.013 ms  0/75485 (0%)  
+[  6]   9.00-10.00  sec   108 MBytes   906 Mbits/sec  0.018 ms  0/75478 (0%)  
+[  6]  10.00-11.00  sec   108 MBytes   906 Mbits/sec  0.012 ms  0/75490 (0%)  
+[  6]  11.00-12.00  sec   108 MBytes   906 Mbits/sec  0.012 ms  0/75483 (0%)  
+[  6]  12.00-13.00  sec   108 MBytes   906 Mbits/sec  0.012 ms  0/75480 (0%)  
+[  6]  13.00-14.00  sec   108 MBytes   906 Mbits/sec  0.017 ms  0/75480 (0%)  
+[  6]  14.00-15.00  sec   108 MBytes   906 Mbits/sec  0.015 ms  0/75484 (0%)  
+[  6]  15.00-16.00  sec   108 MBytes   906 Mbits/sec  0.015 ms  0/75480 (0%)  
+[  6]  16.00-17.00  sec   108 MBytes   906 Mbits/sec  0.015 ms  0/75488 (0%)  
+[  6]  17.00-18.00  sec   108 MBytes   906 Mbits/sec  0.020 ms  0/75479 (0%)  
+[  6]  18.00-19.00  sec   108 MBytes   906 Mbits/sec  0.018 ms  0/75487 (0%)  
+[  6]  19.00-20.00  sec   108 MBytes   906 Mbits/sec  0.018 ms  0/75465 (0%)  
+[  6]  20.00-21.00  sec   108 MBytes   906 Mbits/sec  0.010 ms  0/75483 (0%)  
+[  6]  21.00-22.00  sec   108 MBytes   906 Mbits/sec  0.018 ms  0/75482 (0%)  
+[  6]  22.00-23.00  sec   108 MBytes   906 Mbits/sec  0.014 ms  0/75485 (0%)  
+[  6]  23.00-24.00  sec   108 MBytes   906 Mbits/sec  0.012 ms  0/75485 (0%)  
+[  6]  24.00-25.00  sec   108 MBytes   906 Mbits/sec  0.013 ms  0/75481 (0%)  
+[  6]  25.00-25.04  sec  4.57 MBytes   905 Mbits/sec  0.013 ms  0/3193 (0%)  
+- - - - - - - - - - - - - - - - - - - - - - - - -
+[ ID] Interval           Transfer     Bandwidth       Jitter    Lost/Total Datagrams
+[  6]   0.00-25.04  sec  0.00 Bytes  0.00 bits/sec  0.013 ms  0/1887077 (0%)  
+-----------------------------------------------------------
+Server listening on 5201
+-----------------------------------------------------------
+Accepted connection from dc91::9191:9100:0, port 45566
+[  6] local dc91::9191:9100:4 port 5201 connected to dc91::9191:9100:0 port 43841
+[ ID] Interval           Transfer     Bandwidth       Jitter    Lost/Total Datagrams
+[  6]   0.00-1.00   sec   110 MBytes   920 Mbits/sec  0.037 ms  0/28765 (0%)  
+[  6]   1.00-2.00   sec   114 MBytes   960 Mbits/sec  0.057 ms  0/30006 (0%)  
+[  6]   2.00-3.00   sec   115 MBytes   961 Mbits/sec  0.055 ms  0/30021 (0%)  
+[  6]   3.00-4.00   sec   114 MBytes   960 Mbits/sec  0.035 ms  0/30004 (0%)  
+[  6]   4.00-5.00   sec   114 MBytes   960 Mbits/sec  0.034 ms  0/30011 (0%)  
+[  6]   5.00-6.00   sec   114 MBytes   960 Mbits/sec  0.057 ms  0/30014 (0%)  
+[  6]   6.00-7.00   sec   114 MBytes   960 Mbits/sec  0.038 ms  0/30002 (0%)  
+[  6]   7.00-8.00   sec   114 MBytes   960 Mbits/sec  0.051 ms  0/30000 (0%)  
+[  6]   8.00-9.00   sec   114 MBytes   960 Mbits/sec  0.036 ms  0/30002 (0%)  
+[  6]   9.00-10.00  sec   114 MBytes   960 Mbits/sec  0.047 ms  0/30000 (0%)  
+[  6]  10.00-11.00  sec   114 MBytes   960 Mbits/sec  0.033 ms  0/30004 (0%)  
+[  6]  11.00-12.00  sec   114 MBytes   960 Mbits/sec  0.036 ms  0/30006 (0%)  
+[  6]  12.00-13.00  sec   115 MBytes   961 Mbits/sec  0.052 ms  0/30017 (0%)  
+[  6]  13.00-14.00  sec   114 MBytes   960 Mbits/sec  0.038 ms  0/30002 (0%)  
+[  6]  14.00-15.00  sec   115 MBytes   961 Mbits/sec  0.037 ms  0/30019 (0%)  
+[  6]  15.00-16.00  sec   114 MBytes   960 Mbits/sec  0.051 ms  0/30010 (0%)  
+[  6]  16.00-17.00  sec   114 MBytes   960 Mbits/sec  0.034 ms  0/30005 (0%)  
+[  6]  17.00-18.00  sec   114 MBytes   960 Mbits/sec  0.042 ms  0/30000 (0%)  
+[  6]  18.00-19.00  sec   114 MBytes   960 Mbits/sec  0.035 ms  0/29998 (0%)  
+[  6]  19.00-20.00  sec   114 MBytes   960 Mbits/sec  0.048 ms  0/29999 (0%)  
+[  6]  20.00-21.00  sec   114 MBytes   960 Mbits/sec  0.056 ms  0/30006 (0%)  
+[  6]  21.00-22.00  sec   114 MBytes   960 Mbits/sec  0.050 ms  0/30003 (0%)  
+[  6]  22.00-23.00  sec   115 MBytes   961 Mbits/sec  0.052 ms  0/30029 (0%)  
+[  6]  23.00-24.00  sec   114 MBytes   960 Mbits/sec  0.037 ms  0/30002 (0%)  
+[  6]  24.00-25.00  sec   114 MBytes   960 Mbits/sec  0.045 ms  0/30012 (0%)  
+[  6]  25.00-25.04  sec  4.78 MBytes   960 Mbits/sec  0.040 ms  0/1253 (0%)  
+- - - - - - - - - - - - - - - - - - - - - - - - -
+[ ID] Interval           Transfer     Bandwidth       Jitter    Lost/Total Datagrams
+[  6]   0.00-25.04  sec  0.00 Bytes  0.00 bits/sec  0.040 ms  0/750190 (0%)  
+-----------------------------------------------------------
+Server listening on 5201
+-----------------------------------------------------------
+Accepted connection from dc91::9191:9100:0, port 45570
+[  6] local dc91::9191:9100:4 port 5201 connected to dc91::9191:9100:0 port 60342
+[ ID] Interval           Transfer     Bandwidth       Jitter    Lost/Total Datagrams
+[  6]   0.00-1.00   sec   110 MBytes   926 Mbits/sec  0.096 ms  0/14476 (0%)  
+[  6]   1.00-2.00   sec   115 MBytes   968 Mbits/sec  0.089 ms  0/15123 (0%)  
+[  6]   2.00-3.00   sec   115 MBytes   968 Mbits/sec  0.081 ms  0/15129 (0%)  
+[  6]   3.00-4.00   sec   115 MBytes   967 Mbits/sec  0.091 ms  0/15110 (0%)  
+[  6]   4.00-5.00   sec   115 MBytes   968 Mbits/sec  0.106 ms  0/15123 (0%)  
+[  6]   5.00-6.00   sec   115 MBytes   968 Mbits/sec  0.085 ms  0/15128 (0%)  
+[  6]   6.00-7.00   sec   115 MBytes   968 Mbits/sec  0.089 ms  0/15129 (0%)  
+[  6]   7.00-8.00   sec   115 MBytes   967 Mbits/sec  0.089 ms  0/15111 (0%)  
+[  6]   8.00-9.00   sec   116 MBytes   969 Mbits/sec  0.095 ms  0/15147 (0%)  
+[  6]   9.00-10.00  sec   115 MBytes   967 Mbits/sec  0.104 ms  0/15107 (0%)  
+[  6]  10.00-11.00  sec   115 MBytes   968 Mbits/sec  0.086 ms  0/15126 (0%)  
+[  6]  11.00-12.00  sec   115 MBytes   968 Mbits/sec  0.091 ms  0/15119 (0%)  
+[  6]  12.00-13.00  sec   116 MBytes   969 Mbits/sec  0.083 ms  0/15139 (0%)  
+[  6]  13.00-14.00  sec   115 MBytes   967 Mbits/sec  0.089 ms  0/15116 (0%)  
+[  6]  14.00-15.00  sec   115 MBytes   968 Mbits/sec  0.106 ms  0/15118 (0%)  
+[  6]  15.00-16.00  sec   115 MBytes   968 Mbits/sec  0.089 ms  0/15123 (0%)  
+[  6]  16.00-17.00  sec   116 MBytes   969 Mbits/sec  0.083 ms  0/15140 (0%)  
+[  6]  17.00-18.00  sec   116 MBytes   969 Mbits/sec  0.085 ms  0/15141 (0%)  
+[  6]  18.00-19.00  sec   115 MBytes   968 Mbits/sec  0.096 ms  0/15120 (0%)  
+[  6]  19.00-20.00  sec   115 MBytes   967 Mbits/sec  0.096 ms  0/15116 (0%)  
+[  6]  20.00-21.00  sec   115 MBytes   966 Mbits/sec  0.084 ms  0/15089 (0%)  
+[  6]  21.00-22.00  sec   115 MBytes   969 Mbits/sec  0.089 ms  0/15138 (0%)  
+[  6]  22.00-23.00  sec   116 MBytes   969 Mbits/sec  0.077 ms  0/15140 (0%)  
+[  6]  23.00-24.00  sec   115 MBytes   968 Mbits/sec  0.082 ms  0/15118 (0%)  
+[  6]  24.00-25.00  sec   115 MBytes   968 Mbits/sec  0.081 ms  0/15121 (0%)  
+[  6]  25.00-25.04  sec  4.83 MBytes   964 Mbits/sec  0.084 ms  0/633 (0%)  
+- - - - - - - - - - - - - - - - - - - - - - - - -
+[ ID] Interval           Transfer     Bandwidth       Jitter    Lost/Total Datagrams
+[  6]   0.00-25.04  sec  0.00 Bytes  0.00 bits/sec  0.084 ms  0/378080 (0%)  
