@@ -1,0 +1,7 @@
+Linux 4.4.0-128-generic (nebula111) 	07/16/2018 	_x86_64_	(4 CPU)
+
+11:05:56 AM   UID       PID    %usr %system  %guest    %CPU   CPU  Command
+11:06:16 AM  1001     12106    2.00   35.38    0.00   37.38     0  iperf3
+
+Average:      UID       PID    %usr %system  %guest    %CPU   CPU  Command
+Average:     1001     12106    2.00   35.38    0.00   37.38     -  iperf3
