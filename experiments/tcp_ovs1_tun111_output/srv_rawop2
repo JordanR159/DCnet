@@ -1,0 +1,322 @@
+-----------------------------------------------------------
+Server listening on 5201
+-----------------------------------------------------------
+Accepted connection from dc91::9191:9100:0, port 36698
+[  6] local dc91::9191:9100:4 port 5201 connected to dc91::9191:9100:0 port 36700
+[ ID] Interval           Transfer     Bandwidth
+[  6]   0.00-1.00   sec  27.9 MBytes   234 Mbits/sec                  (omitted)
+[  6]   1.00-2.00   sec  39.3 MBytes   330 Mbits/sec                  (omitted)
+[  6]   2.00-3.00   sec  40.4 MBytes   339 Mbits/sec                  (omitted)
+[  6]   3.00-4.00   sec  41.6 MBytes   349 Mbits/sec                  (omitted)
+[  6]   4.00-5.00   sec  43.2 MBytes   362 Mbits/sec                  (omitted)
+[  6]   5.00-6.00   sec  43.7 MBytes   367 Mbits/sec                  (omitted)
+[  6]   6.00-7.00   sec  44.4 MBytes   373 Mbits/sec                  (omitted)
+[  6]   7.00-8.00   sec  41.9 MBytes   351 Mbits/sec                  (omitted)
+[  6]   8.00-9.00   sec  37.8 MBytes   317 Mbits/sec                  (omitted)
+[  6]   9.00-10.00  sec  39.0 MBytes   328 Mbits/sec                  (omitted)
+[  6]   0.00-1.00   sec  40.9 MBytes   343 Mbits/sec                  
+[  6]   1.00-2.00   sec  41.4 MBytes   347 Mbits/sec                  
+[  6]   2.00-3.00   sec  42.5 MBytes   356 Mbits/sec                  
+[  6]   3.00-4.00   sec  43.7 MBytes   366 Mbits/sec                  
+[  6]   4.00-5.00   sec  52.9 MBytes   444 Mbits/sec                  
+[  6]   5.00-6.00   sec  53.4 MBytes   448 Mbits/sec                  
+[  6]   6.00-7.00   sec  52.9 MBytes   443 Mbits/sec                  
+[  6]   7.00-8.00   sec  52.9 MBytes   444 Mbits/sec                  
+[  6]   8.00-9.00   sec  53.1 MBytes   446 Mbits/sec                  
+[  6]   9.00-10.00  sec  52.7 MBytes   442 Mbits/sec                  
+[  6]  10.00-11.00  sec  52.7 MBytes   442 Mbits/sec                  
+[  6]  11.00-12.00  sec  52.7 MBytes   442 Mbits/sec                  
+[  6]  12.00-13.00  sec  52.3 MBytes   439 Mbits/sec                  
+[  6]  13.00-14.00  sec  52.4 MBytes   439 Mbits/sec                  
+[  6]  14.00-15.00  sec  56.7 MBytes   476 Mbits/sec                  
+[  6]  15.00-15.04  sec  3.76 MBytes   844 Mbits/sec                  
+- - - - - - - - - - - - - - - - - - - - - - - - -
+[ ID] Interval           Transfer     Bandwidth
+[  6]   0.00-15.04  sec  0.00 Bytes  0.00 bits/sec                  sender
+[  6]   0.00-15.04  sec   757 MBytes   422 Mbits/sec                  receiver
+-----------------------------------------------------------
+Server listening on 5201
+-----------------------------------------------------------
+Accepted connection from dc91::9191:9100:0, port 36702
+[  6] local dc91::9191:9100:4 port 5201 connected to dc91::9191:9100:0 port 36704
+[ ID] Interval           Transfer     Bandwidth
+[  6]   0.00-1.00   sec  22.3 MBytes   187 Mbits/sec                  (omitted)
+[  6]   1.00-2.00   sec  42.7 MBytes   358 Mbits/sec                  (omitted)
+[  6]   2.00-3.00   sec  43.0 MBytes   360 Mbits/sec                  (omitted)
+[  6]   3.00-4.00   sec  41.0 MBytes   344 Mbits/sec                  (omitted)
+[  6]   4.00-5.00   sec  35.1 MBytes   295 Mbits/sec                  (omitted)
+[  6]   5.00-6.00   sec  36.4 MBytes   305 Mbits/sec                  (omitted)
+[  6]   6.00-7.00   sec  37.9 MBytes   318 Mbits/sec                  (omitted)
+[  6]   7.00-8.00   sec  39.3 MBytes   330 Mbits/sec                  (omitted)
+[  6]   8.00-9.00   sec  40.8 MBytes   343 Mbits/sec                  (omitted)
+[  6]   9.00-10.00  sec  42.9 MBytes   360 Mbits/sec                  (omitted)
+[  6]   0.00-1.00   sec  44.0 MBytes   369 Mbits/sec                  
+[  6]   1.00-2.00   sec  45.1 MBytes   378 Mbits/sec                  
+[  6]   2.00-3.00   sec  45.8 MBytes   384 Mbits/sec                  
+[  6]   3.00-4.00   sec  45.9 MBytes   385 Mbits/sec                  
+[  6]   4.00-5.00   sec  45.8 MBytes   384 Mbits/sec                  
+[  6]   5.00-6.00   sec  39.9 MBytes   335 Mbits/sec                  
+[  6]   6.00-7.00   sec  39.8 MBytes   334 Mbits/sec                  
+[  6]   7.00-8.00   sec  41.1 MBytes   345 Mbits/sec                  
+[  6]   8.00-9.00   sec  41.9 MBytes   351 Mbits/sec                  
+[  6]   9.00-10.00  sec  35.3 MBytes   296 Mbits/sec                  
+[  6]  10.00-11.00  sec  36.7 MBytes   308 Mbits/sec                  
+[  6]  11.00-12.00  sec  38.2 MBytes   321 Mbits/sec                  
+[  6]  12.00-13.00  sec  39.6 MBytes   332 Mbits/sec                  
+[  6]  13.00-14.00  sec  41.1 MBytes   345 Mbits/sec                  
+[  6]  14.00-15.00  sec  40.5 MBytes   340 Mbits/sec                  
+[  6]  15.00-15.04  sec  4.58 MBytes   917 Mbits/sec                  
+- - - - - - - - - - - - - - - - - - - - - - - - -
+[ ID] Interval           Transfer     Bandwidth
+[  6]   0.00-15.04  sec  0.00 Bytes  0.00 bits/sec                  sender
+[  6]   0.00-15.04  sec   625 MBytes   349 Mbits/sec                  receiver
+-----------------------------------------------------------
+Server listening on 5201
+-----------------------------------------------------------
+Accepted connection from dc91::9191:9100:0, port 36706
+[  6] local dc91::9191:9100:4 port 5201 connected to dc91::9191:9100:0 port 36708
+[ ID] Interval           Transfer     Bandwidth
+[  6]   0.00-1.00   sec  13.0 MBytes   109 Mbits/sec                  (omitted)
+[  6]   1.00-2.00   sec  31.9 MBytes   268 Mbits/sec                  (omitted)
+[  6]   2.00-3.00   sec  33.2 MBytes   278 Mbits/sec                  (omitted)
+[  6]   3.00-4.00   sec  33.4 MBytes   280 Mbits/sec                  (omitted)
+[  6]   4.00-5.00   sec  30.1 MBytes   253 Mbits/sec                  (omitted)
+[  6]   5.00-6.00   sec  27.2 MBytes   228 Mbits/sec                  (omitted)
+[  6]   6.00-7.00   sec  28.3 MBytes   237 Mbits/sec                  (omitted)
+[  6]   7.00-8.00   sec  29.0 MBytes   243 Mbits/sec                  (omitted)
+[  6]   8.00-9.00   sec  29.6 MBytes   248 Mbits/sec                  (omitted)
+[  6]   9.00-10.00  sec  30.5 MBytes   256 Mbits/sec                  (omitted)
+[  6]   0.00-1.00   sec  31.4 MBytes   264 Mbits/sec                  
+[  6]   1.00-2.00   sec  32.7 MBytes   275 Mbits/sec                  
+[  6]   2.00-3.00   sec  32.7 MBytes   274 Mbits/sec                  
+[  6]   3.00-4.00   sec  33.8 MBytes   284 Mbits/sec                  
+[  6]   4.00-5.00   sec  34.5 MBytes   289 Mbits/sec                  
+[  6]   5.00-6.00   sec  34.6 MBytes   290 Mbits/sec                  
+[  6]   6.00-7.00   sec  34.7 MBytes   291 Mbits/sec                  
+[  6]   7.00-8.00   sec  34.5 MBytes   289 Mbits/sec                  
+[  6]   8.00-9.00   sec  34.8 MBytes   292 Mbits/sec                  
+[  6]   9.00-10.00  sec  29.2 MBytes   245 Mbits/sec                  
+[  6]  10.00-11.00  sec  31.6 MBytes   265 Mbits/sec                  
+[  6]  11.00-12.00  sec  33.1 MBytes   278 Mbits/sec                  
+[  6]  12.00-13.00  sec  33.8 MBytes   284 Mbits/sec                  
+[  6]  13.00-14.00  sec  30.4 MBytes   255 Mbits/sec                  
+[  6]  14.00-15.00  sec  33.7 MBytes   283 Mbits/sec                  
+[  6]  15.00-15.04  sec  4.92 MBytes   943 Mbits/sec                  
+- - - - - - - - - - - - - - - - - - - - - - - - -
+[ ID] Interval           Transfer     Bandwidth
+[  6]   0.00-15.04  sec  0.00 Bytes  0.00 bits/sec                  sender
+[  6]   0.00-15.04  sec   501 MBytes   279 Mbits/sec                  receiver
+-----------------------------------------------------------
+Server listening on 5201
+-----------------------------------------------------------
+Accepted connection from dc91::9191:9100:0, port 36710
+[  6] local dc91::9191:9100:4 port 5201 connected to dc91::9191:9100:0 port 36712
+[ ID] Interval           Transfer     Bandwidth
+[  6]   0.00-1.00   sec  15.5 MBytes   130 Mbits/sec                  (omitted)
+[  6]   1.00-2.00   sec  37.9 MBytes   318 Mbits/sec                  (omitted)
+[  6]   2.00-3.00   sec  40.0 MBytes   335 Mbits/sec                  (omitted)
+[  6]   3.00-4.00   sec  40.3 MBytes   338 Mbits/sec                  (omitted)
+[  6]   4.00-5.00   sec  34.4 MBytes   288 Mbits/sec                  (omitted)
+[  6]   5.00-6.00   sec  33.7 MBytes   283 Mbits/sec                  (omitted)
+[  6]   6.00-7.00   sec  34.8 MBytes   292 Mbits/sec                  (omitted)
+[  6]   7.00-8.00   sec  35.4 MBytes   297 Mbits/sec                  (omitted)
+[  6]   8.00-9.00   sec  36.2 MBytes   303 Mbits/sec                  (omitted)
+[  6]   9.00-10.00  sec  37.1 MBytes   311 Mbits/sec                  (omitted)
+[  6]   0.00-1.00   sec  38.0 MBytes   319 Mbits/sec                  
+[  6]   1.00-2.00   sec  39.0 MBytes   327 Mbits/sec                  
+[  6]   2.00-3.00   sec  40.1 MBytes   336 Mbits/sec                  
+[  6]   3.00-4.00   sec  40.1 MBytes   337 Mbits/sec                  
+[  6]   4.00-5.00   sec  41.3 MBytes   346 Mbits/sec                  
+[  6]   5.00-6.00   sec  41.7 MBytes   350 Mbits/sec                  
+[  6]   6.00-7.00   sec  42.0 MBytes   352 Mbits/sec                  
+[  6]   7.00-8.00   sec  42.1 MBytes   353 Mbits/sec                  
+[  6]   8.00-9.00   sec  41.9 MBytes   352 Mbits/sec                  
+[  6]   9.00-10.00  sec  42.1 MBytes   353 Mbits/sec                  
+[  6]  10.00-11.00  sec  42.5 MBytes   357 Mbits/sec                  
+[  6]  11.00-12.00  sec  36.4 MBytes   305 Mbits/sec                  
+[  6]  12.00-13.00  sec  37.8 MBytes   317 Mbits/sec                  
+[  6]  13.00-14.00  sec  39.6 MBytes   332 Mbits/sec                  
+[  6]  14.00-15.00  sec  46.3 MBytes   388 Mbits/sec                  
+[  6]  15.00-15.05  sec  5.20 MBytes   956 Mbits/sec                  
+- - - - - - - - - - - - - - - - - - - - - - - - -
+[ ID] Interval           Transfer     Bandwidth
+[  6]   0.00-15.05  sec  0.00 Bytes  0.00 bits/sec                  sender
+[  6]   0.00-15.05  sec   616 MBytes   344 Mbits/sec                  receiver
+-----------------------------------------------------------
+Server listening on 5201
+-----------------------------------------------------------
+Accepted connection from dc91::9191:9100:0, port 36714
+[  6] local dc91::9191:9100:4 port 5201 connected to dc91::9191:9100:0 port 36716
+[ ID] Interval           Transfer     Bandwidth
+[  6]   0.00-1.00   sec  17.0 MBytes   142 Mbits/sec                  (omitted)
+[  6]   1.00-2.00   sec  38.0 MBytes   319 Mbits/sec                  (omitted)
+[  6]   2.00-3.00   sec  41.3 MBytes   347 Mbits/sec                  (omitted)
+[  6]   3.00-4.00   sec  45.1 MBytes   379 Mbits/sec                  (omitted)
+[  6]   4.00-5.00   sec  42.7 MBytes   358 Mbits/sec                  (omitted)
+[  6]   5.00-6.00   sec  41.7 MBytes   350 Mbits/sec                  (omitted)
+[  6]   6.00-7.00   sec  41.0 MBytes   344 Mbits/sec                  (omitted)
+[  6]   7.00-8.00   sec  40.7 MBytes   342 Mbits/sec                  (omitted)
+[  6]   8.00-9.00   sec  41.6 MBytes   349 Mbits/sec                  (omitted)
+[  6]   9.00-10.00  sec  42.7 MBytes   358 Mbits/sec                  (omitted)
+[  6]   0.00-1.00   sec  43.7 MBytes   367 Mbits/sec                  
+[  6]   1.00-2.00   sec  44.7 MBytes   375 Mbits/sec                  
+[  6]   2.00-3.00   sec  44.6 MBytes   374 Mbits/sec                  
+[  6]   3.00-4.00   sec  39.6 MBytes   332 Mbits/sec                  
+[  6]   4.00-5.00   sec  41.6 MBytes   349 Mbits/sec                  
+[  6]   5.00-6.00   sec  43.8 MBytes   367 Mbits/sec                  
+[  6]   6.00-7.00   sec  45.1 MBytes   378 Mbits/sec                  
+[  6]   7.00-8.00   sec  43.4 MBytes   364 Mbits/sec                  
+[  6]   8.00-9.00   sec  43.4 MBytes   364 Mbits/sec                  
+[  6]   9.00-10.00  sec  43.3 MBytes   363 Mbits/sec                  
+[  6]  10.00-11.00  sec  44.0 MBytes   369 Mbits/sec                  
+[  6]  11.00-12.00  sec  44.8 MBytes   376 Mbits/sec                  
+[  6]  12.00-13.00  sec  46.0 MBytes   386 Mbits/sec                  
+[  6]  13.00-14.00  sec  46.6 MBytes   391 Mbits/sec                  
+[  6]  14.00-15.00  sec  53.9 MBytes   452 Mbits/sec                  
+[  6]  15.00-15.05  sec  5.35 MBytes   964 Mbits/sec                  
+- - - - - - - - - - - - - - - - - - - - - - - - -
+[ ID] Interval           Transfer     Bandwidth
+[  6]   0.00-15.05  sec  0.00 Bytes  0.00 bits/sec                  sender
+[  6]   0.00-15.05  sec   674 MBytes   376 Mbits/sec                  receiver
+-----------------------------------------------------------
+Server listening on 5201
+-----------------------------------------------------------
+Accepted connection from dc91::9191:9100:0, port 36718
+[  6] local dc91::9191:9100:4 port 5201 connected to dc91::9191:9100:0 port 36720
+[ ID] Interval           Transfer     Bandwidth
+[  6]   0.00-1.00   sec  22.5 MBytes   188 Mbits/sec                  (omitted)
+[  6]   1.00-2.00   sec  47.8 MBytes   401 Mbits/sec                  (omitted)
+[  6]   2.00-3.00   sec  49.9 MBytes   418 Mbits/sec                  (omitted)
+[  6]   3.00-4.00   sec  50.3 MBytes   422 Mbits/sec                  (omitted)
+[  6]   4.00-5.00   sec  50.6 MBytes   424 Mbits/sec                  (omitted)
+[  6]   5.00-6.00   sec  42.1 MBytes   354 Mbits/sec                  (omitted)
+[  6]   6.00-7.00   sec  43.9 MBytes   368 Mbits/sec                  (omitted)
+[  6]   7.00-8.00   sec  45.2 MBytes   379 Mbits/sec                  (omitted)
+[  6]   8.00-9.00   sec  45.8 MBytes   384 Mbits/sec                  (omitted)
+[  6]   1.00-1.00   sec  47.2 MBytes   198 Mbits/sec                  
+[  6]   1.00-2.00   sec  48.0 MBytes   403 Mbits/sec                  
+[  6]   2.00-3.00   sec  49.0 MBytes   411 Mbits/sec                  
+[  6]   3.00-4.00   sec  50.0 MBytes   419 Mbits/sec                  
+[  6]   4.00-5.00   sec  51.3 MBytes   431 Mbits/sec                  
+[  6]   5.00-6.00   sec  50.9 MBytes   427 Mbits/sec                  
+[  6]   6.00-7.00   sec  52.5 MBytes   440 Mbits/sec                  
+[  6]   7.00-8.00   sec  53.5 MBytes   449 Mbits/sec                  
+[  6]   8.00-9.00   sec  54.1 MBytes   454 Mbits/sec                  
+[  6]   9.00-10.00  sec  54.4 MBytes   456 Mbits/sec                  
+[  6]  10.00-11.00  sec  53.7 MBytes   450 Mbits/sec                  
+[  6]  11.00-12.00  sec  46.3 MBytes   388 Mbits/sec                  
+[  6]  12.00-13.00  sec  48.8 MBytes   409 Mbits/sec                  
+[  6]  13.00-14.00  sec  50.4 MBytes   422 Mbits/sec                  
+[  6]  14.00-15.00  sec  55.1 MBytes   462 Mbits/sec                  
+[  6]  15.00-15.05  sec  6.08 MBytes   970 Mbits/sec                  
+- - - - - - - - - - - - - - - - - - - - - - - - -
+[ ID] Interval           Transfer     Bandwidth
+[  6]   0.00-15.05  sec  0.00 Bytes  0.00 bits/sec                  sender
+[  6]   0.00-15.05  sec   771 MBytes   430 Mbits/sec                  receiver
+-----------------------------------------------------------
+Server listening on 5201
+-----------------------------------------------------------
+Accepted connection from dc91::9191:9100:0, port 36722
+[  6] local dc91::9191:9100:4 port 5201 connected to dc91::9191:9100:0 port 36724
+[ ID] Interval           Transfer     Bandwidth
+[  6]   0.00-1.00   sec  23.1 MBytes   194 Mbits/sec                  (omitted)
+[  6]   1.00-2.00   sec  49.3 MBytes   414 Mbits/sec                  (omitted)
+[  6]   2.00-3.00   sec  55.9 MBytes   469 Mbits/sec                  (omitted)
+[  6]   3.00-4.00   sec  55.9 MBytes   469 Mbits/sec                  (omitted)
+[  6]   4.00-5.00   sec  56.4 MBytes   473 Mbits/sec                  (omitted)
+[  6]   5.00-6.00   sec  55.9 MBytes   469 Mbits/sec                  (omitted)
+[  6]   6.00-7.00   sec  55.9 MBytes   469 Mbits/sec                  (omitted)
+[  6]   7.00-8.00   sec  55.9 MBytes   469 Mbits/sec                  (omitted)
+[  6]   8.00-9.00   sec  55.9 MBytes   469 Mbits/sec                  (omitted)
+[  6]   9.00-10.00  sec  56.2 MBytes   471 Mbits/sec                  (omitted)
+[  6]   0.00-1.00   sec  56.4 MBytes   473 Mbits/sec                  
+[  6]   1.00-2.00   sec  56.5 MBytes   474 Mbits/sec                  
+[  6]   2.00-3.00   sec  56.6 MBytes   475 Mbits/sec                  
+[  6]   3.00-4.00   sec  56.8 MBytes   477 Mbits/sec                  
+[  6]   4.00-5.00   sec  57.0 MBytes   479 Mbits/sec                  
+[  6]   5.00-6.00   sec  56.8 MBytes   476 Mbits/sec                  
+[  6]   6.00-7.00   sec  56.8 MBytes   476 Mbits/sec                  
+[  6]   7.00-8.00   sec  56.8 MBytes   476 Mbits/sec                  
+[  6]   8.00-9.00   sec  56.9 MBytes   478 Mbits/sec                  
+[  6]   9.00-10.00  sec  48.2 MBytes   405 Mbits/sec                  
+[  6]  10.00-11.00  sec  49.8 MBytes   418 Mbits/sec                  
+[  6]  11.00-12.00  sec  51.0 MBytes   428 Mbits/sec                  
+[  6]  12.00-13.00  sec  51.6 MBytes   433 Mbits/sec                  
+[  6]  13.00-14.00  sec  51.9 MBytes   435 Mbits/sec                  
+[  6]  14.00-15.00  sec  55.5 MBytes   465 Mbits/sec                  
+[  6]  15.00-15.05  sec  6.24 MBytes   974 Mbits/sec                  
+- - - - - - - - - - - - - - - - - - - - - - - - -
+[ ID] Interval           Transfer     Bandwidth
+[  6]   0.00-15.05  sec  0.00 Bytes  0.00 bits/sec                  sender
+[  6]   0.00-15.05  sec   825 MBytes   460 Mbits/sec                  receiver
+-----------------------------------------------------------
+Server listening on 5201
+-----------------------------------------------------------
+Accepted connection from dc91::9191:9100:0, port 36726
+[  6] local dc91::9191:9100:4 port 5201 connected to dc91::9191:9100:0 port 36728
+[ ID] Interval           Transfer     Bandwidth
+[  6]   0.00-1.00   sec  25.4 MBytes   213 Mbits/sec                  (omitted)
+[  6]   1.00-2.00   sec  50.0 MBytes   420 Mbits/sec                  (omitted)
+[  6]   2.00-3.00   sec  53.2 MBytes   447 Mbits/sec                  (omitted)
+[  6]   3.00-4.00   sec  56.4 MBytes   473 Mbits/sec                  (omitted)
+[  6]   4.00-5.00   sec  58.3 MBytes   489 Mbits/sec                  (omitted)
+[  6]   5.00-6.00   sec  57.2 MBytes   480 Mbits/sec                  (omitted)
+[  6]   6.00-7.00   sec  55.5 MBytes   465 Mbits/sec                  (omitted)
+[  6]   7.00-8.00   sec  55.0 MBytes   461 Mbits/sec                  (omitted)
+[  6]   8.00-9.00   sec  54.7 MBytes   459 Mbits/sec                  (omitted)
+[  6]   1.00-1.00   sec  55.3 MBytes   232 Mbits/sec                  
+[  6]   1.00-2.00   sec  56.2 MBytes   471 Mbits/sec                  
+[  6]   2.00-3.00   sec  57.1 MBytes   479 Mbits/sec                  
+[  6]   3.00-4.00   sec  57.6 MBytes   483 Mbits/sec                  
+[  6]   4.00-5.00   sec  58.0 MBytes   487 Mbits/sec                  
+[  6]   5.00-6.00   sec  58.9 MBytes   494 Mbits/sec                  
+[  6]   6.00-7.00   sec  60.0 MBytes   503 Mbits/sec                  
+[  6]   7.00-8.00   sec  60.7 MBytes   509 Mbits/sec                  
+[  6]   8.00-9.00   sec  61.0 MBytes   512 Mbits/sec                  
+[  6]   9.00-10.00  sec  61.2 MBytes   514 Mbits/sec                  
+[  6]  10.00-11.00  sec  60.8 MBytes   510 Mbits/sec                  
+[  6]  11.00-12.00  sec  52.2 MBytes   438 Mbits/sec                  
+[  6]  12.00-13.00  sec  54.6 MBytes   458 Mbits/sec                  
+[  6]  13.00-14.00  sec  56.6 MBytes   475 Mbits/sec                  
+[  6]  14.00-15.00  sec  60.9 MBytes   511 Mbits/sec                  
+[  6]  15.00-15.06  sec  6.77 MBytes   977 Mbits/sec                  
+- - - - - - - - - - - - - - - - - - - - - - - - -
+[ ID] Interval           Transfer     Bandwidth
+[  6]   0.00-15.06  sec  0.00 Bytes  0.00 bits/sec                  sender
+[  6]   0.00-15.06  sec   878 MBytes   489 Mbits/sec                  receiver
+-----------------------------------------------------------
+Server listening on 5201
+-----------------------------------------------------------
+Accepted connection from dc91::9191:9100:0, port 36730
+[  6] local dc91::9191:9100:4 port 5201 connected to dc91::9191:9100:0 port 36732
+[ ID] Interval           Transfer     Bandwidth
+[  6]   0.00-1.00   sec  25.5 MBytes   214 Mbits/sec                  (omitted)
+[  6]   1.00-2.00   sec  52.4 MBytes   439 Mbits/sec                  (omitted)
+[  6]   2.00-3.00   sec  58.6 MBytes   492 Mbits/sec                  (omitted)
+[  6]   3.00-4.00   sec  58.6 MBytes   492 Mbits/sec                  (omitted)
+[  6]   4.00-5.00   sec  58.7 MBytes   492 Mbits/sec                  (omitted)
+[  6]   5.00-6.00   sec  58.7 MBytes   493 Mbits/sec                  (omitted)
+[  6]   6.00-7.00   sec  58.6 MBytes   491 Mbits/sec                  (omitted)
+[  6]   7.00-8.00   sec  58.6 MBytes   492 Mbits/sec                  (omitted)
+[  6]   8.00-9.00   sec  58.7 MBytes   492 Mbits/sec                  (omitted)
+[  6]   9.00-10.00  sec  58.5 MBytes   491 Mbits/sec                  (omitted)
+[  6]   0.00-1.00   sec  58.8 MBytes   494 Mbits/sec                  
+[  6]   1.00-2.00   sec  58.7 MBytes   492 Mbits/sec                  
+[  6]   2.00-3.00   sec  58.7 MBytes   492 Mbits/sec                  
+[  6]   3.00-4.00   sec  58.7 MBytes   492 Mbits/sec                  
+[  6]   4.00-5.00   sec  58.7 MBytes   492 Mbits/sec                  
+[  6]   5.00-6.00   sec  58.7 MBytes   493 Mbits/sec                  
+[  6]   6.00-7.00   sec  58.7 MBytes   492 Mbits/sec                  
+[  6]   7.00-8.00   sec  58.6 MBytes   492 Mbits/sec                  
+[  6]   8.00-9.00   sec  58.5 MBytes   491 Mbits/sec                  
+[  6]   9.00-10.00  sec  58.7 MBytes   492 Mbits/sec                  
+[  6]  10.00-11.00  sec  58.6 MBytes   492 Mbits/sec                  
+[  6]  11.00-12.00  sec  58.7 MBytes   492 Mbits/sec                  
+[  6]  12.00-13.00  sec  58.8 MBytes   493 Mbits/sec                  
+[  6]  13.00-14.00  sec  58.7 MBytes   492 Mbits/sec                  
+[  6]  14.00-15.00  sec  61.7 MBytes   518 Mbits/sec                  
+[  6]  15.00-15.06  sec  6.70 MBytes   979 Mbits/sec                  
+- - - - - - - - - - - - - - - - - - - - - - - - -
+[ ID] Interval           Transfer     Bandwidth
+[  6]   0.00-15.06  sec  0.00 Bytes  0.00 bits/sec                  sender
+[  6]   0.00-15.06  sec   890 MBytes   496 Mbits/sec                  receiver
