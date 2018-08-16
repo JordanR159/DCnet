@@ -10,8 +10,11 @@ set label "Delay = 800 us" at 42,476 rotate by 90
 set label "Delay = 1000 us" at 52,476 rotate by 90
 set label "Delay = 1200 us" at 62,476 rotate by 90
 
-set terminal postscript eps size 6.4,4.8 enhanced color font 'Helvetica-Bold,27'
-set output "tcp_control2_plot.eps"
+#set terminal postscript eps size 6.4,4.8 enhanced color font 'Helvetica-Bold,27'
+#set output "tcp_control2_plot.eps"
 
-plot "plotdata_nodelay" u 1 title 'TCP throughput with no delay in RTT' w l lt 1 lw 3 lc rgb "red",\
-     "plotdata_delay" u 1 title 'TCP throughput with delay in RTT' w l lt 3 lw 3 lc rgb "blue"
+set terminal pngcairo dashed size 640,480 enhanced font "Helvetica-Bold,13"
+set output "tcp_control2_plot.png"
+
+plot "plotdata_nodelay" u 1 title 'TCP throughput with no delay in RTT' w l lt 1 lw 2 lc rgb "red",\
+     "plotdata_delay" u 1 title 'TCP throughput with delay in RTT' w l lt 3 lw 2 lc rgb "blue"
