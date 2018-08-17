@@ -4,8 +4,11 @@ set key top left
 set grid xtics
 set yrange [480:500]
 
-set terminal postscript eps size 6.4,4.8 enhanced color font 'Helvetica-Bold,27'
-set output "tcp_ovs2_plot.eps"
+#set terminal postscript eps size 6.4,4.8 enhanced color font 'Helvetica-Bold,27'
+#set output "tcp_ovs2_plot.eps"
 
-plot "plotdata_norewriting" u 1 title 'TCP throughput with no rewriting' w lp lt 1 pt 6 lw 3 ps 2 lc rgb "red",\
-     "plotdata_rewriting" u 1 title 'TCP throughput with rewriting' w lp lt 1 pt 5 lw 3 ps 2 lc rgb "blue"
+set terminal pngcairo dashed size 640,480 enhanced font 'Helvetica-Bold,13'
+set output "tcp_ovs2_plot.png"
+
+plot "plotdata_norewriting" u 1 title 'TCP throughput with no rewriting' w lp lt 1 pt 6 lw 2 ps 2 lc rgb "red",\
+     "plotdata_rewriting" u 1 title 'TCP throughput with rewriting' w lp lt 1 pt 5 lw 2 ps 2 lc rgb "blue"
