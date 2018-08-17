@@ -2,7 +2,7 @@ set xlabel "Time (sec)"
 set ylabel "Throughout (Mbps)"
 set grid xtics
 set grid ytics
-set yrange [-50:1100]
+set yrange [-50:1200]
 set key top left
 
 #set terminal postscript eps size 6.4,4.8 enhanced color font 'Helvetica,27'
@@ -11,5 +11,5 @@ set key top left
 set terminal pngcairo dashed size 640,480 enhanced font 'Helvetica-Bold,13'
 set output "vmmig_tcp_plot.png"
 
-plot "plotdata_noopt" u 1:2 title 'No TRO' w lp lt 1 pt 4 lw 3 ps 2 lc rgb "red",\
-     "plotdata_opt" u 1:2 title 'With TRO' w lp lt 3 pt 15 lw 3 ps 2 lc rgb "blue"
+plot "plotdata_noopt" u 1:2 title 'No TRO' w lp lt 1 pt 17 lw 2 ps 1 lc rgb "red",\
+     "plotdata_opt" u 1:2 title 'With TRO' w lp lt 3 pt 15 lw 2 ps 1 lc rgb "blue"
