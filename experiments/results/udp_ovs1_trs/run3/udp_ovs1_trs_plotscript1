@@ -9,8 +9,11 @@ set ylabel "UDP throughput (Mbps)"
 set key top left
 set yrange [0:1100]
 
-set terminal postscript eps size 6.4,4.8 enhanced color font 'Helvetica-Bold,27'
-set output "udp_ovs1_trs_plot1.eps"
+#set terminal postscript eps size 6.4,4.8 enhanced color font 'Helvetica-Bold,27'
+#set output "udp_ovs1_trs_plot1.eps"
+
+set terminal pngcairo size 640,480 enhanced font 'Helvetica-Bold,13'
+set output "udp_ovs1_trs_plot1.png"
 
 plot "plotdata" u 2:xtic(1) title "with rewriting" fillstyle pattern 1 lw 3 lc rgb "red",\
      "plotdata" u 3 title "with tunneling" fillstyle pattern 3 lc rgb "blue"
