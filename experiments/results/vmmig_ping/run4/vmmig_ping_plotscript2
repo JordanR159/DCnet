@@ -4,15 +4,18 @@ set key top left
 set yrange [-10:80]
 unset key
 
-set terminal postscript eps size 6.4,4.8 enhanced color font 'Helvetica-Bold,22'
-set output "vmmig_ping_plot2.eps"
+#set terminal postscript eps size 6.4,4.8 enhanced color font 'Helvetica-Bold,22'
+#set output "vmmig_ping_plot2.eps"
+
+set terminal pngcairo dashed size 640,480 enhanced font 'Helvetica-Bold,13'
+set output "vmmig_ping_plot2.png"
 
 set multiplot layout 2,1
 
 set title "No Temporary Redirection Optimization"
-plot "plotdata2_noopt" u 1:2 w l lw 4 lc rgb "blue"
+plot "plotdata2_noopt" u 1:2 w l lw 2 lc rgb "blue"
 
 set title "With Temporary Redirection Optimization"
-plot "plotdata2_opt" u 1:2 title 'With Temporary Redirection Optimization' w l lw 4 lc rgb "blue"
+plot "plotdata2_opt" u 1:2 title 'With Temporary Redirection Optimization' w l lw 2 lc rgb "blue"
 
 unset multiplot
