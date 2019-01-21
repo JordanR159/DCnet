@@ -271,4 +271,4 @@ class   DCnetRestAPIManager (ControllerBase):
             print 'migrate_thread :: adding rules to ToRs in the background'
             self.controller.create_vm(uid=vm['uid'], srvname=dst, switch=None, slp=n_tor)
             time.sleep(1)
-            #self.controller.delete_tmp_vm(uid=vm['uid'], src=src)
+            self.controller.delete_tmp_vm(uid=vm['uid'], src=src)
