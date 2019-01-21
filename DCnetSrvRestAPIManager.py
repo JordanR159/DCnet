@@ -66,7 +66,8 @@ class   DCnetSrvRestAPIManager (ControllerBase):
         qmpport = self.controller.qmpport
         self.controller.qmpport = self.controller.qmpport + 1
 
-        image = '/home/rajas/nfs_files/tiny-core-linux-{0}.img'.format(uid)
+        #image = '/home/rajas/nfs_files/tiny-core-linux-{0}.img'.format(uid)
+        image = '/DCnet_images/tiny-core-linux-{0}.img'.format(uid)
 
         if incoming == 0:
             # Create a copy of the image for this new VM
@@ -208,7 +209,8 @@ class   DCnetSrvRestAPIManager (ControllerBase):
         del(self.controller.vms[uid])
 
         # Delete the copy of the linux image
-        proc = subprocess.Popen(['rm', '-f', '/home/rajas/nfs_files/tiny-core-linux-{0}.img'.format(uid)])
+        #proc = subprocess.Popen(['rm', '-f', '/home/rajas/nfs_files/tiny-core-linux-{0}.img'.format(uid)])
+        proc = subprocess.Popen(['rm', '-f', '/DCnet_images/tiny-core-linux-{0}.img'.format(uid)])
         proc.wait()
 
         return Response(content_type='application/json',body='{}')
