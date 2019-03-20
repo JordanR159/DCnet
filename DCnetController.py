@@ -5,6 +5,8 @@ from ryu.topology import event
 from ryu.app.wsgi import WSGIApplication
 from DCnetRestAPIManager import DCnetRestAPIManager
 import time
+import json
+import sys
 
 class   DCnetController (app_manager.RyuApp):
     OFP_VERSIONS = [ofproto_v1_3.OFP_VERSION]
@@ -15,37 +17,37 @@ class   DCnetController (app_manager.RyuApp):
 
         # All the switches in the DC and their positions
         self.switchDB = {}
-        self.switchDB['128.10.135.31'] = { 'name' : 'core0', 'level' : 0, 'pod' : 0, 'column' : 0, 'joined' : 0 }
-        self.switchDB['128.10.135.32'] = { 'name' : 'core1', 'level' : 0, 'pod' : 0, 'column' : 1, 'joined' : 0}
-        self.switchDB['128.10.135.33'] = { 'name' : 'aggr00', 'level' : 1, 'pod' : 0, 'column' : 0, 'joined' : 0 }
-        self.switchDB['128.10.135.34'] = { 'name' : 'aggr01', 'level' : 1, 'pod' : 0, 'column' : 1, 'joined' : 0 }
-        self.switchDB['128.10.135.35'] = { 'name' : 'edge00', 'level' : 2, 'pod' : 0, 'column' : 0, 'joined' : 0 }
-        self.switchDB['128.10.135.36'] = { 'name' : 'edge01', 'level' : 2, 'pod' : 0, 'column' : 1, 'joined' : 0 }
-        self.switchDB['128.10.135.37'] = { 'name' : 'aggr10', 'level' : 1, 'pod' : 1, 'column' : 0, 'joined' : 0 }
-        self.switchDB['128.10.135.38'] = { 'name' : 'aggr11', 'level' : 1, 'pod' : 1, 'column' : 1, 'joined' : 0 }
-        self.switchDB['128.10.135.39'] = { 'name' : 'edge10', 'level' : 2, 'pod' : 1, 'column' : 0, 'joined' : 0 }
-        self.switchDB['128.10.135.40'] = { 'name' : 'edge11', 'level' : 2, 'pod' : 1, 'column' : 1, 'joined' : 0 }
-        self.switchDB['128.10.135.41'] = { 'name' : 'dummy' }
-        self.switchDB['128.10.135.42'] = { 'name' : 'dummy' }
-        self.switchDB['128.10.135.43'] = { 'name' : 'dummy' }
+        
+        # Servers in the DC
+        self.servers = {}
+        
+        try:
+            with open('config/network.json') as config:
+                try:
+                    data = json.load(config)
 
+                    # Radix of switches in the DC
+                    self.radix = data['radix']
+
+                    for switch in data['switches']:
+                        ip = switch['ip']
+                        self.switchDB[ip] = switch['data']
+
+                    for server in data['servers']:
+                        name = server['name']
+                        self.servers[name] = server['data']
+                        
+                except ValueError:
+                    print "Encountered an error with config/network.json. Please check its formatting."
+                    sys.exit()
+
+        except IOError:
+            print "Encountered an error with config/network.json. Please check it exists."
+            sys.exit()
+        
         self.n_joined = 0
 
         self.dummy_list = []
-
-        # Radix of switches in the DC
-        self.radix = 4
-
-        # Servers in the DC
-        self.servers = {}
-        self.servers['dcnet-srv000'] = { 'uid' : 0, 'rmac' : 'dc:dc:dc:00:00:00', 'edge' : 'edge00', 'port' : 1, 'ip' : '128.10.135.41' }
-        self.servers['dcnet-srv001'] = { 'uid' : 1, 'rmac' : 'dc:dc:dc:00:00:01', 'edge' : 'edge00', 'port' : 2 }
-        self.servers['dcnet-srv010'] = { 'uid' : 2, 'rmac' : 'dc:dc:dc:00:01:00', 'edge' : 'edge01', 'port' : 1, 'ip' : '128.10.135.42' }
-        self.servers['dcnet-srv011'] = { 'uid' : 3, 'rmac' : 'dc:dc:dc:00:01:01', 'edge' : 'edge01', 'port' : 2 }
-        self.servers['dcnet-srv100'] = { 'uid' : 4, 'rmac' : 'dc:dc:dc:01:00:00', 'edge' : 'edge10', 'port' : 1, 'ip' : '128.10.135.43' }
-        self.servers['dcnet-srv101'] = { 'uid' : 5, 'rmac' : 'dc:dc:dc:01:00:01', 'edge' : 'edge10', 'port' : 2 }
-        self.servers['dcnet-srv110'] = { 'uid' : 6, 'rmac' : 'dc:dc:dc:01:01:00', 'edge' : 'edge11', 'port' : 1 }
-        self.servers['dcnet-srv111'] = { 'uid' : 7, 'rmac' : 'dc:dc:dc:01:01:01', 'edge' : 'edge11', 'port' : 2 }
 
         # VMs in the DC
         self.vms = {}
