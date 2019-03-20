@@ -1,0 +1,157 @@
+{
+	"radix" : 4,
+	"switches" : [
+		{
+			"ip" : "128.10.135.31",
+			"name" : "core0",
+			"level" : 0,
+			"pod" : 0,
+			"column" : 0,
+			"joined" : 0
+		},
+		{
+			"ip" : "128.10.135.32",
+			"name" : "core1",
+			"level" : 0,
+			"pod" : 0,
+			"column" : 1,
+			"joined" : 0
+		},
+		{
+			"ip" : "128.10.135.33",
+			"name" : "aggr00",
+			"level" : 1,
+			"pod" : 0,
+			"column" : 0,
+			"joined" : 0
+		},
+		{
+			"ip" : "128.10.135.34",
+			"name" : "aggr01",
+			"level" : 1,
+			"pod" : 0,
+			"column" : 1,
+			"joined" : 0
+		},
+		{
+			"ip" : "128.10.135.35",
+			"name" : "edge00",
+			"level" : 2,
+			"pod" : 0,
+			"column" : 0,
+			"joined" : 0
+		},
+		{
+			"ip" : "128.10.135.36",
+			"name" : "edge01",
+			"level" : 2,
+			"pod" : 0,
+			"column" : 1,
+			"joined" : 0
+		},
+		{
+			"ip" : "128.10.135.37",
+			"name" : "aggr10",
+			"level" : 1,
+			"pod" : 1,
+			"column" : 0,
+			"joined" : 0
+		},
+		{
+			"ip" : "128.10.135.38",
+			"name" : "aggr11",
+			"level" : 1,
+			"pod" : 1,
+			"column" : 1,
+			"joined" : 0
+		},
+		{
+			"ip" : "128.10.135.39",
+			"name" : "edge10",
+			"level" : 2,
+			"pod" : 1,
+			"column" : 0,
+			"joined" : 0
+		},
+		{
+			"ip" : "128.10.135.40",
+			"name" : "edge11",
+			"level" : 2,
+			"pod" : 1,
+			"column" : 1,
+			"joined" : 0
+		},
+		{
+			"ip" : "128.10.135.41",
+			"name" : "dummy"
+		},
+		{
+			"ip" : "128.10.135.42",
+			"name" : "dummy"
+		},
+		{
+			"ip" : "128.10.135.43",
+			"name" : "dummy"
+		}
+	],
+	"servers" : [
+		{
+			"name" : 'dcnet-srv000',
+			'uid' : 0,
+			'rmac' : 'dc:dc:dc:00:00:00',
+			'edge' : 'edge00',
+			'port' : 1,
+			'ip' : '128.10.135.41'
+		},
+		{
+			"name" : 'dcnet-srv001',
+			'uid' : 1,
+			'rmac' : 'dc:dc:dc:00:00:01',
+			'edge' : 'edge00',
+			'port' : 2
+		},
+		{
+			"name" : 'dcnet-srv010',
+			'uid' : 2,
+			'rmac' : 'dc:dc:dc:00:01:00',
+			'edge' : 'edge01',
+			'port' : 1,
+			'ip' : '128.10.135.42'
+		},
+			"name" : 'dcnet-srv011',
+			'uid' : 3,
+			'rmac' : 'dc:dc:dc:00:01:01',
+			'edge' : 'edge01',
+			'port' : 2
+		},
+		{
+			"name" : 'dcnet-srv100',
+			'uid' : 4,
+			'rmac' : 'dc:dc:dc:01:00:00',
+			'edge' : 'edge10',
+			'port' : 1,
+			'ip' : '128.10.135.43'
+		},
+		{
+			"name" : 'dcnet-srv101',
+			'uid' : 5,
+			'rmac' : 'dc:dc:dc:01:00:01',
+			'edge' : 'edge10',
+			'port' : 2
+		},
+		{
+			"name" : 'dcnet-srv110',
+			'uid' : 6,
+			'rmac' : 'dc:dc:dc:01:01:00',
+			'edge' : 'edge11',
+			'port' : 1
+		},
+		{
+			"name" : 'dcnet-srv111',
+			'uid' : 7,
+			'rmac' : 'dc:dc:dc:01:01:01',
+			'edge' : 'edge11',
+			'port' : 2
+		}
+	]
+}
