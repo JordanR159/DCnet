@@ -1,0 +1,122 @@
+{
+	"radix" : 4,
+	"switches" : [
+		{
+			"ip" : "128.10.135.31",
+			"data" :
+			{
+				"name" : "dummy"
+			}
+		},
+		{
+			"ip" : "128.10.135.32",
+			"data" :
+			{
+				"name" : "core1",
+				"level" : 0,
+				"pod" : 0,
+				"column" : 1,
+				"joined" : 0
+			}
+		},
+		{
+			"ip" : "128.10.135.33",
+			"data" :
+			{
+				"name" : "dummy"
+			}
+		},
+		{
+			"ip" : "128.10.135.34",
+			"data" :
+			{
+				"name" : "aggr01",
+				"level" : 1,
+				"pod" : 0,
+				"column" : 1,
+				"joined" : 0
+			}
+		},
+		{
+			"ip" : "128.10.135.35",
+			"data" :
+			{
+				"name" : "edge00",
+				"level" : 2,
+				"pod" : 0,
+				"column" : 0,
+				"joined" : 0
+			}
+		},
+		{
+			"ip" : "128.10.135.36",
+			"data" :
+			{
+				"name" : "edge01",
+				"level" : 2,
+				"pod" : 0,
+				"column" : 1,
+				"joined" : 0
+			}
+		},
+		{
+			"ip" : "128.10.135.37",
+			"data" :
+			{
+				"name" : "dummy"
+			}
+		},
+		{
+			"ip" : "128.10.135.38",
+			"data" :
+			{
+				"name" : "dummy"
+			}
+		},
+		{
+			"ip" : "128.10.135.39",
+			"data" :
+			{
+				"name" : "dummy"
+			}
+		},
+		{
+			"ip" : "128.10.135.40",
+			"data" :
+			{
+				"name" : "dummy"
+			}
+		},
+		{
+			"ip" : "128.10.135.43",
+			"data" :
+			{
+				"name" : "dummy"
+			}
+		}
+	],
+	"servers" : [
+		{
+			"name" : "dcnet-srv000",
+			"data" :
+			{
+				"uid" : 0,
+				"rmac" : "dc:dc:dc:00:00:00",
+				"edge" : "edge00",
+				"port" : 1,
+				"ip" : "128.10.135.41"
+			}
+		},
+		{
+			"name" : "dcnet-srv010",
+			"data":
+			{
+				"uid" : 2,
+				"rmac" : "dc:dc:dc:00:01:00",
+				"edge" : "edge01",
+				"port" : 1,
+				"ip" : "128.10.135.42"
+			}
+		}
+	]
+}
