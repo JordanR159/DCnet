@@ -13,50 +13,39 @@ class   DCnetController (app_manager.RyuApp):
     def __init__ (self, *args, **kwargs):
         super(DCnetController, self).__init__(*args, **kwargs)
 
-        # All the switches in the DC and their positions
-        self.switchDB = {}
-        self.switchDB['128.10.135.31'] = { 'name' : 'core0', 'level' : 0, 'pod' : 0, 'column' : 0, 'joined' : 0 }
-        self.switchDB['128.10.135.32'] = { 'name' : 'core1', 'level' : 0, 'pod' : 0, 'column' : 1, 'joined' : 0}
-        self.switchDB['128.10.135.33'] = { 'name' : 'aggr00', 'level' : 1, 'pod' : 0, 'column' : 0, 'joined' : 0 }
-        self.switchDB['128.10.135.34'] = { 'name' : 'aggr01', 'level' : 1, 'pod' : 0, 'column' : 1, 'joined' : 0 }
-        self.switchDB['128.10.135.35'] = { 'name' : 'edge00', 'level' : 2, 'pod' : 0, 'column' : 0, 'joined' : 0 }
-        self.switchDB['128.10.135.36'] = { 'name' : 'edge01', 'level' : 2, 'pod' : 0, 'column' : 1, 'joined' : 0 }
-        self.switchDB['128.10.135.37'] = { 'name' : 'aggr10', 'level' : 1, 'pod' : 1, 'column' : 0, 'joined' : 0 }
-        self.switchDB['128.10.135.38'] = { 'name' : 'aggr11', 'level' : 1, 'pod' : 1, 'column' : 1, 'joined' : 0 }
-        self.switchDB['128.10.135.39'] = { 'name' : 'edge10', 'level' : 2, 'pod' : 1, 'column' : 0, 'joined' : 0 }
-        self.switchDB['128.10.135.40'] = { 'name' : 'edge11', 'level' : 2, 'pod' : 1, 'column' : 1, 'joined' : 0 }
-        self.switchDB['128.10.135.41'] = { 'name' : 'dummy' }
-        self.switchDB['128.10.135.42'] = { 'name' : 'dummy' }
-        self.switchDB['128.10.135.43'] = { 'name' : 'dummy' }
-
+        # Configure switches in DB from configuration CSV file
+		self.switchDB = {}
+		switch_config = open("switch_config.csv", "r")
+		switch_config.readline()
+		line = switch_config.readline()
+		while line != "":
+			config = line.split(",")
+			line = switch_config.readline()
+			switchDB[config[0][1:]] = {	
+				"name" : config[0],
+				"level" : config[1],
+				"pod" : config[2],
+				"leaf" : config[3][:-1]
+				"joined" : 0 }	
         self.n_joined = 0
 
-        self.dummy_list = []
-
-        # Radix of switches in the DC
-        self.radix = 4
-
-        # Servers in the DC
-        self.servers = {}
-        self.servers['dcnet-srv000'] = { 'uid' : 0, 'rmac' : 'dc:dc:dc:00:00:00', 'edge' : 'edge00', 'port' : 1, 'ip' : '128.10.135.41' }
-        self.servers['dcnet-srv001'] = { 'uid' : 1, 'rmac' : 'dc:dc:dc:00:00:01', 'edge' : 'edge00', 'port' : 2 }
-        self.servers['dcnet-srv010'] = { 'uid' : 2, 'rmac' : 'dc:dc:dc:00:01:00', 'edge' : 'edge01', 'port' : 1, 'ip' : '128.10.135.42' }
-        self.servers['dcnet-srv011'] = { 'uid' : 3, 'rmac' : 'dc:dc:dc:00:01:01', 'edge' : 'edge01', 'port' : 2 }
-        self.servers['dcnet-srv100'] = { 'uid' : 4, 'rmac' : 'dc:dc:dc:01:00:00', 'edge' : 'edge10', 'port' : 1, 'ip' : '128.10.135.43' }
-        self.servers['dcnet-srv101'] = { 'uid' : 5, 'rmac' : 'dc:dc:dc:01:00:01', 'edge' : 'edge10', 'port' : 2 }
-        self.servers['dcnet-srv110'] = { 'uid' : 6, 'rmac' : 'dc:dc:dc:01:01:00', 'edge' : 'edge11', 'port' : 1 }
-        self.servers['dcnet-srv111'] = { 'uid' : 7, 'rmac' : 'dc:dc:dc:01:01:01', 'edge' : 'edge11', 'port' : 2 }
-
+        # Configure hosts in DB from configuration CSV file
+		self.hostDB = {}
+		host_config = open("host_config.csv", "r")
+		host_config.readline()
+		line = host_config.readline()
+		while line != "":
+			config = line.split(",")
+			line = host_config.readline()
+			hostDB[config[0][1:]] = {
+				"name" : config[0],
+				"leaf" : config[1],
+				"port" : config[2],
+				"rmac" : config[3][:-1]}
         # VMs in the DC
         self.vms = {}
 
-        self.nextuid = 0
-        """
-        # VMs in the DC
-        self.vms = [{ 'mac' : '00:00:98:00:00:00', 'edge' : 'edge00', 'rmac' : 'dc:dc:dc:00:00:00', 'port' : 1},
-                    { 'mac' : '00:00:98:00:00:01', 'edge' : 'edge01', 'rmac' : 'dc:dc:dc:00:01:00', 'port' : 1},
-                    { 'mac' : '00:00:98:00:00:02', 'edge' : 'edge10', 'rmac' : 'dc:dc:dc:01:00:00', 'port' : 1}]
-        """
+        self.nextuid = 1
 
         # Register the Rest API Manager
         wsgi = kwargs['wsgi']
@@ -68,35 +57,30 @@ class   DCnetController (app_manager.RyuApp):
     def switch_enter_handler (self, ev):
 
         switch = ev.switch
-        ip = switch.dp.address[0]
+        dpid = switch.dp.dpid
 
         # Check if the switch is in our database of switches
-        if ip in self.switchDB.keys():
+        if dpid in self.switchDB.keys():
 
-            if self.switchDB[ip]['name'] == 'dummy':
-                print 'Dummy switch connected!!!'
-                self.dummy_list.append(switch)
-                return
-
-            print 'Switch ', ip, 'connected!!'
-            print 'Level: ', self.switchDB[ip]['level']
-            print 'Pod: ', self.switchDB[ip]['pod']
-            print 'Column: ', self.switchDB[ip]['column']
+            print 'Switch ', dpid, 'connected!!'
+            print 'Level: ', self.switchDB[dpid]['level']
+            print 'Pod: ', self.switchDB[dpid]['pod']
+            print 'Leaf: ', self.switchDB[dpid]['leaf']
 
             self.switchDB[ip]['object'] = switch
 
             # Depending on its position, add flows in it
             if self.switchDB[ip]['level'] == 0:
-                self.add_flows_core(switch)
+                self.add_flows_super(switch)
             elif self.switchDB[ip]['level'] == 1:
-                self.add_flows_aggr(switch)
+                self.add_flows_spine(switch)
             elif self.switchDB[ip]['level'] == 2:
-                self.add_flows_edge(switch)
+                self.add_flows_leaf(switch)
 
         if self.switchDB[ip]['joined'] == 0:
             self.switchDB[ip]['joined'] = 1
-            self.n_joined = self.n_joined + 1
-
+            self.n_joined += 1
+			
             self.create_vm(srvname="dcnet-srv000", uid=0, switch=self.switchDB[ip])
             self.create_vm(srvname="dcnet-srv001", uid=1, switch=self.switchDB[ip])
             self.create_vm(srvname="dcnet-srv010", uid=2, switch=self.switchDB[ip])
