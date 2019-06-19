@@ -16,11 +16,17 @@ sudo python folded_clos.py [--leaf NUM] [--spine NUM] [--pod NUM] [--ratio NUM] 
 ```
 All arguments are optional, with the default values and effects being:
 
+
 --leaf   (Default 4) : Number of leaves in a pod
+
 --spine  (Default 2) : Number of spines in a pod
+
 --pod    (Default 4) : Number of pods in topology
+
 --ratio  (Default 2) : Number of super spines per spine
+
 --fanout (Default 3) : Number of hosts per leaf
+
 
 Running this command starts the Mininet CLI and creates two configuration files, switch_config.csv and host_config.csv, for use by the Ryu controller.
 
