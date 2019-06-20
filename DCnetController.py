@@ -42,6 +42,16 @@ class   DCnetController (app_manager.RyuApp):
 				"leaf" : config[1],
 				"port" : config[2],
 				"rmac" : config[3][:-1]}
+
+		# Configure port radix for switches from CSV file
+		top_config = open("top_config.csv", "r")
+		top_config.readline()
+		config = top_config.readline().split(",")
+		self.ss_radix_down = config[0]
+		self.sp_radix_up = config[1]
+		self.sp_radix_down = config[2]
+		self.lf_radix_up = config[3]
+		self.lf_radix_down = config[4]
         # VMs in the DC
         self.vms = {}
 
@@ -67,40 +77,33 @@ class   DCnetController (app_manager.RyuApp):
             print 'Pod: ', self.switchDB[dpid]['pod']
             print 'Leaf: ', self.switchDB[dpid]['leaf']
 
-            self.switchDB[ip]['object'] = switch
+            self.switchDB[dpid]['object'] = switch
 
             # Depending on its position, add flows in it
-            if self.switchDB[ip]['level'] == 0:
+            if self.switchDB[dpid]['level'] == 0:
                 self.add_flows_super(switch)
-            elif self.switchDB[ip]['level'] == 1:
+            elif self.switchDB[dpid]['level'] == 1:
                 self.add_flows_spine(switch)
-            elif self.switchDB[ip]['level'] == 2:
+            elif self.switchDB[dpid]['level'] == 2:
                 self.add_flows_leaf(switch)
 
-        if self.switchDB[ip]['joined'] == 0:
-            self.switchDB[ip]['joined'] = 1
+        if self.switchDB[dpid]['joined'] == 0:
+            self.switchDB[dpid]['joined'] = 1
             self.n_joined += 1
-			
-            self.create_vm(srvname="dcnet-srv000", uid=0, switch=self.switchDB[ip])
-            self.create_vm(srvname="dcnet-srv001", uid=1, switch=self.switchDB[ip])
-            self.create_vm(srvname="dcnet-srv010", uid=2, switch=self.switchDB[ip])
-            self.create_vm(srvname="dcnet-srv011", uid=3, switch=self.switchDB[ip])
-            self.create_vm(srvname="dcnet-srv100", uid=4, switch=self.switchDB[ip])
-            self.create_vm(srvname="dcnet-srv101", uid=5, switch=self.switchDB[ip])
-            self.create_vm(srvname="dcnet-srv110", uid=6, switch=self.switchDB[ip])
-            self.create_vm(srvname="dcnet-srv111", uid=7, switch=self.switchDB[ip])
+			for h in range(len(self.hostDB)):
+				self.create_vm(srvname = hostDB[h]["name"], uid = h, switch = self.switchDB[dpid])
         else:
             for vm in self.vms.values():
-                self.create_vm(srvname=vm['server'], uid=vm['uid'], switch=self.switchDB[ip])
+                self.create_vm(srvname=vm['server'], uid=vm['uid'], switch = self.switchDB[dpid])
 
     # Add flows in a core switch
-    def add_flows_core (self, switch=None):
+    def add_flows_super (self, switch=None):
 
         dp = switch.dp
         ofp = dp.ofproto
         parser = dp.ofproto_parser
 
-        for i in range(self.radix):
+        for i in range(self.ss_radix):
 
             # Match the POD ID in the RMAC and forward accordingly
             match = parser.OFPMatch(eth_dst=('dc:dc:dc:%s:00:00' % (i), 'ff:ff:ff:ff:00:00'))

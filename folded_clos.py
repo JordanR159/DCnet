@@ -62,6 +62,12 @@ class FoldedClos(Topo):
 		spine_count = 11 + increment
 		leaf_count = 12 + increment
 
+		# Configuration file for topology that can be used by SDN controller
+		top_config = open("top_config.csv", "w+")
+		top_config.write("ss_radix_down,sp_radix_up,sp_radix_down,lf_radix_up,lf_radix_down\n")
+		top_config.write(pod * ss_ratio + "," + ss_ratio + ",")
+		top_config.write(leaf + "," + spine + "," + fanout + "\n")
+
 		# Configuration file for switches that can be used by SDN controller
 		switch_config = open("switch_config.csv", "w+")
 		switch_config.write("name,level,pod,leaf,ip\n")
@@ -69,6 +75,7 @@ class FoldedClos(Topo):
 		# Configuration file for hosts that can be used by SDN controller
 		host_config = open("host_config.csv", "w+")
 		host_config.write("name,leaf,port,rmac,ip\n")
+
 		# Create super spines, designated by letter u
 		for ss in range(ss_ratio * spine):
 			ss_name = "u" + str(ss_count)
