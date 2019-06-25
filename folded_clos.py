@@ -3,9 +3,11 @@ from mininet.topo import Topo
 from mininet.cli import CLI
 from mininet.log import setLogLevel
 from mininet.node import RemoteController, Node, Host, OVSKernelSwitch
+from mininet.link import TCLink
 
 from mininet.link import TCLink
 from argparse import ArgumentParser
+import traceback
 
 # Function to parse the command line arguments
 def parseOptions():
@@ -65,8 +67,8 @@ class FoldedClos(Topo):
 		# Configuration file for topology that can be used by SDN controller
 		top_config = open("top_config.csv", "w+")
 		top_config.write("ss_radix_down,sp_radix_up,sp_radix_down,lf_radix_up,lf_radix_down\n")
-		top_config.write(pod * ss_ratio + "," + ss_ratio + ",")
-		top_config.write(leaf + "," + spine + "," + fanout + "\n")
+		top_config.write(str(pod * ss_ratio) + "," + str(ss_ratio) + ",")
+		top_config.write(str(leaf) + "," + str(spine) + "," + str(fanout) + "\n")
 
 		# Configuration file for switches that can be used by SDN controller
 		switch_config = open("switch_config.csv", "w+")
@@ -120,7 +122,7 @@ class FoldedClos(Topo):
 					host_config.write(host_name + "," + leaf_name + ",")
 					host_config.write(str(h) + "," + mac_addr + "\n")
 					host_count += 1
-					self.addLink(leaf_name, host_name)
+					self.addLink(leaf_name, host_name, bw = 10)
 
 			# Create spines, designated by letter s, and link to super spines and leaves
 			for s in range(spine):
@@ -129,16 +131,17 @@ class FoldedClos(Topo):
 				switch_config.write(spine_name + ",1," + str(p) + ",N/A\n")
 				spine_count += increment
 				for ss in range(ss_ratio):
-					self.addLink(ss_switches[ss + s * ss_ratio], spine_name)
+					self.addLink(ss_switches[ss + s * ss_ratio], spine_name, bw = 40)
 				for l in range(leaf):
-					self.addLink(spine_name, leaf_switches[l + p * leaf])
+					self.addLink(spine_name, leaf_switches[l + p * leaf], bw = 40)
 
 if __name__ == "__main__":
+	net = None
 	try:
 		setLogLevel("info")
 		leaf, spine, pod, ss_ratio, fanout = parseOptions()
 		topo = FoldedClos(leaf, spine, pod, ss_ratio, fanout)
-		net = Mininet(topo, controller=RemoteController)
+		net = Mininet(topo, controller=RemoteController, link=TCLink)
 		net.start()
 
 		# Assign IPv6 addresses based on DCnet specifications
@@ -150,7 +153,8 @@ if __name__ == "__main__":
 			host.cmd(command)
 		CLI(net)
 	finally:
-		net.stop()
+		if net is not None:
+			net.stop()
 
 '''
 topos = {'FoldedClos':
