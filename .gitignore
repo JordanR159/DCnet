@@ -1,3 +1,4 @@
 # Ignore generated configuration files
 *.csv
 *.swp
+*.out

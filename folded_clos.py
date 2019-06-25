@@ -8,6 +8,8 @@ from mininet.link import TCLink
 from mininet.link import TCLink
 from argparse import ArgumentParser
 import traceback
+import random
+import time
 
 # Function to parse the command line arguments
 def parseOptions():
@@ -16,16 +18,18 @@ def parseOptions():
 	pod = 4
 	ss_ratio = 2
 	fanout = 3
+	dc = 1
 
 	parser = ArgumentParser("Create a folded Clos network topology")
 
 	# Add arguments to the parser for leaf, spine, pod, super spine, and fanout options
-	parser.add_argument("--leaf", type = int, help = "Number of Leaf switches per Pod")
-	parser.add_argument("--spine", type = int, help = "Number of Spine switches per Pod")
-	parser.add_argument("--pod", type = int, help = "Number of Pods in topology")
+	parser.add_argument("--leaf", type = int, help = "Number of leaf switches per pod")
+	parser.add_argument("--spine", type = int, help = "Number of spine switches per pod")
+	parser.add_argument("--pod", type = int, help = "Number of pods per data center")
 	parser.add_argument("--ratio", type = int
-						, help = "Number of Super Spine switches per Spine switch")
-	parser.add_argument("--fanout", type = int, help = "Number of hosts per Leaf switch")
+						, help = "Number of super spine switches per spine switch")
+	parser.add_argument("--fanout", type = int, help = "Number of hosts per leaf switch")
+	parser.add_argument("--dc", type = int, help = "Number of data centers")
 
 	args = parser.parse_args()
 
@@ -44,6 +48,50 @@ def parseOptions():
 	# return the values
 	return leaf, spine, pod, ss_ratio, fanout
 
+def runPingTests(net, pods):
+	host = net.hosts[0]
+	ping_out = open("ping_test.out", "w+")
+	print("Ping Test 1")
+	ping_out.write("\n--- Ping Test 1 Results ---")
+	ping_out.write(host.cmd("ping -c 3 " + net.hosts[1].IP()))
+	print("Ping Test 2")
+	ping_out.write("\n--- Ping Test 2 Results ---")
+	ping_out.write(host.cmd("ping -c 20 " + net.hosts[1].IP()))
+	print("Ping Test 3")
+	ping_out.write("\n--- Ping Test 3 Results ---")
+	ping_out.write(host.cmd("ping -c 3 " + net.hosts[len(net.hosts) / pods - 1].IP()))
+	print("Ping Test 4")
+	ping_out.write("\n--- Ping Test 4 Results ---")
+	ping_out.write(host.cmd("ping -c 20 " + net.hosts[len(net.hosts) / pods - 1].IP()))
+	print("Ping Test 5")
+	ping_out.write("\n--- Ping Test 5 Results ---")
+	ping_out.write(host.cmd("ping -c 3 " + net.hosts[-1].IP()))
+	print("Ping Test 6")
+	ping_out.write("\n--- Ping Test 6 Results ---")
+	ping_out.write(host.cmd("ping -c 20 " + net.hosts[-1].IP()))
+
+def runTCPTests(net):
+	shuffle = list(net.hosts)
+	tcp_out = open("tcp_test.out", "w+")
+	for i in range(6):
+		h = 0
+		random.shuffle(shuffle)
+		while h < len(shuffle) - 2:
+			server = shuffle[h]
+			client = shuffle[h + 1]
+			server.cmd("iperf3 -s -1 &")
+			client.cmd("iperf3 -c " + server.IP() + " &")
+			h += 2
+		server = shuffle[h]
+		client = shuffle[h + 1]
+		server.cmd("iperf3 -s -1 &")
+		print("TCP Test " + str(i + 1))
+		tcp_out.write("\n--- TCP Test " + str(i + 1) + ": ")
+		tcp_out.write(client.name + " sending to " + server.name + " ---\n")
+		client.cmd("clear")
+		tcp_out.write(client.cmd("iperf3 -c " + server.IP()))
+		time.sleep(5)
+
 # Class defining a Folded Clos topology using super spines
 class FoldedClos(Topo):
 	def __init__(self, leaf = 4, spine = 2, pod = 2, ss_ratio = 2, fanout = 3):
@@ -60,9 +108,10 @@ class FoldedClos(Topo):
 		# Counter with adjustable increments for switch names. Choose
 		# increment and initial values to easily identify switch types
 		increment = 16
-		ss_count = 10 + increment
+		leaf_count = 10 + increment
 		spine_count = 11 + increment
-		leaf_count = 12 + increment
+		ss_count = 12 + increment
+		dc_count = 13 + increment
 
 		# Configuration file for topology that can be used by SDN controller
 		top_config = open("top_config.csv", "w+")
@@ -122,7 +171,7 @@ class FoldedClos(Topo):
 					host_config.write(host_name + "," + leaf_name + ",")
 					host_config.write(str(h) + "," + mac_addr + "\n")
 					host_count += 1
-					self.addLink(leaf_name, host_name, bw = 10)
+					self.addLink(leaf_name, host_name, bw = 10, delay = "2ms")
 
 			# Create spines, designated by letter s, and link to super spines and leaves
 			for s in range(spine):
@@ -131,9 +180,13 @@ class FoldedClos(Topo):
 				switch_config.write(spine_name + ",1," + str(p) + ",N/A\n")
 				spine_count += increment
 				for ss in range(ss_ratio):
-					self.addLink(ss_switches[ss + s * ss_ratio], spine_name, bw = 40)
+					self.addLink(ss_switches[ss + s * ss_ratio], spine_name,
+									bw = 40, delay = "2ms")
 				for l in range(leaf):
-					self.addLink(spine_name, leaf_switches[l + p * leaf], bw = 40)
+					self.addLink(spine_name, leaf_switches[l + p * leaf],
+									bw = 40, delay = "2ms")
+
+
 
 if __name__ == "__main__":
 	net = None
@@ -151,6 +204,12 @@ if __name__ == "__main__":
 			command += format(((h + 1) >> 16) & 0xFF, "02x")
 			command += ":" + format((h + 1) & 0xFFFF, "04x") + "/104"
 			host.cmd(command)
+
+		# Run ping and TCP tests
+		print("*** Running performance tests")
+		#runPingTests(net, pod)
+		#runTCPTests(net)
+
 		CLI(net)
 	finally:
 		if net is not None:
