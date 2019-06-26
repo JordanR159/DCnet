@@ -15,10 +15,10 @@ import time
 def parseOptions():
 	leaf = 4
 	spine = 2
-	pod = 4
+	pod = 2
 	ss_ratio = 2
 	fanout = 3
-	dc = 1
+	dc = 2
 
 	parser = ArgumentParser("Create a folded Clos network topology")
 
@@ -44,9 +44,11 @@ def parseOptions():
 		ss_ratio = args.ratio
 	if args.pod:
 		fanout = args.fanout
+	if args.dc:
+		dc = args.dc
 
 	# return the values
-	return leaf, spine, pod, ss_ratio, fanout
+	return leaf, spine, pod, ss_ratio, fanout, dc
 
 def runPingTests(net, pods):
 	host = net.hosts[0]
@@ -94,13 +96,10 @@ def runTCPTests(net):
 
 # Class defining a Folded Clos topology using super spines
 class FoldedClos(Topo):
-	def __init__(self, leaf = 4, spine = 2, pod = 2, ss_ratio = 2, fanout = 3):
+	def __init__(self, leaf, spine, pod, ss_ratio, fanout, dc):
 		"Create Leaf and Spine Topo."
 
 		Topo.__init__(self)
-
-		ss_switches = []
-		leaf_switches = []
 
 		# Simple counter for assigning host names
 		host_count = 1
@@ -115,85 +114,107 @@ class FoldedClos(Topo):
 
 		# Configuration file for topology that can be used by SDN controller
 		top_config = open("top_config.csv", "w+")
-		top_config.write("ss_radix_down,sp_radix_up,sp_radix_down,lf_radix_up,lf_radix_down\n")
+		top_config.write("dc_count,dc_radix_down,ss_radix_down,")
+		top_config.write("sp_radix_up,sp_radix_down,lf_radix_up,lf_radix_down\n")
+		top_config.write(str(dc) + "," + str(spine * ss_ratio) + ",")
 		top_config.write(str(pod * ss_ratio) + "," + str(ss_ratio) + ",")
 		top_config.write(str(leaf) + "," + str(spine) + "," + str(fanout) + "\n")
 
 		# Configuration file for switches that can be used by SDN controller
 		switch_config = open("switch_config.csv", "w+")
-		switch_config.write("name,level,pod,leaf,ip\n")
+		switch_config.write("name,level,dc,pod,leaf\n")
 		
 		# Configuration file for hosts that can be used by SDN controller
 		host_config = open("host_config.csv", "w+")
-		host_config.write("name,leaf,port,rmac,ip\n")
+		host_config.write("name,leaf,port,rmac\n")
+		
+		dc_switches = []
+		ss_switches = []
+		leaf_switches = []
 
-		# Create super spines, designated by letter u
-		for ss in range(ss_ratio * spine):
-			ss_name = "u" + str(ss_count)
-			self.addSwitch(ss_name)
-			ss_switches.append(ss_name)
-			switch_config.write(ss_name + ",0,N/A,N/A\n")
-			ss_count += increment
+		for d in range(dc):
+			dc_name = "d" + str(dc_count)
+			self.addSwitch(dc_name)
+			dc_switches.append(dc_name)
+			switch_config.write(dc_name + ",0," + str(d) + ",N/A,N/A\n")
+			dc_count += increment
 
-		# Create a group of leaf and spine switches for every pod
-		for p in range(pod):
+			# Create super spines and connect to data center router
+			for ss in range(ss_ratio * spine):
+				ss_name = "u" + str(ss_count)
+				self.addSwitch(ss_name)
+				ss_switches.append(ss_name)
+				switch_config.write(ss_name + ",1," + str(d) + ",N/A,N/A\n")
+				ss_count += increment
+				self.addLink(dc_name, ss_name, bw = 100, delay = "1ms")
 
-			# Create leaves, designated by letter l, and hosts for each leaf
-			for l in range(leaf):
-				leaf_name = "l" + str(leaf_count)
-				self.addSwitch(leaf_name)
-				leaf_switches.append(leaf_name)
-				switch_config.write(leaf_name + ",2," + str(p) + "," + str(l) + "\n")
-				leaf_count += increment
-				
-				# Create hosts, designated by letter h, and link to leaf
-				for h in range(fanout):
-					host_name = "h" + str(host_count)
+			# Create a group of leaf and spine switches for every pod
+			for p in range(pod):
 
-					# Construct host UID MAC address, first 24 bits are reserved,
-					# last 24 bits uniquely identify a host
-					mac_addr = "dc:dc:dc:" + format((host_count >> 16) & 0xFF, "02x")
-					mac_addr += ":" + format((host_count >> 8) & 0xFF, "02x")
-					mac_addr += ":" + format(host_count & 0xFF, "02x")
-
-					# Construct host RMAC address based on dc, pod, leaf, and host
-					# First 2 bits are type (unused), next 10 are the data center id,
-					# next 12 are pod the number, next 12 are the leaf number, and
-					# last 12 are the host number
-					rmac_addr = "00:1" + format((p >> 8) & 0xF, "01x") + ":"
-					rmac_addr += format(p & 0xFF, "02x") + ":"
-					rmac_addr += format((l >> 4) & 0xFF, "02x") + ":"
-					rmac_addr += format(l & 0xF, "01x") + format((h >> 8)& 0xF, "01x")
-					rmac_addr += ":" + format(h & 0xFF, "02x")
-
-					# print(host_name + " UID-MAC : " + mac_addr + " RMAC: " + rmac_addr)
-					self.addHost(host_name, mac = mac_addr)
-					host_config.write(host_name + "," + leaf_name + ",")
-					host_config.write(str(h) + "," + mac_addr + "\n")
-					host_count += 1
-					self.addLink(leaf_name, host_name, bw = 10, delay = "2ms")
-
-			# Create spines, designated by letter s, and link to super spines and leaves
-			for s in range(spine):
-				spine_name = "s" + str(spine_count)
-				self.addSwitch(spine_name)
-				switch_config.write(spine_name + ",1," + str(p) + ",N/A\n")
-				spine_count += increment
-				for ss in range(ss_ratio):
-					self.addLink(ss_switches[ss + s * ss_ratio], spine_name,
-									bw = 40, delay = "2ms")
+				# Create leaves and hosts for each leaf
 				for l in range(leaf):
-					self.addLink(spine_name, leaf_switches[l + p * leaf],
-									bw = 40, delay = "2ms")
-
-
+					leaf_name = "l" + str(leaf_count)
+					self.addSwitch(leaf_name)
+					leaf_switches.append(leaf_name)
+					switch_config.write(leaf_name + ",3," + str(d) + ",")
+					switch_config.write(str(p) + "," + str(l) + "\n")
+					leaf_count += increment
+					
+					# Create hosts, designated by letter h, and link to leaf
+					for h in range(fanout):
+						host_name = "h" + str(host_count)
+	
+						# Construct host UID MAC address, first 24 bits are reserved,
+						# last 24 bits uniquely identify a host
+						mac_addr = "dc:dc:dc:" + format((host_count >> 16) & 0xFF, "02x")
+						mac_addr += ":" + format((host_count >> 8) & 0xFF, "02x")
+						mac_addr += ":" + format(host_count & 0xFF, "02x")
+	
+						# Construct host RMAC address based on dc, pod, leaf, and host
+						# First 2 bits are type (unused), next 10 are the data center id,
+						# next 12 are pod the number, next 12 are the leaf number, and
+						# last 12 are the host number
+						rmac_addr = format((d >> 4) & 0x3F, "02x") + ":"
+						rmac_addr += format(d & 0xF, "01x")
+						rmac_addr += format((p >> 8) & 0xF, "01x") + ":"
+						rmac_addr += format(p & 0xFF, "02x") + ":"
+						rmac_addr += format((l >> 4) & 0xFF, "02x") + ":"
+						rmac_addr += format(l & 0xF, "01x")
+						rmac_addr += format((h >> 8)& 0xF, "01x") + ":"
+						rmac_addr += format(h & 0xFF, "02x")
+	
+						self.addHost(host_name, mac = mac_addr)
+						host_config.write(host_name + "," + leaf_name + ",")
+						host_config.write(str(h) + "," + mac_addr + "\n")
+						host_count += 1
+						self.addLink(leaf_name, host_name, bw = 10, delay = "1ms")
+	
+				# Create spines and link to super spines and leaves
+				for s in range(spine):
+					spine_name = "s" + str(spine_count)
+					self.addSwitch(spine_name)
+					switch_config.write(spine_name + ",2," + str(d))
+					switch_config.write("," + str(p) + ",N/A\n")
+					spine_count += increment
+					for ss in range(ss_ratio):
+						self.addLink(ss_switches[ss + s*ss_ratio + d*spine*ss_ratio],
+										spine_name, bw = 40, delay = "1ms")
+					for l in range(leaf):
+						self.addLink(spine_name, leaf_switches[l + p*leaf + d*pod*leaf],
+										bw = 40, delay = "1ms")
+		
+		# Let a single high bandwidth, high latency link represent
+		# an internet connection between each pair of data centers	
+		for d1 in range(dc):
+			for d2 in range(d1 + 1, dc):
+				self.addLink(dc_switches[d1], dc_switches[d2], bw = 1000, delay = "50ms")
 
 if __name__ == "__main__":
 	net = None
 	try:
 		setLogLevel("info")
-		leaf, spine, pod, ss_ratio, fanout = parseOptions()
-		topo = FoldedClos(leaf, spine, pod, ss_ratio, fanout)
+		leaf, spine, pod, ss_ratio, fanout, dc = parseOptions()
+		topo = FoldedClos(leaf, spine, pod, ss_ratio, fanout, dc)
 		net = Mininet(topo, controller=RemoteController, link=TCLink)
 		net.start()
 
