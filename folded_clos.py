@@ -163,6 +163,12 @@ class FoldedClos(Topo):
 					# Create hosts, designated by letter h, and link to leaf
 					for h in range(fanout):
 						host_name = "h" + str(host_count)
+
+						# Construct host IPv4 address, first 8 bits are reserved,
+						# last 24 bits uniquely identify a host
+						ip_addr = "128." + str((host_count >> 16) & 0xFF)
+						ip_addr += "." + str((host_count >> 8) & 0xFF)
+						ip_addr += "." + str(host_count & 0xFF) + "/8"
 	
 						# Construct host UID MAC address, first 24 bits are reserved,
 						# last 24 bits uniquely identify a host
@@ -183,7 +189,7 @@ class FoldedClos(Topo):
 						rmac_addr += format((h >> 8)& 0xF, "01x") + ":"
 						rmac_addr += format(h & 0xFF, "02x")
 	
-						self.addHost(host_name, mac = mac_addr)
+						self.addHost(host_name, ip = ip_addr, mac = mac_addr)
 						host_config.write(host_name + "," + leaf_name + ",")
 						host_config.write(str(h) + "," + mac_addr + "\n")
 						host_count += 1

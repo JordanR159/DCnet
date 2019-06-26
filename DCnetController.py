@@ -6,14 +6,14 @@ from ryu.app.wsgi import WSGIApplication
 from DCnetRestAPIManager import DCnetRestAPIManager
 import time
 
-class   DCnetController (app_manager.RyuApp):
-    OFP_VERSIONS = [ofproto_v1_3.OFP_VERSION]
-    _CONTEXTS = {'wsgi' : WSGIApplication}
+class	DCnetController (app_manager.RyuApp):
+	OFP_VERSIONS = [ofproto_v1_3.OFP_VERSION]
+	_CONTEXTS = {'wsgi' : WSGIApplication}
 
-    def __init__ (self, *args, **kwargs):
-        super(DCnetController, self).__init__(*args, **kwargs)
+	def __init__ (self, *args, **kwargs):
+		super(DCnetController, self).__init__(*args, **kwargs)
 
-        # Configure switches in DB from configuration CSV file
+		# Configure switches in DB from configuration CSV file
 		self.switchDB = {}
 		switch_config = open("switch_config.csv", "r")
 		switch_config.readline()
@@ -24,12 +24,13 @@ class   DCnetController (app_manager.RyuApp):
 			switchDB[config[0][1:]] = {	
 				"name" : config[0],
 				"level" : config[1],
-				"pod" : config[2],
-				"leaf" : config[3][:-1]
+				"dc" : config[2],
+				"pod" : config[3],
+				"leaf" : config[4][:-1]
 				"joined" : 0 }	
-        self.n_joined = 0
+		self.n_joined = 0
 
-        # Configure hosts in DB from configuration CSV file
+		# Configure hosts in DB from configuration CSV file
 		self.hostDB = {}
 		host_config = open("host_config.csv", "r")
 		host_config.readline()
@@ -47,348 +48,476 @@ class   DCnetController (app_manager.RyuApp):
 		top_config = open("top_config.csv", "r")
 		top_config.readline()
 		config = top_config.readline().split(",")
-		self.ss_radix_down = config[0]
-		self.sp_radix_up = config[1]
-		self.sp_radix_down = config[2]
-		self.lf_radix_up = config[3]
-		self.lf_radix_down = config[4]
-        # VMs in the DC
-        self.vms = {}
+		self.dc_count = config[0]
+		self.dc_radix_down = config[1]
+		self.ss_radix_down = config[2]
+		self.sp_radix_up = config[3]
+		self.sp_radix_down = config[4]
+		self.lf_radix_up = config[5]
+		self.lf_radix_down = config[6]
 
-        self.nextuid = 1
+		# VMs in the DC
+		self.vms = {}
 
-        # Register the Rest API Manager
-        wsgi = kwargs['wsgi']
+		self.nextuid = 1
+
+		# Register the Rest API Manager
+		wsgi = kwargs["wsgi"]
 	print wsgi
-        print wsgi.register(DCnetRestAPIManager, { 'controller' : self })
+		print wsgi.register(DCnetRestAPIManager, { "controller" : self })
 
-    # Handle a new switch joining
-    @set_ev_cls (event.EventSwitchEnter, MAIN_DISPATCHER)
-    def switch_enter_handler (self, ev):
+	# Handle a new switch joining
+	@set_ev_cls (event.EventSwitchEnter, MAIN_DISPATCHER)
+	def switch_enter_handler (self, ev):
 
-        switch = ev.switch
-        dpid = switch.dp.dpid
+		switch = ev.switch
+		dpid = switch.dp.dpid
 
-        # Check if the switch is in our database of switches
-        if dpid in self.switchDB.keys():
+		# Check if the switch is in our database of switches
+		if dpid in self.switchDB.keys():
 
-            print 'Switch ', dpid, 'connected!!'
-            print 'Level: ', self.switchDB[dpid]['level']
-            print 'Pod: ', self.switchDB[dpid]['pod']
-            print 'Leaf: ', self.switchDB[dpid]['leaf']
+			print "Switch ", dpid, "connected!!"
+			print "Level: ", self.switchDB[dpid]["level"]
+			print "Pod: ", self.switchDB[dpid]["pod"]
+			print "Leaf: ", self.switchDB[dpid]["leaf"]
 
-            self.switchDB[dpid]['object'] = switch
+			self.switchDB[dpid]["object"] = switch
 
-            # Depending on its position, add flows in it
-            if self.switchDB[dpid]['level'] == 0:
-                self.add_flows_super(switch)
-            elif self.switchDB[dpid]['level'] == 1:
-                self.add_flows_spine(switch)
-            elif self.switchDB[dpid]['level'] == 2:
-                self.add_flows_leaf(switch)
+			# Depending on its position, add flows in it
+			if self.switchDB[dpid]["level"] == 0:
+				self.add_flows_dc(switch)
+			elif self.switchDB[dpid]["level"] == 1:
+				self.add_flows_super(switch)
+			elif self.switchDB[dpid]["level"] == 2:
+				self.add_flows_spine(switch)
+			elif self.switchDB[dpid]["level"] == 3:
+				self.add_flows_leaf(switch)
 
-        if self.switchDB[dpid]['joined'] == 0:
-            self.switchDB[dpid]['joined'] = 1
-            self.n_joined += 1
+		if self.switchDB[dpid]["joined"] == 0:
+			self.switchDB[dpid]["joined"] = 1
+			self.n_joined += 1
 			for h in range(len(self.hostDB)):
 				self.create_vm(srvname = hostDB[h]["name"], uid = h, switch = self.switchDB[dpid])
-        else:
-            for vm in self.vms.values():
-                self.create_vm(srvname=vm['server'], uid=vm['uid'], switch = self.switchDB[dpid])
+		else:
+			for vm in self.vms.values():
+				self.create_vm(srvname = vm['server'], uid=vm['uid'], switch = self.switchDB[dpid])
 
-    # Add flows in a core switch
-    def add_flows_super (self, switch=None):
+	# Add flows in a data center access switch
+	def add_flows_dc (self, switch = None):
+		dp = switch.dp
+		ofp = dp.ofproto
+		parser = dp.ofproto_parser
+		config = self.switchDB[dp.dpid]
 
-        dp = switch.dp
-        ofp = dp.ofproto
-        parser = dp.ofproto_parser
+		# Construct ethernet address to match for each connected pod
+		eth_addr = format((config["dc"] >> 4) & 0x3F, "02x") + ":"
+		eth_addr += format((config["dc"] & 0xF, "01x")
+		eth_addr += "0:00:00:00"
 
-        for i in range(self.ss_radix):
+		# Match the Data Center ID in the RMAC and forward accordingly
+		match = parser.OFPMatch(eth_dst = eth_addr, "ff:f0:00:00:00:00"))
+		
+		#TODO this might need to be changed to randomly select a super spine
+		action = parser.NXActionBundle(algorithm=nicira_ext.NX_BD_ALG_HRW,
+									   fields=nicira_ext.NX_HASH_FIELDS_SYMMETRIC_L4,
+									   basis=0,
+									   slave_type=nicira_ext.NXM_OF_IN_PORT,
+									   n_slaves=self.radix/2,
+									   ofs_nbits=0,
+									   dst=0,
+									   slaves=range(1+(self.radix/2), self.radix+1))
+		instr = parser.OFPInstructionActions(ofp.OFPIT_APPLY_ACTIONS, [action])
+		flowmod = parser.OFPFlowMod(datapath=dp,
+									table_id=0,
+									priority=1000,
+									match=match,
+									instructions=[instr])
+		dp.send_msg(flowmod)
+		barrier = parser.OFPBarrierRequest(dp)
+		dp.send_msg(barrier)
 
-            # Match the POD ID in the RMAC and forward accordingly
-            match = parser.OFPMatch(eth_dst=('dc:dc:dc:%s:00:00' % (i), 'ff:ff:ff:ff:00:00'))
-            action = parser.OFPActionOutput(i+1)
-            instr = parser.OFPInstructionActions(ofp.OFPIT_APPLY_ACTIONS, [action])
-            flowmod = parser.OFPFlowMod(datapath=dp,
-                                        table_id=0,
-                                        priority=1000,
-                                        match=match,
-                                        instructions=[instr])
+		for d in range(self.dc_count):
 
-            dp.send_msg(flowmod)
-            barrier = parser.OFPBarrierRequest(dp)
-            dp.send_msg(barrier)
+			if d == config["dc"]:
+				continue
 
-    # Add flows in an aggregate switch
-    def add_flows_aggr (self, switch=None):
+			# Construct ethernet address to match for each connected pod
+			eth_addr = format((config["dc"] >> 4) & 0x3F, "02x") + ":"
+			eth_addr += format(config["dc"] & 0xF, "01x")
+			eth_addr += "0:00:00:00:00"
 
-        dp = switch.dp
-        ofp = dp.ofproto
-        parser = dp.ofproto_parser
-        ip = dp.address[0]
-        pod = self.switchDB[ip]['pod']
-        column = self.switchDB[ip]['column']
+			# Match the POD ID in the RMAC and forward accordingly
+			match = parser.OFPMatch(eth_dst = (eth_addr, "ff:f0:00:00:00:00"))
+			action = parser.OFPActionOutput(d+1)
+			instr = parser.OFPInstructionActions(ofp.OFPIT_APPLY_ACTIONS, [action])
+			flowmod = parser.OFPFlowMod(datapath=dp,
+										table_id=0,
+										priority=500,
+										match=match,
+										instructions=[instr])
+			dp.send_msg(flowmod)
+			barrier = parser.OFPBarrierRequest(dp)
+			dp.send_msg(barrier)
 
-        # Handle flows that remain in the pod
-        for i in range(self.radix/2):
+		
+		# Send all other traffic to internet
+		match = parser.OFPMatch(eth_dst = ("00:00:00:00:00:00", "c0:00:00:00:00:00"))
+		action = parser.OFPActionOutput(0)
+		instr = parser.OFPInstructionActions(ofp.OFPIT_APPLY_ACTIONS, [action])
+		flowmod = parser.OFPFlowMod(datapath=dp,
+									table_id=0,
+									priority=100,
+									match=match,
+									instructions=[instr])
+		dp.send_msg(flowmod)
+		barrier = parser.OFPBarrierRequest(dp)
+		dp.send_msg(barrier)
 
-            # Match the pod number and the column number and forward accordingly
-            dst='dc:dc:dc:{0:02x}:{1:02x}:00'.format(pod, i)
-            match = parser.OFPMatch(eth_dst=(dst, 'ff:ff:ff:ff:ff:00'))
-            action = parser.OFPActionOutput(i+1)
-            instr = parser.OFPInstructionActions(ofp.OFPIT_APPLY_ACTIONS, [action])
-            flowmod = parser.OFPFlowMod(datapath=dp,
-                                        table_id=0,
-                                        priority=1000,
-                                        match=match,
-                                        instructions=[instr])
+	# Add flows in a super spine switch
+	def add_flows_super (self, switch = None):
 
-            dp.send_msg(flowmod)
-            barrier = parser.OFPBarrierRequest(dp)
-            dp.send_msg(barrier)
+		dp = switch.dp
+		ofp = dp.ofproto
+		parser = dp.ofproto_parser
+		config = self.switchDB[dp.dpid]
 
-        # Handle flows that are destined to other pods
-        # ECMP the flow towards the core switches
-        match = parser.OFPMatch(eth_dst=('dc:dc:dc:00:00:00', 'ff:ff:ff:00:00:00'))
-        action = parser.NXActionBundle(algorithm=nicira_ext.NX_BD_ALG_HRW,
-                                       fields=nicira_ext.NX_HASH_FIELDS_SYMMETRIC_L4,
-                                       basis=0,
-                                       slave_type=nicira_ext.NXM_OF_IN_PORT,
-                                       n_slaves=self.radix/2,
-                                       ofs_nbits=0,
-                                       dst=0,
-                                       slaves=range(1+(self.radix/2), self.radix+1))
-        instr = parser.OFPInstructionActions(ofp.OFPIT_APPLY_ACTIONS, [action])
-        flowmod = parser.OFPFlowMod(datapath=dp,
-                                    table_id=0,
-                                    priority=500,
-                                    match=match,
-                                    instructions=[instr])
+		for p in range(self.ss_radix_down):
 
-        dp.send_msg(flowmod)
-        barrier = parser.OFPBarrierRequest(dp)
-        dp.send_msg(barrier)
+			# Construct ethernet address to match for each connected pod
+			eth_addr = format((config["dc"] >> 4) & 0x3F, "02x") + ":"
+			eth_addr += format(config["dc"] & 0xF, "01x")
+			eth_addr += format((p >> 8) & 0xF, "01x") + ":"
+			eth_addr += format(p & 0xFF, "02x") + ":"
+			eth_addr += "00:00:00"
 
-    # Add flows in an edge switch
-    def add_flows_edge (self, switch=None):
+			# Match the POD ID in the RMAC and forward accordingly
+			match = parser.OFPMatch(eth_dst = (eth_addr, "ff:ff:ff:00:00:00"))
+			action = parser.OFPActionOutput(p+1)
+			instr = parser.OFPInstructionActions(ofp.OFPIT_APPLY_ACTIONS, [action])
+			flowmod = parser.OFPFlowMod(datapath=dp,
+										table_id=0,
+										priority=1000,
+										match=match,
+										instructions=[instr])
+			dp.send_msg(flowmod)
+			barrier = parser.OFPBarrierRequest(dp)
+			dp.send_msg(barrier)
 
-        dp = switch.dp
-        ofp = dp.ofproto
-        parser = dp.ofproto_parser
-        ip = dp.address[0]
-        pod = self.switchDB[ip]['pod']
-        column = self.switchDB[ip]['column']
+		# Send traffic destined for another data center or internet to dc access switch
+		match = parser.OFPMatch(eth_dst=("00:00:00:00:00:00", "c0:00:00:00:00:00"))
+		action = parser.OFPActionOutput(0)
+		instr = parser.OFPInstructionActions(ofp.OFPIT_APPLY_ACTIONS, [action])
+		flowmod = parser.OFPFlowMod(datapath=dp,
+									table_id=0,
+									priority=500,
+									match=match,
+									instructions=[instr])
+		dp.send_msg(flowmod)
+		barrier = parser.OFPBarrierRequest(dp)
+		dp.send_msg(barrier)
 
-        # If the ethernet destination is an RMAC use it to forward the packet
-        for i in range(0, self.radix/2):
+	# Add flows in a spine switch
+	def add_flows_spine (self, switch = None):
 
-            match = parser.OFPMatch(eth_dst='dc:dc:dc:{0:02x}:{1:02x}:{2:02x}'.format(pod, column, i))
-            action = parser.OFPActionOutput(i+1)
-            instr = parser.OFPInstructionActions(ofp.OFPIT_APPLY_ACTIONS, [action])
-            flowmod = parser.OFPFlowMod(datapath=dp,
-                                        table_id=0,
-                                        priority=1000,
-                                        match=match,
-                                        instructions=[instr])
+		dp = switch.dp
+		ofp = dp.ofproto
+		parser = dp.ofproto_parser
+		config = switchDB[dp.dpid]
 
-            dp.send_msg(flowmod)
-            barrier = parser.OFPBarrierRequest(dp)
-            dp.send_msg(barrier)
+		# Handle flows that remain in the pod
+		for l in range(self.sp_radix_down):
 
-    def create_vm (self, srvname, uid=None, switch=None, slp=0):
+			# Construct ethernet address to match for each connected pod
+			eth_addr = format((config["dc"] >> 4) & 0x3F, "02x") + ":"
+			eth_addr += format(config["dc"] & 0xF, "01x")
+			eth_addr += format((config["pod"] >> 8) & 0xF, "01x") + ":"
+			eth_addr += format(config["pod"] & 0xFF, "02x") + ":"
+			eth_addr += format((l >> 4) & 0xFF, "02x") + ":"
+			eth_addr += format(l & 0xF, "01x")
+			eth_addr += "0:00"
 
-        if srvname not in self.servers.keys():
-            return None
+			# Match the POD ID and LEAF ID in the RMAC and forward accordingly
+			match = parser.OFPMatch(eth_dst = (eth_addr, "ff:ff:ff:ff:f0:00"))
+			action = parser.OFPActionOutput(l+1)
+			instr = parser.OFPInstructionActions(ofp.OFPIT_APPLY_ACTIONS, [action])
+			flowmod = parser.OFPFlowMod(datapath=dp,
+										table_id=0,
+										priority=1000,
+										match=match,
+										instructions=[instr])
+			dp.send_msg(flowmod)
+			barrier = parser.OFPBarrierRequest(dp)
+			dp.send_msg(barrier)
 
-        if uid == None or uid not in self.vms.keys():
-            uid = self.nextuid
-            self.nextuid = self.nextuid + 1
-            self.vms[uid] = {'uid' : uid, 'mac' : '98:98:98:00:00:{0:02x}'.format(uid), 'server' : srvname}
-        vm = self.vms[uid]
+		# Handle flows that are destined to other pods
+		# ECMP the flow towards the super spine switches
+		match = parser.OFPMatch(eth_dst=("00:00:00:00:00:00", "c0:00:00:00:00:00"))
+		action = parser.NXActionBundle(algorithm=nicira_ext.NX_BD_ALG_HRW,
+									   fields=nicira_ext.NX_HASH_FIELDS_SYMMETRIC_L4,
+									   basis=0,
+									   slave_type=nicira_ext.NXM_OF_IN_PORT,
+									   n_slaves=self.radix/2,
+									   ofs_nbits=0,
+									   dst=0,
+									   slaves=range(1+(self.radix/2), self.radix+1))
+		instr = parser.OFPInstructionActions(ofp.OFPIT_APPLY_ACTIONS, [action])
+		flowmod = parser.OFPFlowMod(datapath=dp,
+									table_id=0,
+									priority=500,
+									match=match,
+									instructions=[instr])
+		dp.send_msg(flowmod)
+		barrier = parser.OFPBarrierRequest(dp)
+		dp.send_msg(barrier)
 
-        if switch == None:
-            switches = self.switchDB.values()
-        else:
-            switches = [switch]
+	# Add flows in a leaf switch
+	def add_flows_leaf (self, switch = None):
 
-        #print 'controller.create_vm :: sleeping for', slp
-        #time.sleep(slp)
-        #print 'controller.create_vm :: out of sleep'
+		dp = switch.dp
+		ofp = dp.ofproto
+		parser = dp.ofproto_parser
+		config = switchDB[dp.dpid]
 
-        n = len(self.dummy_list)
-        for i in range(0, slp):
-            s = self.dummy_list[i % n]
+		# If the ethernet destination is an RMAC use it to forward the packet
+		for h in range(lf_radix_down):
 
-            #print 'create_vm :: adding flow to dummy', s
-            dp = s.dp
-            ofp = dp.ofproto
-            parser = dp.ofproto_parser
+			# Construct ethernet address to match for each connected pod
+			eth_addr = format((config["dc"] >> 4) & 0x3F, "02x") + ":"
+			eth_addr += format(config["dc"] & 0xF, "01x")
+			eth_addr += format((config["pod"] >> 8) & 0xF, "01x") + ":"
+			eth_addr += format(config["pod"] & 0xFF, "02x") + ":"
+			eth_addr += format((config["leaf"] >> 4) & 0xFF, "02x") + ":"
+			eth_addr += format(config["leaf"] & 0xF, "01x")
+			eth_addr += format((h >> 8) & 0xF, "01x") + ":"
+			eth_addr += format(h & 0xFF, "02x")
 
-            match = parser.OFPMatch(eth_dst=vm['mac'])
-            action = parser.OFPActionOutput(1)
-            instr = parser.OFPInstructionActions(ofp.OFPIT_APPLY_ACTIONS, [action])
-            flowmod = parser.OFPFlowMod(datapath=dp,
-                                        table_id=0,
-                                        priority=1000,
-                                        match=match,
-                                        instructions=[instr])
-            dp.send_msg(flowmod)
-            #barrier = parser.OFPBarrierRequest(dp)
-            #dp.send_msg(barrier)
+			match = parser.OFPMatch(eth_dst = eth_addr)
+			action = parser.OFPActionOutput(h+1)
+			instr = parser.OFPInstructionActions(ofp.OFPIT_APPLY_ACTIONS, [action])
+			flowmod = parser.OFPFlowMod(datapath=dp,
+										table_id=0,
+										priority=1000,
+										match=match,
+										instructions=[instr])
+			dp.send_msg(flowmod)
+			barrier = parser.OFPBarrierRequest(dp)
+			dp.send_msg(barrier)
 
-        for s in switches:
+		# Handle flows that are destined to other leaves
+		# ECMP the flow towards the spine switches
+		match = parser.OFPMatch(eth_dst=("00:00:00:00:00:00", "c0:00:00:00:00:00"))
+		action = parser.NXActionBundle(algorithm=nicira_ext.NX_BD_ALG_HRW,
+									   fields=nicira_ext.NX_HASH_FIELDS_SYMMETRIC_L4,
+									   basis=0,
+									   slave_type=nicira_ext.NXM_OF_IN_PORT,
+									   n_slaves=self.radix/2,
+									   ofs_nbits=0,
+									   dst=0,
+									   slaves=range(1+(self.radix/2), self.radix+1))
+		instr = parser.OFPInstructionActions(ofp.OFPIT_APPLY_ACTIONS, [action])
+		flowmod = parser.OFPFlowMod(datapath=dp,
+									table_id=0,
+									priority=500,
+									match=match,
+									instructions=[instr])
+		dp.send_msg(flowmod)
+		barrier = parser.OFPBarrierRequest(dp)
+		dp.send_msg(barrier)
 
-            #print s
-            if s['name'] == 'dummy':
-                continue
+	def create_vm (self, srvname, uid=None, switch=None, slp=0):
 
-            if s['level'] != 2:
-                continue
+		if srvname not in self.servers.keys():
+			return None
 
-            if 'object' not in s.keys():
-                continue
+		if uid == None or uid not in self.vms.keys():
+			uid = self.nextuid
+			self.nextuid = self.nextuid + 1
+			self.vms[uid] = {'uid' : uid, 'mac' : '98:98:98:00:00:{0:02x}'.format(uid), 'server' : srvname}
+		vm = self.vms[uid]
 
-            dp = s['object'].dp
-            ofp = dp.ofproto
-            parser = dp.ofproto_parser
+		if switch == None:
+			switches = self.switchDB.values()
+		else:
+			switches = [switch]
 
-            if self.servers[srvname]['edge'] == s['name']:
+		#print 'controller.create_vm :: sleeping for', slp
+		#time.sleep(slp)
+		#print 'controller.create_vm :: out of sleep'
 
-                match = parser.OFPMatch(eth_dst=vm['mac'])
-                action = parser.OFPActionOutput(self.servers[srvname]['port'])
-                instr = parser.OFPInstructionActions(ofp.OFPIT_APPLY_ACTIONS, [action])
-                flowmod = parser.OFPFlowMod(datapath=dp,
-                                            table_id=0,
-                                            priority=1000,
-                                            match=match,
-                                            instructions=[instr])
-                dp.send_msg(flowmod)
-                barrier = parser.OFPBarrierRequest(dp)
-                dp.send_msg(barrier)
-            else:
+		n = len(self.dummy_list)
+		for i in range(0, slp):
+			s = self.dummy_list[i % n]
 
-                match = parser.OFPMatch(eth_dst=vm['mac'])
-                action1 = parser.OFPActionSetField(eth_dst=self.servers[srvname]['rmac'])
-                action2 = parser.NXActionBundle(algorithm=nicira_ext.NX_BD_ALG_HRW,
-                                                fields=nicira_ext.NX_HASH_FIELDS_SYMMETRIC_L4,
-                                                basis=0,
-                                                slave_type=nicira_ext.NXM_OF_IN_PORT,
-                                                n_slaves=self.radix/2,
-                                                ofs_nbits=0,
-                                                dst=0,
-                                                slaves=range(1+(self.radix/2), 1+self.radix))
-                instr = parser.OFPInstructionActions(ofp.OFPIT_APPLY_ACTIONS, [action1, action2])
-                flowmod = parser.OFPFlowMod(datapath=dp,
-                                            table_id=0,
-                                            priority=1000,
-                                            match=match,
-                                            instructions=[instr])
-                dp.send_msg(flowmod)
-                barrier = parser.OFPBarrierRequest(dp)
-                dp.send_msg(barrier)
+			#print 'create_vm :: adding flow to dummy', s
+			dp = s.dp
+			ofp = dp.ofproto
+			parser = dp.ofproto_parser
 
-        return uid
+			match = parser.OFPMatch(eth_dst=vm['mac'])
+			action = parser.OFPActionOutput(1)
+			instr = parser.OFPInstructionActions(ofp.OFPIT_APPLY_ACTIONS, [action])
+			flowmod = parser.OFPFlowMod(datapath=dp,
+										table_id=0,
+										priority=1000,
+										match=match,
+										instructions=[instr])
+			dp.send_msg(flowmod)
+			#barrier = parser.OFPBarrierRequest(dp)
+			#dp.send_msg(barrier)
 
-    def create_tmp_vm (self, uid, src, dst):
+		for s in switches:
 
-        swname = self.servers[src]['edge']
+			#print s
+			if s['name'] == 'dummy':
+				continue
 
-        edge = None
-        for s in self.switchDB.values():
-            if s['name'] == swname:
-                edge = s
-                break
+			if s['level'] != 2:
+				continue
 
-        if edge == None:
-            return
+			if 'object' not in s.keys():
+				continue
 
-        if 'object' not in edge.keys():
-            return
+			dp = s['object'].dp
+			ofp = dp.ofproto
+			parser = dp.ofproto_parser
 
-        dp = edge['object'].dp
-        ofp = dp.ofproto
-        parser = dp.ofproto_parser
+			if self.servers[srvname]['edge'] == s['name']:
 
-        match = parser.OFPMatch(eth_type=0x86dd,
-                                ipv6_dst='dc98::9898:9800:{0:02x}'.format(uid))
-        action2 = parser.OFPActionSetField(eth_dst=self.servers[dst]['rmac'])
-        action1 = parser.OFPActionSetField(in_port_nxm=1)
-        action3 = parser.NXActionBundle(algorithm=nicira_ext.NX_BD_ALG_HRW,
-                                        fields=nicira_ext.NX_HASH_FIELDS_SYMMETRIC_L4,
-                                        basis=0,
-                                        slave_type=nicira_ext.NXM_OF_IN_PORT,
-                                        n_slaves=self.radix/2,
-                                        ofs_nbits=0,
-                                        dst=0,
-                                        slaves=range(1+(self.radix/2), 1+self.radix))
-        instr = parser.OFPInstructionActions(ofp.OFPIT_APPLY_ACTIONS, [action1, action2, action3])
-        flowmod = parser.OFPFlowMod(datapath=dp,
-                                    table_id=0,
-                                    priority=1001,
-                                    match=match,
-                                    instructions=[instr])
-        dp.send_msg(flowmod)
-        barrier = parser.OFPBarrierRequest(dp)
-        dp.send_msg(barrier)
+				match = parser.OFPMatch(eth_dst=vm['mac'])
+				action = parser.OFPActionOutput(self.servers[srvname]['port'])
+				instr = parser.OFPInstructionActions(ofp.OFPIT_APPLY_ACTIONS, [action])
+				flowmod = parser.OFPFlowMod(datapath=dp,
+											table_id=0,
+											priority=1000,
+											match=match,
+											instructions=[instr])
+				dp.send_msg(flowmod)
+				barrier = parser.OFPBarrierRequest(dp)
+				dp.send_msg(barrier)
+			else:
 
-    def delete_tmp_vm (self, uid, src):
+				match = parser.OFPMatch(eth_dst=vm['mac'])
+				action1 = parser.OFPActionSetField(eth_dst=self.servers[srvname]['rmac'])
+				action2 = parser.NXActionBundle(algorithm=nicira_ext.NX_BD_ALG_HRW,
+												fields=nicira_ext.NX_HASH_FIELDS_SYMMETRIC_L4,
+												basis=0,
+												slave_type=nicira_ext.NXM_OF_IN_PORT,
+												n_slaves=self.radix/2,
+												ofs_nbits=0,
+												dst=0,
+												slaves=range(1+(self.radix/2), 1+self.radix))
+				instr = parser.OFPInstructionActions(ofp.OFPIT_APPLY_ACTIONS, [action1, action2])
+				flowmod = parser.OFPFlowMod(datapath=dp,
+											table_id=0,
+											priority=1000,
+											match=match,
+											instructions=[instr])
+				dp.send_msg(flowmod)
+				barrier = parser.OFPBarrierRequest(dp)
+				dp.send_msg(barrier)
 
-        swname = self.servers[src]['edge']
+		return uid
 
-        edge = None
-        for s in self.switchDB.values():
-            if s['name'] == swname:
-                edge = s
-                break
+	def create_tmp_vm (self, uid, src, dst):
 
-        if edge == None or 'object' not in edge.keys():
-            return
+		swname = self.servers[src]['edge']
 
-        dp = edge['object'].dp
-        ofp = dp.ofproto
-        parser = dp.ofproto_parser
+		edge = None
+		for s in self.switchDB.values():
+			if s['name'] == swname:
+				edge = s
+				break
 
-        match = parser.OFPMatch(eth_type=0x86dd,
-                                ipv6_dst='dc98::9898:9800:{0:02x}'.format(uid))
-        flowmod = parser.OFPFlowMod(datapath=dp,
-                                    table_id=0,
-                                    match=match,
-                                    out_port=ofp.OFPP_ANY,
-                                    out_group=ofp.OFPG_ANY,
-                                    command=ofp.OFPFC_DELETE)
-        dp.send_msg(flowmod)
-        barrier = parser.OFPBarrierRequest(dp)
-        dp.send_msg(barrier)
+		if edge == None:
+			return
 
-    def delete_vm (self, uid):
+		if 'object' not in edge.keys():
+			return
 
-        if uid not in self.vms.keys():
-            return None
+		dp = edge['object'].dp
+		ofp = dp.ofproto
+		parser = dp.ofproto_parser
 
-        server = self.vms[uid]['server']
+		match = parser.OFPMatch(eth_type=0x86dd,
+								ipv6_dst='dc98::9898:9800:{0:02x}'.format(uid))
+		action2 = parser.OFPActionSetField(eth_dst=self.servers[dst]['rmac'])
+		action1 = parser.OFPActionSetField(in_port_nxm=1)
+		action3 = parser.NXActionBundle(algorithm=nicira_ext.NX_BD_ALG_HRW,
+										fields=nicira_ext.NX_HASH_FIELDS_SYMMETRIC_L4,
+										basis=0,
+										slave_type=nicira_ext.NXM_OF_IN_PORT,
+										n_slaves=self.radix/2,
+										ofs_nbits=0,
+										dst=0,
+										slaves=range(1+(self.radix/2), 1+self.radix))
+		instr = parser.OFPInstructionActions(ofp.OFPIT_APPLY_ACTIONS, [action1, action2, action3])
+		flowmod = parser.OFPFlowMod(datapath=dp,
+									table_id=0,
+									priority=1001,
+									match=match,
+									instructions=[instr])
+		dp.send_msg(flowmod)
+		barrier = parser.OFPBarrierRequest(dp)
+		dp.send_msg(barrier)
 
-        for s in self.switchDB.values():
+	def delete_tmp_vm (self, uid, src):
 
-            if s['name'] == 'dummy':
-                continue
+		swname = self.servers[src]['edge']
 
-            if s['level'] != 2:
-                continue
+		edge = None
+		for s in self.switchDB.values():
+			if s['name'] == swname:
+				edge = s
+				break
 
-            if 'object' not in s.keys():
-                continue
+		if edge == None or 'object' not in edge.keys():
+			return
 
-            dp = s['object'].dp
-            ofp = dp.ofproto
-            parser = dp.ofproto_parser
+		dp = edge['object'].dp
+		ofp = dp.ofproto
+		parser = dp.ofproto_parser
 
-            match = parser.OFPMatch(eth_dst=self.vms[uid]['mac'])
-            flowmod = parser.OFPFlowMod(datapath=dp,
-                                        table_id=0,
-                                        match=match,
-                                        out_port=ofp.OFPP_ANY,
-                                        out_group=ofp.OFPG_ANY,
-                                        command=ofp.OFPFC_DELETE)
-            dp.send_msg(flowmod)
-            barrier = parser.OFPBarrierRequest(dp)
-            dp.send_msg(barrier)
+		match = parser.OFPMatch(eth_type=0x86dd,
+								ipv6_dst='dc98::9898:9800:{0:02x}'.format(uid))
+		flowmod = parser.OFPFlowMod(datapath=dp,
+									table_id=0,
+									match=match,
+									out_port=ofp.OFPP_ANY,
+									out_group=ofp.OFPG_ANY,
+									command=ofp.OFPFC_DELETE)
+		dp.send_msg(flowmod)
+		barrier = parser.OFPBarrierRequest(dp)
+		dp.send_msg(barrier)
+
+	def delete_vm (self, uid):
+
+		if uid not in self.vms.keys():
+			return None
+
+		server = self.vms[uid]['server']
+
+		for s in self.switchDB.values():
+
+			if s['name'] == 'dummy':
+				continue
+
+			if s['level'] != 2:
+				continue
+
+			if 'object' not in s.keys():
+				continue
+
+			dp = s['object'].dp
+			ofp = dp.ofproto
+			parser = dp.ofproto_parser
+
+			match = parser.OFPMatch(eth_dst=self.vms[uid]['mac'])
+			flowmod = parser.OFPFlowMod(datapath=dp,
+										table_id=0,
+										match=match,
+										out_port=ofp.OFPP_ANY,
+										out_group=ofp.OFPG_ANY,
+										command=ofp.OFPFC_DELETE)
+			dp.send_msg(flowmod)
+			barrier = parser.OFPBarrierRequest(dp)
+			dp.send_msg(barrier)
