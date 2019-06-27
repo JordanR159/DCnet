@@ -19,6 +19,7 @@ def parseOptions():
 	ss_ratio = 2
 	fanout = 3
 	dc = 2
+	test = False
 
 	parser = ArgumentParser("Create a folded Clos network topology")
 
@@ -30,6 +31,7 @@ def parseOptions():
 						, help = "Number of super spine switches per spine switch")
 	parser.add_argument("--fanout", type = int, help = "Number of hosts per leaf switch")
 	parser.add_argument("--dc", type = int, help = "Number of data centers")
+	parser.add_argument("--test", help = "Enable automatic testing")
 
 	args = parser.parse_args()
 
@@ -46,53 +48,114 @@ def parseOptions():
 		fanout = args.fanout
 	if args.dc:
 		dc = args.dc
+	if args.test:
+		test = True
 
 	# return the values
-	return leaf, spine, pod, ss_ratio, fanout, dc
+	return leaf, spine, pod, ss_ratio, fanout, dc, test
 
-def runPingTests(net, pods):
+def createTraffic(shuffle, host):
+	h = 0
+	while h < len(shuffle):
+		server = shuffle[h]
+		client = shuffle[h + 1]
+		if server.name == host.name or client.name == host.name:
+			h += 2
+			continue
+		server.cmd("iperf3 -s -1 &")
+		client.cmd("iperf3 -t 25 -c " + server.IP() + " &")
+		h += 2
+
+def runPingTests(net, pods, dcs, with_load):
 	host = net.hosts[0]
-	ping_out = open("ping_test.out", "w+")
+	if with_load is True:
+		ping_out = open("ping_test_with_load.out", "w+")
+	else:
+		ping_out = open("ping_test_no_load.out", "w+")
+	shuffle = list(net.hosts)
+	random.shuffle(shuffle)
 	print("Ping Test 1")
+	if with_load is True:
+		createTraffic(shuffle, host)
 	ping_out.write("\n--- Ping Test 1 Results ---")
 	ping_out.write(host.cmd("ping -c 3 " + net.hosts[1].IP()))
 	print("Ping Test 2")
 	ping_out.write("\n--- Ping Test 2 Results ---")
 	ping_out.write(host.cmd("ping -c 20 " + net.hosts[1].IP()))
+	time.sleep(5)
 	print("Ping Test 3")
+	if with_load is True:
+		createTraffic(shuffle, host)
 	ping_out.write("\n--- Ping Test 3 Results ---")
-	ping_out.write(host.cmd("ping -c 3 " + net.hosts[len(net.hosts) / pods - 1].IP()))
+	ping_out.write(host.cmd("ping -c 3 " + net.hosts[len(net.hosts)/(dcs*pods)-1].IP()))
 	print("Ping Test 4")
 	ping_out.write("\n--- Ping Test 4 Results ---")
-	ping_out.write(host.cmd("ping -c 20 " + net.hosts[len(net.hosts) / pods - 1].IP()))
+	ping_out.write(host.cmd("ping -c 20 " + net.hosts[len(net.hosts)/(dcs*pods)-1].IP()))
+	time.sleep(5)
 	print("Ping Test 5")
+	if with_load is True:
+		createTraffic(shuffle, host)
 	ping_out.write("\n--- Ping Test 5 Results ---")
-	ping_out.write(host.cmd("ping -c 3 " + net.hosts[-1].IP()))
+	ping_out.write(host.cmd("ping -c 3 " + net.hosts[len(net.hosts) / dcs - 1].IP()))
 	print("Ping Test 6")
 	ping_out.write("\n--- Ping Test 6 Results ---")
+	ping_out.write(host.cmd("ping -c 20 " + net.hosts[len(net.hosts) / dcs - 1].IP()))
+	time.sleep(5)
+	print("Ping Test 7")
+	if with_load is True:
+		createTraffic(shuffle, host)
+	ping_out.write("\n--- Ping Test 7 Results ---")
+	ping_out.write(host.cmd("ping -c 3 " + net.hosts[-1].IP()))
+	print("Ping Test 8")
+	ping_out.write("\n--- Ping Test 8 Results ---")
 	ping_out.write(host.cmd("ping -c 20 " + net.hosts[-1].IP()))
+	time.sleep(5)
 
-def runTCPTests(net):
+def runTCPTests(net, pods, dcs, with_load):
+	client = net.hosts[0]
+	if with_load is True:
+		tcp_out = open("tcp_test_with_load.out", "w+")
+	else:
+		tcp_out = open("tcp_test_no_load.out", "w+")
 	shuffle = list(net.hosts)
-	tcp_out = open("tcp_test.out", "w+")
-	for i in range(6):
-		h = 0
-		random.shuffle(shuffle)
-		while h < len(shuffle) - 2:
-			server = shuffle[h]
-			client = shuffle[h + 1]
-			server.cmd("iperf3 -s -1 &")
-			client.cmd("iperf3 -c " + server.IP() + " &")
-			h += 2
-		server = shuffle[h]
-		client = shuffle[h + 1]
-		server.cmd("iperf3 -s -1 &")
-		print("TCP Test " + str(i + 1))
-		tcp_out.write("\n--- TCP Test " + str(i + 1) + ": ")
-		tcp_out.write(client.name + " sending to " + server.name + " ---\n")
-		client.cmd("clear")
-		tcp_out.write(client.cmd("iperf3 -c " + server.IP()))
-		time.sleep(5)
+	random.shuffle(shuffle)
+	print("TCP Test 1")
+	if with_load is True:
+		createTraffic(shuffle, client)
+	server = net.hosts[1]
+	server.cmd("iperf3 -s -1 -p 5250 &")
+	tcp_out.write("\n--- TCP Test 1: ")
+	tcp_out.write(client.name + " sending to " + server.name + " ---\n")
+	tcp_out.write(client.cmd("iperf3 -t 20 -p 5250 -c " + server.IP()))
+	time.sleep(5)
+	print("TCP Test 2")
+	if with_load is True:
+		createTraffic(shuffle, client)
+	server = net.hosts[len(net.hosts)/(dcs * pods) - 1]
+	server.cmd("iperf3 -s -1 -p 5250 &")
+	tcp_out.write("\n--- TCP Test 2: ")
+	tcp_out.write(client.name + " sending to " + server.name + " ---\n")
+	tcp_out.write(client.cmd("iperf3 -t 20 -p 5250 -c " + server.IP()))
+	time.sleep(5)
+	print("TCP Test 3")
+	if with_load is True:
+		createTraffic(shuffle, client)
+	server = net.hosts[len(net.hosts)/dcs - 1]
+	server.cmd("iperf3 -s -1 -p 5250 &")
+	tcp_out.write("\n--- TCP Test 3: ")
+	tcp_out.write(client.name + " sending to " + server.name + " ---\n")
+	tcp_out.write(client.cmd("iperf3 -t 20 -p 5250 -c " + server.IP()))
+	time.sleep(5)
+	print("TCP Test 4")
+	if with_load is True:
+		createTraffic(shuffle, client)
+	server = net.hosts[len(net.hosts) - 1]
+	server.cmd("iperf3 -s -1 -p 5250 &")
+	tcp_out.write("\n--- TCP Test 4: ")
+	tcp_out.write(client.name + " sending to " + server.name + " ---\n")
+	tcp_out.write(client.cmd("iperf3 -t 20 -p 5250 -c " + server.IP()))
+	time.sleep(5)
+
 
 # Class defining a Folded Clos topology using super spines
 class FoldedClos(Topo):
@@ -139,14 +202,13 @@ class FoldedClos(Topo):
 			switch_config.write(dc_name + ",0," + str(d) + ",N/A,N/A\n")
 			dc_count += increment
 
-			# Create super spines and connect to data center router
+			# Create super spines
 			for ss in range(ss_ratio * spine):
 				ss_name = "u" + str(ss_count)
 				self.addSwitch(ss_name)
 				ss_switches.append(ss_name)
 				switch_config.write(ss_name + ",1," + str(d) + ",N/A,N/A\n")
 				ss_count += increment
-				self.addLink(dc_name, ss_name, bw = 100, delay = "1ms")
 
 			# Create a group of leaf and spine switches for every pod
 			for p in range(pod):
@@ -193,7 +255,7 @@ class FoldedClos(Topo):
 						host_config.write(host_name + "," + leaf_name + ",")
 						host_config.write(str(h) + "," + mac_addr + "\n")
 						host_count += 1
-						self.addLink(leaf_name, host_name, bw = 10, delay = "1ms")
+						self.addLink(leaf_name, host_name, bw = 10, delay = "0.1ms")
 	
 				# Create spines and link to super spines and leaves
 				for s in range(spine):
@@ -202,12 +264,17 @@ class FoldedClos(Topo):
 					switch_config.write(spine_name + ",2," + str(d))
 					switch_config.write("," + str(p) + ",N/A\n")
 					spine_count += increment
-					for ss in range(ss_ratio):
-						self.addLink(ss_switches[ss + s*ss_ratio + d*spine*ss_ratio],
-										spine_name, bw = 40, delay = "1ms")
 					for l in range(leaf):
 						self.addLink(spine_name, leaf_switches[l + p*leaf + d*pod*leaf],
-										bw = 40, delay = "1ms")
+										bw = 40, delay = "0.1ms")
+					for ss in range(ss_ratio):
+						self.addLink(ss_switches[ss + s*ss_ratio + d*spine*ss_ratio],
+										spine_name, bw = 40, delay = "0.1ms")
+			
+			# Link super spines to data center router
+			for ss in range(ss_ratio * spine):
+				ss_name = ss_switches[ss + d*spine*ss_ratio]
+				self.addLink(dc_name, ss_name, bw = 100, delay = "0.1ms")
 		
 		# Let a single high bandwidth, high latency link represent
 		# an internet connection between each pair of data centers	
@@ -219,7 +286,7 @@ if __name__ == "__main__":
 	net = None
 	try:
 		setLogLevel("info")
-		leaf, spine, pod, ss_ratio, fanout, dc = parseOptions()
+		leaf, spine, pod, ss_ratio, fanout, dc, test = parseOptions()
 		topo = FoldedClos(leaf, spine, pod, ss_ratio, fanout, dc)
 		net = Mininet(topo, controller=RemoteController, link=TCLink)
 		net.start()
@@ -233,9 +300,14 @@ if __name__ == "__main__":
 			host.cmd(command)
 
 		# Run ping and TCP tests
-		print("*** Running performance tests")
-		#runPingTests(net, pod)
-		#runTCPTests(net)
+		if test is True:
+			print("*** Running performance tests (no load)")
+			runPingTests(net, pod, dc, False)
+			runTCPTests(net, pod, dc, False)
+		
+			print("*** Running performance tests (with load)")
+			runPingTests(net, pod, dc, True)
+			runTCPTests(net, pod, dc, True)
 
 		CLI(net)
 	finally:
