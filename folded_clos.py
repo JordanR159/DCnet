@@ -301,6 +301,7 @@ if __name__ == "__main__":
 
 		# Run ping and TCP tests
 		if test is True:
+                        time.sleep(30)
 			print("*** Running performance tests (no load)")
 			runPingTests(net, pod, dc, False)
 			runTCPTests(net, pod, dc, False)
