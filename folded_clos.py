@@ -255,7 +255,8 @@ class FoldedClos(Topo):
 						host_config.write(host_name + "," + leaf_name + ",")
 						host_config.write(str(h) + "," + mac_addr + "\n")
 						host_count += 1
-						self.addLink(leaf_name, host_name, bw = 10, delay = "0.1ms")
+						#self.addLink(leaf_name, host_name, cls = TCLink, bw = 10, delay = "0.1ms")
+						self.addLink(leaf_name, host_name)
 	
 				# Create spines and link to super spines and leaves
 				for s in range(spine):
@@ -265,22 +266,26 @@ class FoldedClos(Topo):
 					switch_config.write("," + str(p) + ",N/A\n")
 					spine_count += increment
 					for l in range(leaf):
-						self.addLink(spine_name, leaf_switches[l + p*leaf + d*pod*leaf],
-										bw = 40, delay = "0.1ms")
+						#self.addLink(spine_name, leaf_switches[l + p*leaf + d*pod*leaf],
+						#				cls = TCLink, bw = 40, delay = "0.1ms")
+						self.addLink(spine_name, leaf_switches[l + p*leaf + d*pod*leaf])
 					for ss in range(ss_ratio):
-						self.addLink(ss_switches[ss + s*ss_ratio + d*spine*ss_ratio],
-										spine_name, bw = 40, delay = "0.1ms")
+						#self.addLink(ss_switches[ss + s*ss_ratio + d*spine*ss_ratio],
+						#				spine_name, cls = TCLink, bw = 40, delay = "0.1ms")
+						self.addLink(ss_switches[ss + s*ss_ratio + d*spine*ss_ratio], spine_name)
 			
 			# Link super spines to data center router
 			for ss in range(ss_ratio * spine):
 				ss_name = ss_switches[ss + d*spine*ss_ratio]
-				self.addLink(dc_name, ss_name, bw = 100, delay = "0.1ms")
+				#self.addLink(dc_name, ss_name, cls = TCLink, bw = 100, delay = "0.1ms")
+				self.addLink(dc_name, ss_name)
 		
 		# Let a single high bandwidth, high latency link represent
 		# an internet connection between each pair of data centers	
 		for d1 in range(dc):
 			for d2 in range(d1 + 1, dc):
-				self.addLink(dc_switches[d1], dc_switches[d2], bw = 1000, delay = "50ms")
+				#self.addLink(dc_switches[d1], dc_switches[d2], cls = TCLink, bw = 1000, delay = "50ms")
+				self.addLink(dc_switches[d1], dc_switches[d2])
 
 if __name__ == "__main__":
 	net = None
@@ -288,7 +293,7 @@ if __name__ == "__main__":
 		setLogLevel("info")
 		leaf, spine, pod, ss_ratio, fanout, dc, test = parseOptions()
 		topo = FoldedClos(leaf, spine, pod, ss_ratio, fanout, dc)
-		net = Mininet(topo, controller=RemoteController, link=TCLink)
+		net = Mininet(topo, controller = RemoteController, link = TCLink)
 		net.start()
 
 		# Assign IPv6 addresses based on DCnet specifications
@@ -307,16 +312,16 @@ if __name__ == "__main__":
 			runTCPTests(net, pod, dc, False)
 		
 			print("*** Running performance tests (with load)")
-			#runPingTests(net, pod, dc, True)
-			#runTCPTests(net, pod, dc, True)
+			runPingTests(net, pod, dc, True)
+			runTCPTests(net, pod, dc, True)
 
 		CLI(net)
 	finally:
 		if net is not None:
 			net.stop()
 
-'''
+
 topos = {'FoldedClos':
-		(lambda leaf, spine, pod, ss_ratio, fanout:
-		FoldedClos(leaf, spine, pod, ss_ratio, fanout))}
-'''
+		(lambda leaf, spine, pod, ss_ratio, fanout, dc:
+		FoldedClos(leaf, spine, pod, ss_ratio, fanout, dc))}
+
