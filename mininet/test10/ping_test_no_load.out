@@ -1,0 +1,458 @@
+
+--- Ping Test 1 Results ---PING 128.0.0.2 (128.0.0.2) 56(84) bytes of data.
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=199 ms
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=298 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=298 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=298 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=349 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=349 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=349 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=349 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=349 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=422 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=427 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=427 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=431 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=444 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=450 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=450 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=450 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=450 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=451 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=451 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=451 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=451 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=451 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=510 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=510 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=510 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=510 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=510 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=510 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=510 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=510 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=510 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=510 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=510 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=510 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=510 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=510 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=510 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=511 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=578 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=578 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=588 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=588 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=588 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=588 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=589 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=589 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=589 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=589 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=589 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=589 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=589 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=589 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=589 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=590 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=590 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=591 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=591 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=667 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=667 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=722 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=723 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=723 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=734 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=734 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=734 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=734 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=777 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=778 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=778 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=887 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=887 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=888 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=923 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=923 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=923 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=925 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=925 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=925 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=925 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=926 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=926 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=926 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=928 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=960 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=960 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=963 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=967 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=967 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=972 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=976 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=976 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=979 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=979 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1008 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1009 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1010 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1010 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1012 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1012 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1014 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1014 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1015 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1015 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1017 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1018 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1018 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1018 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1018 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1027 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1029 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1039 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1063 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1066 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1066 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1066 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1066 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1067 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1071 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1071 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1074 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1074 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1074 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1076 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1076 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1076 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1076 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1076 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1076 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1076 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1077 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1077 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1077 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1077 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1077 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1078 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1079 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1079 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1079 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1080 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1080 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1080 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1080 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1080 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1080 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1081 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=2 ttl=64 time=82.1 ms
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1083 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1086 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1114 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1117 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1117 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1117 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1131 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1131 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1131 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1132 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1132 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1132 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1132 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1132 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1132 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1136 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1137 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1146 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1146 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1146 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1146 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1146 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1146 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1146 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1146 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1146 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1147 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1147 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1147 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1147 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1149 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1149 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1149 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1150 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1151 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1151 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1151 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1151 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1154 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1155 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1155 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1155 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1155 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1155 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1155 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1155 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1177 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1177 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1177 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1177 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1178 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1181 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1182 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1188 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1189 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1189 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1190 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1190 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1192 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1192 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1192 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1193 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1193 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1193 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1193 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1193 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1193 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1194 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1194 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1195 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1197 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1199 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1199 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1199 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1199 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1220 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1220 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1222 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1223 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1228 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1228 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1231 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1234 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1234 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1235 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1236 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1236 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1260 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1262 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1262 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1263 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1264 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1275 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1279 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1280 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1280 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1282 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1282 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1291 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1291 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1292 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1294 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1294 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1298 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1298 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1298 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1298 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1299 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1299 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1299 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1299 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1299 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1300 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1300 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1300 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1301 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1304 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1306 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1306 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1348 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1348 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1349 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1349 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1376 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1376 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1376 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1377 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1377 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1377 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1377 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1377 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1378 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1378 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1378 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1378 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1386 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1389 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1432 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1450 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1450 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1450 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1482 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1482 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1495 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1495 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1495 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1496 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1496 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1496 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1578 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1578 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1578 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1578 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1578 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1578 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1578 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1578 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1646 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1731 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1731 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1858 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1858 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1858 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1858 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1858 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1858 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1859 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1859 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1927 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1927 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1927 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1928 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=1928 ms (DUP!)
+64 bytes from 128.0.0.2: icmp_seq=3 ttl=64 time=2.63 ms
+
+--- 128.0.0.2 ping statistics ---
+3 packets transmitted, 3 received, +318 duplicates, 0% packet loss, time 1999ms
+rtt min/avg/max/mdev = 2.637/1066.585/1928.164/362.259 ms, pipe 2
+
+--- Ping Test 2 Results ---PING 128.0.0.2 (128.0.0.2) 56(84) bytes of data.
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=0.521 ms
+64 bytes from 128.0.0.2: icmp_seq=2 ttl=64 time=0.532 ms
+64 bytes from 128.0.0.2: icmp_seq=3 ttl=64 time=0.548 ms
+64 bytes from 128.0.0.2: icmp_seq=4 ttl=64 time=0.508 ms
+64 bytes from 128.0.0.2: icmp_seq=5 ttl=64 time=0.533 ms
+64 bytes from 128.0.0.2: icmp_seq=6 ttl=64 time=0.525 ms
+64 bytes from 128.0.0.2: icmp_seq=7 ttl=64 time=0.491 ms
+64 bytes from 128.0.0.2: icmp_seq=8 ttl=64 time=0.505 ms
+64 bytes from 128.0.0.2: icmp_seq=9 ttl=64 time=0.488 ms
+64 bytes from 128.0.0.2: icmp_seq=10 ttl=64 time=0.501 ms
+64 bytes from 128.0.0.2: icmp_seq=11 ttl=64 time=0.504 ms
+64 bytes from 128.0.0.2: icmp_seq=12 ttl=64 time=0.495 ms
+64 bytes from 128.0.0.2: icmp_seq=13 ttl=64 time=0.532 ms
+64 bytes from 128.0.0.2: icmp_seq=14 ttl=64 time=0.492 ms
+64 bytes from 128.0.0.2: icmp_seq=15 ttl=64 time=0.573 ms
+64 bytes from 128.0.0.2: icmp_seq=16 ttl=64 time=0.499 ms
+64 bytes from 128.0.0.2: icmp_seq=17 ttl=64 time=0.537 ms
+64 bytes from 128.0.0.2: icmp_seq=18 ttl=64 time=0.522 ms
+64 bytes from 128.0.0.2: icmp_seq=19 ttl=64 time=0.516 ms
+64 bytes from 128.0.0.2: icmp_seq=20 ttl=64 time=0.521 ms
+
+--- 128.0.0.2 ping statistics ---
+20 packets transmitted, 20 received, 0% packet loss, time 19447ms
+rtt min/avg/max/mdev = 0.488/0.517/0.573/0.024 ms
+
+--- Ping Test 3 Results ---PING 128.0.0.64 (128.0.0.64) 56(84) bytes of data.
+64 bytes from 128.0.0.64: icmp_seq=1 ttl=64 time=411 ms
+64 bytes from 128.0.0.64: icmp_seq=2 ttl=64 time=1.75 ms
+64 bytes from 128.0.0.64: icmp_seq=3 ttl=64 time=1.00 ms
+
+--- 128.0.0.64 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2002ms
+rtt min/avg/max/mdev = 1.009/138.139/411.651/193.402 ms
+
+--- Ping Test 4 Results ---PING 128.0.0.64 (128.0.0.64) 56(84) bytes of data.
+64 bytes from 128.0.0.64: icmp_seq=1 ttl=64 time=0.930 ms
+64 bytes from 128.0.0.64: icmp_seq=2 ttl=64 time=1.13 ms
+64 bytes from 128.0.0.64: icmp_seq=3 ttl=64 time=0.921 ms
+64 bytes from 128.0.0.64: icmp_seq=4 ttl=64 time=0.944 ms
+64 bytes from 128.0.0.64: icmp_seq=5 ttl=64 time=0.934 ms
+64 bytes from 128.0.0.64: icmp_seq=6 ttl=64 time=0.980 ms
+64 bytes from 128.0.0.64: icmp_seq=7 ttl=64 time=0.965 ms
+64 bytes from 128.0.0.64: icmp_seq=8 ttl=64 time=0.921 ms
+64 bytes from 128.0.0.64: icmp_seq=9 ttl=64 time=0.952 ms
+64 bytes from 128.0.0.64: icmp_seq=10 ttl=64 time=0.900 ms
+64 bytes from 128.0.0.64: icmp_seq=11 ttl=64 time=0.959 ms
+64 bytes from 128.0.0.64: icmp_seq=12 ttl=64 time=0.956 ms
+64 bytes from 128.0.0.64: icmp_seq=13 ttl=64 time=0.906 ms
+64 bytes from 128.0.0.64: icmp_seq=14 ttl=64 time=0.946 ms
+64 bytes from 128.0.0.64: icmp_seq=15 ttl=64 time=0.970 ms
+64 bytes from 128.0.0.64: icmp_seq=16 ttl=64 time=0.928 ms
+64 bytes from 128.0.0.64: icmp_seq=17 ttl=64 time=0.931 ms
+64 bytes from 128.0.0.64: icmp_seq=18 ttl=64 time=1.01 ms
+64 bytes from 128.0.0.64: icmp_seq=19 ttl=64 time=1.01 ms
+64 bytes from 128.0.0.64: icmp_seq=20 ttl=64 time=0.902 ms
+
+--- 128.0.0.64 ping statistics ---
+20 packets transmitted, 20 received, 0% packet loss, time 19167ms
+rtt min/avg/max/mdev = 0.900/0.955/1.131/0.051 ms
+
+--- Ping Test 5 Results ---PING 128.0.2.0 (128.0.2.0) 56(84) bytes of data.
+64 bytes from 128.0.2.0: icmp_seq=1 ttl=64 time=562 ms
+64 bytes from 128.0.2.0: icmp_seq=2 ttl=64 time=2.59 ms
+64 bytes from 128.0.2.0: icmp_seq=3 ttl=64 time=1.41 ms
+
+--- 128.0.2.0 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2000ms
+rtt min/avg/max/mdev = 1.411/188.819/562.450/264.197 ms
+
+--- Ping Test 6 Results ---PING 128.0.2.0 (128.0.2.0) 56(84) bytes of data.
+64 bytes from 128.0.2.0: icmp_seq=1 ttl=64 time=1.50 ms
+64 bytes from 128.0.2.0: icmp_seq=2 ttl=64 time=1.40 ms
+64 bytes from 128.0.2.0: icmp_seq=3 ttl=64 time=1.37 ms
+64 bytes from 128.0.2.0: icmp_seq=4 ttl=64 time=1.50 ms
+64 bytes from 128.0.2.0: icmp_seq=5 ttl=64 time=1.46 ms
+64 bytes from 128.0.2.0: icmp_seq=6 ttl=64 time=1.35 ms
+64 bytes from 128.0.2.0: icmp_seq=7 ttl=64 time=1.38 ms
+64 bytes from 128.0.2.0: icmp_seq=8 ttl=64 time=1.48 ms
+64 bytes from 128.0.2.0: icmp_seq=9 ttl=64 time=1.38 ms
+64 bytes from 128.0.2.0: icmp_seq=10 ttl=64 time=1.46 ms
+64 bytes from 128.0.2.0: icmp_seq=11 ttl=64 time=1.34 ms
+64 bytes from 128.0.2.0: icmp_seq=12 ttl=64 time=1.41 ms
+64 bytes from 128.0.2.0: icmp_seq=13 ttl=64 time=1.45 ms
+64 bytes from 128.0.2.0: icmp_seq=14 ttl=64 time=1.37 ms
+64 bytes from 128.0.2.0: icmp_seq=15 ttl=64 time=1.45 ms
+64 bytes from 128.0.2.0: icmp_seq=16 ttl=64 time=1.43 ms
+64 bytes from 128.0.2.0: icmp_seq=17 ttl=64 time=1.38 ms
+64 bytes from 128.0.2.0: icmp_seq=18 ttl=64 time=1.36 ms
+64 bytes from 128.0.2.0: icmp_seq=19 ttl=64 time=1.34 ms
+64 bytes from 128.0.2.0: icmp_seq=20 ttl=64 time=1.36 ms
+
+--- 128.0.2.0 ping statistics ---
+20 packets transmitted, 20 received, 0% packet loss, time 19026ms
+rtt min/avg/max/mdev = 1.342/1.413/1.501/0.061 ms
+
+--- Ping Test 7 Results ---PING 128.0.4.0 (128.0.4.0) 56(84) bytes of data.
+64 bytes from 128.0.4.0: icmp_seq=1 ttl=64 time=2413 ms
+64 bytes from 128.0.4.0: icmp_seq=3 ttl=64 time=382 ms
+64 bytes from 128.0.4.0: icmp_seq=2 ttl=64 time=1410 ms
+
+--- 128.0.4.0 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2030ms
+rtt min/avg/max/mdev = 382.258/1401.862/2413.066/829.095 ms, pipe 3
+
+--- Ping Test 8 Results ---PING 128.0.4.0 (128.0.4.0) 56(84) bytes of data.
+64 bytes from 128.0.4.0: icmp_seq=1 ttl=64 time=102 ms
+64 bytes from 128.0.4.0: icmp_seq=2 ttl=64 time=101 ms
+64 bytes from 128.0.4.0: icmp_seq=3 ttl=64 time=101 ms
+64 bytes from 128.0.4.0: icmp_seq=4 ttl=64 time=102 ms
+64 bytes from 128.0.4.0: icmp_seq=5 ttl=64 time=101 ms
+64 bytes from 128.0.4.0: icmp_seq=6 ttl=64 time=101 ms
+64 bytes from 128.0.4.0: icmp_seq=7 ttl=64 time=101 ms
+64 bytes from 128.0.4.0: icmp_seq=8 ttl=64 time=102 ms
+64 bytes from 128.0.4.0: icmp_seq=9 ttl=64 time=102 ms
+64 bytes from 128.0.4.0: icmp_seq=10 ttl=64 time=102 ms
+64 bytes from 128.0.4.0: icmp_seq=11 ttl=64 time=101 ms
+64 bytes from 128.0.4.0: icmp_seq=12 ttl=64 time=102 ms
+64 bytes from 128.0.4.0: icmp_seq=13 ttl=64 time=101 ms
+64 bytes from 128.0.4.0: icmp_seq=14 ttl=64 time=102 ms
+64 bytes from 128.0.4.0: icmp_seq=15 ttl=64 time=102 ms
+64 bytes from 128.0.4.0: icmp_seq=16 ttl=64 time=102 ms
+64 bytes from 128.0.4.0: icmp_seq=17 ttl=64 time=101 ms
+64 bytes from 128.0.4.0: icmp_seq=18 ttl=64 time=102 ms
+64 bytes from 128.0.4.0: icmp_seq=19 ttl=64 time=101 ms
+64 bytes from 128.0.4.0: icmp_seq=20 ttl=64 time=101 ms
+
+--- 128.0.4.0 ping statistics ---
+20 packets transmitted, 20 received, 0% packet loss, time 19018ms
+rtt min/avg/max/mdev = 101.863/102.029/102.306/0.357 ms

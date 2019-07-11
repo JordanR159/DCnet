@@ -82,7 +82,7 @@ def runPingTests(net, pods, dcs, with_load):
 	print("Ping Test 2")
 	ping_out.write("\n--- Ping Test 2 Results ---")
 	ping_out.write(host.cmd("ping -c 20 " + net.hosts[1].IP()))
-	time.sleep(5)
+	time.sleep(10)
 	print("Ping Test 3")
 	if with_load is True:
 		createTraffic(shuffle, host)
@@ -91,7 +91,7 @@ def runPingTests(net, pods, dcs, with_load):
 	print("Ping Test 4")
 	ping_out.write("\n--- Ping Test 4 Results ---")
 	ping_out.write(host.cmd("ping -c 20 " + net.hosts[len(net.hosts)/(dcs*pods)-1].IP()))
-	time.sleep(5)
+	time.sleep(10)
 	print("Ping Test 5")
 	if with_load is True:
 		createTraffic(shuffle, host)
@@ -100,7 +100,7 @@ def runPingTests(net, pods, dcs, with_load):
 	print("Ping Test 6")
 	ping_out.write("\n--- Ping Test 6 Results ---")
 	ping_out.write(host.cmd("ping -c 20 " + net.hosts[len(net.hosts) / dcs - 1].IP()))
-	time.sleep(5)
+	time.sleep(10)
 	print("Ping Test 7")
 	if with_load is True:
 		createTraffic(shuffle, host)
@@ -109,7 +109,7 @@ def runPingTests(net, pods, dcs, with_load):
 	print("Ping Test 8")
 	ping_out.write("\n--- Ping Test 8 Results ---")
 	ping_out.write(host.cmd("ping -c 20 " + net.hosts[-1].IP()))
-	time.sleep(5)
+	time.sleep(10)
 
 def runTCPTests(net, pods, dcs, with_load):
 	client = net.hosts[0]
@@ -127,7 +127,7 @@ def runTCPTests(net, pods, dcs, with_load):
 	tcp_out.write("\n--- TCP Test 1: ")
 	tcp_out.write(client.name + " sending to " + server.name + " ---\n")
 	tcp_out.write(client.cmd("iperf3 -t 20 -p 5250 -c " + server.IP()))
-	time.sleep(5)
+	time.sleep(10)
 	print("TCP Test 2")
 	if with_load is True:
 		createTraffic(shuffle, client)
@@ -136,7 +136,7 @@ def runTCPTests(net, pods, dcs, with_load):
 	tcp_out.write("\n--- TCP Test 2: ")
 	tcp_out.write(client.name + " sending to " + server.name + " ---\n")
 	tcp_out.write(client.cmd("iperf3 -t 20 -p 5250 -c " + server.IP()))
-	time.sleep(5)
+	time.sleep(10)
 	print("TCP Test 3")
 	if with_load is True:
 		createTraffic(shuffle, client)
@@ -145,7 +145,7 @@ def runTCPTests(net, pods, dcs, with_load):
 	tcp_out.write("\n--- TCP Test 3: ")
 	tcp_out.write(client.name + " sending to " + server.name + " ---\n")
 	tcp_out.write(client.cmd("iperf3 -t 20 -p 5250 -c " + server.IP()))
-	time.sleep(5)
+	time.sleep(10)
 	print("TCP Test 4")
 	if with_load is True:
 		createTraffic(shuffle, client)
@@ -154,7 +154,7 @@ def runTCPTests(net, pods, dcs, with_load):
 	tcp_out.write("\n--- TCP Test 4: ")
 	tcp_out.write(client.name + " sending to " + server.name + " ---\n")
 	tcp_out.write(client.cmd("iperf3 -t 20 -p 5250 -c " + server.IP()))
-	time.sleep(5)
+	time.sleep(10)
 
 
 # Class defining a Folded Clos topology using super spines
@@ -307,8 +307,8 @@ if __name__ == "__main__":
 			runTCPTests(net, pod, dc, False)
 		
 			print("*** Running performance tests (with load)")
-			runPingTests(net, pod, dc, True)
-			runTCPTests(net, pod, dc, True)
+			#runPingTests(net, pod, dc, True)
+			#runTCPTests(net, pod, dc, True)
 
 		CLI(net)
 	finally:
