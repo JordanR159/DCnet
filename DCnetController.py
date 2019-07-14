@@ -3,7 +3,7 @@ from ryu.ofproto import ofproto_v1_3, nicira_ext
 from ryu.controller.handler import MAIN_DISPATCHER, set_ev_cls
 from ryu.topology import event
 from ryu.app.wsgi import WSGIApplication
-from DCnetRestAPIManager import DCnetRestAPIManager
+#from DCnetRestAPIManager import DCnetRestAPIManager
 import time
 
 class	DCnetController (app_manager.RyuApp):
@@ -21,12 +21,12 @@ class	DCnetController (app_manager.RyuApp):
 		while line != "":
 			config = line.split(",")
 			line = switch_config.readline()
-			switchDB[config[0][1:]] = {	
+			self.switchDB[int(config[0][1:])] = {	
 				"name" : config[0],
-				"level" : config[1],
-				"dc" : config[2],
-				"pod" : config[3],
-				"leaf" : config[4][:-1]
+				"level" : int(config[1]),
+				"dc" : int(config[2]),
+				"pod" : int(config[3]),
+				"leaf" : int(config[4][:-1]),
 				"joined" : 0 }	
 		self.n_joined = 0
 
@@ -38,7 +38,7 @@ class	DCnetController (app_manager.RyuApp):
 		while line != "":
 			config = line.split(",")
 			line = host_config.readline()
-			hostDB[config[0][1:]] = {
+			self.hostDB[config[0][1:]] = {
 				"name" : config[0],
 				"leaf" : config[1],
 				"port" : config[2],
@@ -48,13 +48,13 @@ class	DCnetController (app_manager.RyuApp):
 		top_config = open("top_config.csv", "r")
 		top_config.readline()
 		config = top_config.readline().split(",")
-		self.dc_count = config[0]
-		self.dc_radix_down = config[1]
-		self.ss_radix_down = config[2]
-		self.sp_radix_up = config[3]
-		self.sp_radix_down = config[4]
-		self.lf_radix_up = config[5]
-		self.lf_radix_down = config[6]
+		self.dc_count = int(config[0])
+		self.dc_radix_down = int(config[1])
+		self.ss_radix_down = int(config[2])
+		self.sp_radix_up = int(config[3])
+		self.sp_radix_down = int(config[4])
+		self.lf_radix_up = int(config[5])
+		self.lf_radix_down = int(config[6])
 
 		# VMs in the DC
 		self.vms = {}
@@ -63,15 +63,15 @@ class	DCnetController (app_manager.RyuApp):
 
 		# Register the Rest API Manager
 		wsgi = kwargs["wsgi"]
-	print wsgi
-		print wsgi.register(DCnetRestAPIManager, { "controller" : self })
+		print wsgi
+		#print wsgi.register(DCnetRestAPIManager, { "controller" : self })
 
 	# Handle a new switch joining
 	@set_ev_cls (event.EventSwitchEnter, MAIN_DISPATCHER)
 	def switch_enter_handler (self, ev):
 
 		switch = ev.switch
-		dpid = switch.dp.dpid
+		dpid = switch.dp.id
 
 		# Check if the switch is in our database of switches
 		if dpid in self.switchDB.keys():
@@ -92,40 +92,43 @@ class	DCnetController (app_manager.RyuApp):
 				self.add_flows_spine(switch)
 			elif self.switchDB[dpid]["level"] == 3:
 				self.add_flows_leaf(switch)
+				if self.switchDB[dpid]["joined"] == 0:
+					self.switchDB[dpid]["joined"] = 1
+					self.n_joined += 1
+					#for h in range(len(self.hostDB)):
+					#	if self.hostDB[h]["leaf"] == self.switchDB[dpid]["name"]:
+					#		self.create_vm(srvname = self.hostDB[h]["name"],
+					#						uid = h, switch = self.switchDB[dpid])
 
-		if self.switchDB[dpid]["joined"] == 0:
 			self.switchDB[dpid]["joined"] = 1
-			self.n_joined += 1
-			for h in range(len(self.hostDB)):
-				self.create_vm(srvname = hostDB[h]["name"], uid = h, switch = self.switchDB[dpid])
-		else:
-			for vm in self.vms.values():
-				self.create_vm(srvname = vm['server'], uid=vm['uid'], switch = self.switchDB[dpid])
+		#else:
+		#	for vm in self.vms.values():
+		#		self.create_vm(srvname = vm['server'], uid=vm['uid'], switch = self.switchDB[dpid])
 
 	# Add flows in a data center access switch
 	def add_flows_dc (self, switch = None):
 		dp = switch.dp
 		ofp = dp.ofproto
 		parser = dp.ofproto_parser
-		config = self.switchDB[dp.dpid]
+		config = self.switchDB[dp.id]
 
 		# Construct ethernet address to match for each connected pod
 		eth_addr = format((config["dc"] >> 4) & 0x3F, "02x") + ":"
-		eth_addr += format((config["dc"] & 0xF, "01x")
+		eth_addr += format((config["dc"] & 0xF, "01x"))
 		eth_addr += "0:00:00:00"
 
 		# Match the Data Center ID in the RMAC and forward accordingly
-		match = parser.OFPMatch(eth_dst = eth_addr, "ff:f0:00:00:00:00"))
+		match = parser.OFPMatch(eth_dst = (eth_addr, "ff:f0:00:00:00:00"))
 		
-		#TODO this might need to be changed to randomly select a super spine
+		# ECMP flows down to the data center's super spines
 		action = parser.NXActionBundle(algorithm=nicira_ext.NX_BD_ALG_HRW,
 									   fields=nicira_ext.NX_HASH_FIELDS_SYMMETRIC_L4,
 									   basis=0,
 									   slave_type=nicira_ext.NXM_OF_IN_PORT,
-									   n_slaves=self.radix/2,
+									   n_slaves=self.dc_radix_down,
 									   ofs_nbits=0,
 									   dst=0,
-									   slaves=range(1+(self.radix/2), self.radix+1))
+									   slaves=range(1, self.dc_radix_down + 1))
 		instr = parser.OFPInstructionActions(ofp.OFPIT_APPLY_ACTIONS, [action])
 		flowmod = parser.OFPFlowMod(datapath=dp,
 									table_id=0,
@@ -142,13 +145,13 @@ class	DCnetController (app_manager.RyuApp):
 				continue
 
 			# Construct ethernet address to match for each connected pod
-			eth_addr = format((config["dc"] >> 4) & 0x3F, "02x") + ":"
-			eth_addr += format(config["dc"] & 0xF, "01x")
+			eth_addr = format((d >> 4) & 0x3F, "02x") + ":"
+			eth_addr += format(d & 0xF, "01x")
 			eth_addr += "0:00:00:00:00"
 
 			# Match the POD ID in the RMAC and forward accordingly
 			match = parser.OFPMatch(eth_dst = (eth_addr, "ff:f0:00:00:00:00"))
-			action = parser.OFPActionOutput(d+1)
+			action = parser.OFPActionOutput(d + self.dc_radix_down + 1)
 			instr = parser.OFPInstructionActions(ofp.OFPIT_APPLY_ACTIONS, [action])
 			flowmod = parser.OFPFlowMod(datapath=dp,
 										table_id=0,
@@ -161,6 +164,7 @@ class	DCnetController (app_manager.RyuApp):
 
 		
 		# Send all other traffic to internet
+		# TODO: Figure out how to do this
 		match = parser.OFPMatch(eth_dst = ("00:00:00:00:00:00", "c0:00:00:00:00:00"))
 		action = parser.OFPActionOutput(0)
 		instr = parser.OFPInstructionActions(ofp.OFPIT_APPLY_ACTIONS, [action])
@@ -179,7 +183,7 @@ class	DCnetController (app_manager.RyuApp):
 		dp = switch.dp
 		ofp = dp.ofproto
 		parser = dp.ofproto_parser
-		config = self.switchDB[dp.dpid]
+		config = self.switchDB[dp.id]
 
 		for p in range(self.ss_radix_down):
 
@@ -192,7 +196,7 @@ class	DCnetController (app_manager.RyuApp):
 
 			# Match the POD ID in the RMAC and forward accordingly
 			match = parser.OFPMatch(eth_dst = (eth_addr, "ff:ff:ff:00:00:00"))
-			action = parser.OFPActionOutput(p+1)
+			action = parser.OFPActionOutput(p + 1)
 			instr = parser.OFPInstructionActions(ofp.OFPIT_APPLY_ACTIONS, [action])
 			flowmod = parser.OFPFlowMod(datapath=dp,
 										table_id=0,
@@ -205,7 +209,7 @@ class	DCnetController (app_manager.RyuApp):
 
 		# Send traffic destined for another data center or internet to dc access switch
 		match = parser.OFPMatch(eth_dst=("00:00:00:00:00:00", "c0:00:00:00:00:00"))
-		action = parser.OFPActionOutput(0)
+		action = parser.OFPActionOutput(self.ss_radix_down + 1)
 		instr = parser.OFPInstructionActions(ofp.OFPIT_APPLY_ACTIONS, [action])
 		flowmod = parser.OFPFlowMod(datapath=dp,
 									table_id=0,
@@ -222,7 +226,7 @@ class	DCnetController (app_manager.RyuApp):
 		dp = switch.dp
 		ofp = dp.ofproto
 		parser = dp.ofproto_parser
-		config = switchDB[dp.dpid]
+		config = self.switchDB[dp.id]
 
 		# Handle flows that remain in the pod
 		for l in range(self.sp_radix_down):
@@ -238,7 +242,7 @@ class	DCnetController (app_manager.RyuApp):
 
 			# Match the POD ID and LEAF ID in the RMAC and forward accordingly
 			match = parser.OFPMatch(eth_dst = (eth_addr, "ff:ff:ff:ff:f0:00"))
-			action = parser.OFPActionOutput(l+1)
+			action = parser.OFPActionOutput(l + 1)
 			instr = parser.OFPInstructionActions(ofp.OFPIT_APPLY_ACTIONS, [action])
 			flowmod = parser.OFPFlowMod(datapath=dp,
 										table_id=0,
@@ -256,10 +260,11 @@ class	DCnetController (app_manager.RyuApp):
 									   fields=nicira_ext.NX_HASH_FIELDS_SYMMETRIC_L4,
 									   basis=0,
 									   slave_type=nicira_ext.NXM_OF_IN_PORT,
-									   n_slaves=self.radix/2,
+									   n_slaves=self.sp_radix_up,
 									   ofs_nbits=0,
 									   dst=0,
-									   slaves=range(1+(self.radix/2), self.radix+1))
+					slaves=range(self.sp_radix_down + 1,
+								self.sp_radix_up + self.sp_radix_down + 1))
 		instr = parser.OFPInstructionActions(ofp.OFPIT_APPLY_ACTIONS, [action])
 		flowmod = parser.OFPFlowMod(datapath=dp,
 									table_id=0,
@@ -276,10 +281,10 @@ class	DCnetController (app_manager.RyuApp):
 		dp = switch.dp
 		ofp = dp.ofproto
 		parser = dp.ofproto_parser
-		config = switchDB[dp.dpid]
+		config = self.switchDB[dp.id]
 
 		# If the ethernet destination is an RMAC use it to forward the packet
-		for h in range(lf_radix_down):
+		for h in range(self.lf_radix_down):
 
 			# Construct ethernet address to match for each connected pod
 			eth_addr = format((config["dc"] >> 4) & 0x3F, "02x") + ":"
@@ -292,7 +297,7 @@ class	DCnetController (app_manager.RyuApp):
 			eth_addr += format(h & 0xFF, "02x")
 
 			match = parser.OFPMatch(eth_dst = eth_addr)
-			action = parser.OFPActionOutput(h+1)
+			action = parser.OFPActionOutput(h + 1)
 			instr = parser.OFPInstructionActions(ofp.OFPIT_APPLY_ACTIONS, [action])
 			flowmod = parser.OFPFlowMod(datapath=dp,
 										table_id=0,
@@ -310,10 +315,11 @@ class	DCnetController (app_manager.RyuApp):
 									   fields=nicira_ext.NX_HASH_FIELDS_SYMMETRIC_L4,
 									   basis=0,
 									   slave_type=nicira_ext.NXM_OF_IN_PORT,
-									   n_slaves=self.radix/2,
+									   n_slaves=self.lf_radix_up,
 									   ofs_nbits=0,
 									   dst=0,
-									   slaves=range(1+(self.radix/2), self.radix+1))
+					slaves=range(self.lf_radix_down + 1,
+								self.lf_radix_up + self.lf_radix_down + 1))
 		instr = parser.OFPInstructionActions(ofp.OFPIT_APPLY_ACTIONS, [action])
 		flowmod = parser.OFPFlowMod(datapath=dp,
 									table_id=0,
@@ -323,6 +329,8 @@ class	DCnetController (app_manager.RyuApp):
 		dp.send_msg(flowmod)
 		barrier = parser.OFPBarrierRequest(dp)
 		dp.send_msg(barrier)
+
+"""
 
 	def create_vm (self, srvname, uid=None, switch=None, slp=0):
 
@@ -521,3 +529,5 @@ class	DCnetController (app_manager.RyuApp):
 			dp.send_msg(flowmod)
 			barrier = parser.OFPBarrierRequest(dp)
 			dp.send_msg(barrier)
+
+"""

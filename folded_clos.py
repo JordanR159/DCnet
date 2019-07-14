@@ -199,7 +199,7 @@ class FoldedClos(Topo):
 			dc_name = "d" + str(dc_count)
 			self.addSwitch(dc_name)
 			dc_switches.append(dc_name)
-			switch_config.write(dc_name + ",0," + str(d) + ",N/A,N/A\n")
+			switch_config.write(dc_name + ",0," + str(d) + ",-1,-1\n")
 			dc_count += increment
 
 			# Create super spines
@@ -207,7 +207,7 @@ class FoldedClos(Topo):
 				ss_name = "u" + str(ss_count)
 				self.addSwitch(ss_name)
 				ss_switches.append(ss_name)
-				switch_config.write(ss_name + ",1," + str(d) + ",N/A,N/A\n")
+				switch_config.write(ss_name + ",1," + str(d) + ",-1,-1\n")
 				ss_count += increment
 
 			# Create a group of leaf and spine switches for every pod
@@ -255,37 +255,37 @@ class FoldedClos(Topo):
 						host_config.write(host_name + "," + leaf_name + ",")
 						host_config.write(str(h) + "," + mac_addr + "\n")
 						host_count += 1
-						#self.addLink(leaf_name, host_name, cls = TCLink, bw = 10, delay = "0.1ms")
-						self.addLink(leaf_name, host_name)
+						self.addLink(leaf_name, host_name, cls = TCLink, bw = 10, delay = "0.1ms")
+						#self.addLink(leaf_name, host_name)
 	
 				# Create spines and link to super spines and leaves
 				for s in range(spine):
 					spine_name = "s" + str(spine_count)
 					self.addSwitch(spine_name)
 					switch_config.write(spine_name + ",2," + str(d))
-					switch_config.write("," + str(p) + ",N/A\n")
+					switch_config.write("," + str(p) + ",-1\n")
 					spine_count += increment
 					for l in range(leaf):
-						#self.addLink(spine_name, leaf_switches[l + p*leaf + d*pod*leaf],
-						#				cls = TCLink, bw = 40, delay = "0.1ms")
-						self.addLink(spine_name, leaf_switches[l + p*leaf + d*pod*leaf])
+						self.addLink(spine_name, leaf_switches[l + p*leaf + d*pod*leaf],
+										cls = TCLink, bw = 40, delay = "0.1ms")
+						#self.addLink(spine_name, leaf_switches[l + p*leaf + d*pod*leaf])
 					for ss in range(ss_ratio):
-						#self.addLink(ss_switches[ss + s*ss_ratio + d*spine*ss_ratio],
-						#				spine_name, cls = TCLink, bw = 40, delay = "0.1ms")
-						self.addLink(ss_switches[ss + s*ss_ratio + d*spine*ss_ratio], spine_name)
+						self.addLink(ss_switches[ss + s*ss_ratio + d*spine*ss_ratio],
+										spine_name, cls = TCLink, bw = 40, delay = "0.1ms")
+						#self.addLink(ss_switches[ss + s*ss_ratio + d*spine*ss_ratio], spine_name)
 			
 			# Link super spines to data center router
 			for ss in range(ss_ratio * spine):
 				ss_name = ss_switches[ss + d*spine*ss_ratio]
-				#self.addLink(dc_name, ss_name, cls = TCLink, bw = 100, delay = "0.1ms")
-				self.addLink(dc_name, ss_name)
+				self.addLink(dc_name, ss_name, cls = TCLink, bw = 100, delay = "0.1ms")
+				#self.addLink(dc_name, ss_name)
 		
 		# Let a single high bandwidth, high latency link represent
 		# an internet connection between each pair of data centers	
 		for d1 in range(dc):
 			for d2 in range(d1 + 1, dc):
-				#self.addLink(dc_switches[d1], dc_switches[d2], cls = TCLink, bw = 1000, delay = "50ms")
-				self.addLink(dc_switches[d1], dc_switches[d2])
+				self.addLink(dc_switches[d1], dc_switches[d2], cls = TCLink, bw = 1000, delay = "50ms")
+				#self.addLink(dc_switches[d1], dc_switches[d2])
 
 if __name__ == "__main__":
 	net = None

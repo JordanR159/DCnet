@@ -1,139 +1,131 @@
 
 --- Ping Test 1 Results ---PING 128.0.0.2 (128.0.0.2) 56(84) bytes of data.
-64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=87.7 ms
-64 bytes from 128.0.0.2: icmp_seq=2 ttl=64 time=8.71 ms
-64 bytes from 128.0.0.2: icmp_seq=3 ttl=64 time=2.34 ms
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=927 ms
+64 bytes from 128.0.0.2: icmp_seq=2 ttl=64 time=689 ms
+64 bytes from 128.0.0.2: icmp_seq=3 ttl=64 time=0.720 ms
 
 --- 128.0.0.2 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 2004ms
-rtt min/avg/max/mdev = 2.348/32.936/87.741/38.840 ms
+3 packets transmitted, 3 received, 0% packet loss, time 1999ms
+rtt min/avg/max/mdev = 0.720/539.159/927.469/392.954 ms
 
 --- Ping Test 2 Results ---PING 128.0.0.2 (128.0.0.2) 56(84) bytes of data.
-64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=4.57 ms
-64 bytes from 128.0.0.2: icmp_seq=2 ttl=64 time=14.8 ms
-64 bytes from 128.0.0.2: icmp_seq=3 ttl=64 time=3.13 ms
-64 bytes from 128.0.0.2: icmp_seq=4 ttl=64 time=3.83 ms
-64 bytes from 128.0.0.2: icmp_seq=5 ttl=64 time=1.99 ms
-64 bytes from 128.0.0.2: icmp_seq=6 ttl=64 time=48.0 ms
-64 bytes from 128.0.0.2: icmp_seq=7 ttl=64 time=99.7 ms
-64 bytes from 128.0.0.2: icmp_seq=8 ttl=64 time=149 ms
-64 bytes from 128.0.0.2: icmp_seq=9 ttl=64 time=199 ms
-64 bytes from 128.0.0.2: icmp_seq=10 ttl=64 time=254 ms
-64 bytes from 128.0.0.2: icmp_seq=11 ttl=64 time=372 ms
-64 bytes from 128.0.0.2: icmp_seq=12 ttl=64 time=529 ms
-64 bytes from 128.0.0.2: icmp_seq=13 ttl=64 time=737 ms
-64 bytes from 128.0.0.2: icmp_seq=14 ttl=64 time=930 ms
-64 bytes from 128.0.0.2: icmp_seq=15 ttl=64 time=1175 ms
-64 bytes from 128.0.0.2: icmp_seq=16 ttl=64 time=1443 ms
-64 bytes from 128.0.0.2: icmp_seq=17 ttl=64 time=1779 ms
-64 bytes from 128.0.0.2: icmp_seq=18 ttl=64 time=2126 ms
-64 bytes from 128.0.0.2: icmp_seq=19 ttl=64 time=2349 ms
-64 bytes from 128.0.0.2: icmp_seq=20 ttl=64 time=2036 ms
+64 bytes from 128.0.0.2: icmp_seq=1 ttl=64 time=0.524 ms
+64 bytes from 128.0.0.2: icmp_seq=2 ttl=64 time=0.564 ms
+64 bytes from 128.0.0.2: icmp_seq=3 ttl=64 time=0.651 ms
+64 bytes from 128.0.0.2: icmp_seq=4 ttl=64 time=0.651 ms
+64 bytes from 128.0.0.2: icmp_seq=5 ttl=64 time=0.490 ms
+64 bytes from 128.0.0.2: icmp_seq=6 ttl=64 time=0.516 ms
+64 bytes from 128.0.0.2: icmp_seq=7 ttl=64 time=0.634 ms
+64 bytes from 128.0.0.2: icmp_seq=8 ttl=64 time=0.548 ms
+64 bytes from 128.0.0.2: icmp_seq=9 ttl=64 time=1.62 ms
+64 bytes from 128.0.0.2: icmp_seq=10 ttl=64 time=1.28 ms
+64 bytes from 128.0.0.2: icmp_seq=11 ttl=64 time=0.682 ms
+64 bytes from 128.0.0.2: icmp_seq=12 ttl=64 time=0.534 ms
+64 bytes from 128.0.0.2: icmp_seq=13 ttl=64 time=2.72 ms
+64 bytes from 128.0.0.2: icmp_seq=14 ttl=64 time=2.55 ms
+64 bytes from 128.0.0.2: icmp_seq=15 ttl=64 time=1.46 ms
+64 bytes from 128.0.0.2: icmp_seq=16 ttl=64 time=0.826 ms
+64 bytes from 128.0.0.2: icmp_seq=17 ttl=64 time=4.62 ms
+64 bytes from 128.0.0.2: icmp_seq=18 ttl=64 time=0.696 ms
+64 bytes from 128.0.0.2: icmp_seq=19 ttl=64 time=0.742 ms
+64 bytes from 128.0.0.2: icmp_seq=20 ttl=64 time=1.09 ms
 
 --- 128.0.0.2 ping statistics ---
-20 packets transmitted, 20 received, 0% packet loss, time 19073ms
-rtt min/avg/max/mdev = 1.997/712.999/2349.826/794.417 ms, pipe 3
+20 packets transmitted, 20 received, 0% packet loss, time 19275ms
+rtt min/avg/max/mdev = 0.490/1.170/4.624/1.016 ms
 
---- Ping Test 3 Results ---PING 128.0.0.64 (128.0.0.64) 56(84) bytes of data.
-64 bytes from 128.0.0.64: icmp_seq=1 ttl=64 time=25.3 ms
-64 bytes from 128.0.0.64: icmp_seq=2 ttl=64 time=342 ms
-64 bytes from 128.0.0.64: icmp_seq=3 ttl=64 time=406 ms
+--- Ping Test 3 Results ---PING 128.0.0.32 (128.0.0.32) 56(84) bytes of data.
 
---- 128.0.0.64 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 2002ms
-rtt min/avg/max/mdev = 25.343/257.956/406.483/166.573 ms
+--- 128.0.0.32 ping statistics ---
+3 packets transmitted, 0 received, 100% packet loss, time 2032ms
 
---- Ping Test 4 Results ---PING 128.0.0.64 (128.0.0.64) 56(84) bytes of data.
-64 bytes from 128.0.0.64: icmp_seq=1 ttl=64 time=422 ms
-64 bytes from 128.0.0.64: icmp_seq=2 ttl=64 time=468 ms
-64 bytes from 128.0.0.64: icmp_seq=3 ttl=64 time=485 ms
-64 bytes from 128.0.0.64: icmp_seq=4 ttl=64 time=543 ms
-64 bytes from 128.0.0.64: icmp_seq=5 ttl=64 time=643 ms
-64 bytes from 128.0.0.64: icmp_seq=6 ttl=64 time=550 ms
-64 bytes from 128.0.0.64: icmp_seq=7 ttl=64 time=388 ms
-64 bytes from 128.0.0.64: icmp_seq=8 ttl=64 time=395 ms
-64 bytes from 128.0.0.64: icmp_seq=9 ttl=64 time=412 ms
-64 bytes from 128.0.0.64: icmp_seq=10 ttl=64 time=432 ms
-64 bytes from 128.0.0.64: icmp_seq=11 ttl=64 time=450 ms
-64 bytes from 128.0.0.64: icmp_seq=12 ttl=64 time=453 ms
-64 bytes from 128.0.0.64: icmp_seq=13 ttl=64 time=453 ms
-64 bytes from 128.0.0.64: icmp_seq=14 ttl=64 time=486 ms
-64 bytes from 128.0.0.64: icmp_seq=16 ttl=64 time=285 ms
-64 bytes from 128.0.0.64: icmp_seq=17 ttl=64 time=367 ms
-64 bytes from 128.0.0.64: icmp_seq=18 ttl=64 time=369 ms
-64 bytes from 128.0.0.64: icmp_seq=19 ttl=64 time=396 ms
-64 bytes from 128.0.0.64: icmp_seq=20 ttl=64 time=376 ms
 
---- 128.0.0.64 ping statistics ---
-20 packets transmitted, 19 received, 5% packet loss, time 19052ms
-rtt min/avg/max/mdev = 285.845/441.305/643.723/78.013 ms
+--- Ping Test 4 Results ---PING 128.0.0.32 (128.0.0.32) 56(84) bytes of data.
+From 128.0.0.1 icmp_seq=1 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=2 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=3 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=4 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=5 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=6 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=7 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=8 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=9 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=10 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=11 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=12 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=13 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=14 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=15 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=16 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=17 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=18 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=19 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=20 Destination Host Unreachable
 
---- Ping Test 5 Results ---PING 128.0.0.64 (128.0.0.64) 56(84) bytes of data.
-64 bytes from 128.0.0.64: icmp_seq=1 ttl=64 time=3.90 ms
-64 bytes from 128.0.0.64: icmp_seq=2 ttl=64 time=284 ms
-64 bytes from 128.0.0.64: icmp_seq=3 ttl=64 time=330 ms
+--- 128.0.0.32 ping statistics ---
+20 packets transmitted, 0 received, +20 errors, 100% packet loss, time 19458ms
+pipe 4
 
---- 128.0.0.64 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 2001ms
-rtt min/avg/max/mdev = 3.906/206.287/330.876/144.375 ms
+--- Ping Test 5 Results ---PING 128.0.1.0 (128.0.1.0) 56(84) bytes of data.
 
---- Ping Test 6 Results ---PING 128.0.0.64 (128.0.0.64) 56(84) bytes of data.
-64 bytes from 128.0.0.64: icmp_seq=1 ttl=64 time=327 ms
-64 bytes from 128.0.0.64: icmp_seq=2 ttl=64 time=372 ms
-64 bytes from 128.0.0.64: icmp_seq=3 ttl=64 time=373 ms
-64 bytes from 128.0.0.64: icmp_seq=4 ttl=64 time=420 ms
-64 bytes from 128.0.0.64: icmp_seq=5 ttl=64 time=463 ms
-64 bytes from 128.0.0.64: icmp_seq=6 ttl=64 time=520 ms
-64 bytes from 128.0.0.64: icmp_seq=7 ttl=64 time=560 ms
-64 bytes from 128.0.0.64: icmp_seq=8 ttl=64 time=385 ms
-64 bytes from 128.0.0.64: icmp_seq=9 ttl=64 time=302 ms
-64 bytes from 128.0.0.64: icmp_seq=10 ttl=64 time=366 ms
-64 bytes from 128.0.0.64: icmp_seq=11 ttl=64 time=399 ms
-64 bytes from 128.0.0.64: icmp_seq=12 ttl=64 time=396 ms
-64 bytes from 128.0.0.64: icmp_seq=13 ttl=64 time=343 ms
-64 bytes from 128.0.0.64: icmp_seq=14 ttl=64 time=390 ms
-64 bytes from 128.0.0.64: icmp_seq=15 ttl=64 time=282 ms
-64 bytes from 128.0.0.64: icmp_seq=16 ttl=64 time=352 ms
-64 bytes from 128.0.0.64: icmp_seq=17 ttl=64 time=382 ms
-64 bytes from 128.0.0.64: icmp_seq=18 ttl=64 time=409 ms
-64 bytes from 128.0.0.64: icmp_seq=19 ttl=64 time=354 ms
-64 bytes from 128.0.0.64: icmp_seq=20 ttl=64 time=372 ms
+--- 128.0.1.0 ping statistics ---
+3 packets transmitted, 0 received, 100% packet loss, time 2045ms
 
---- 128.0.0.64 ping statistics ---
-20 packets transmitted, 20 received, 0% packet loss, time 19036ms
-rtt min/avg/max/mdev = 282.166/388.799/560.058/64.165 ms
 
---- Ping Test 7 Results ---PING 128.0.0.64 (128.0.0.64) 56(84) bytes of data.
-64 bytes from 128.0.0.64: icmp_seq=1 ttl=64 time=4.53 ms
-64 bytes from 128.0.0.64: icmp_seq=2 ttl=64 time=347 ms
-64 bytes from 128.0.0.64: icmp_seq=3 ttl=64 time=383 ms
+--- Ping Test 6 Results ---PING 128.0.1.0 (128.0.1.0) 56(84) bytes of data.
+From 128.0.0.1 icmp_seq=1 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=2 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=3 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=4 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=5 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=6 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=7 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=8 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=9 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=10 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=11 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=12 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=13 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=14 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=15 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=16 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=17 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=18 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=19 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=20 Destination Host Unreachable
 
---- 128.0.0.64 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 2000ms
-rtt min/avg/max/mdev = 4.535/245.123/383.653/170.773 ms
+--- 128.0.1.0 ping statistics ---
+20 packets transmitted, 0 received, +20 errors, 100% packet loss, time 19462ms
+pipe 4
 
---- Ping Test 8 Results ---PING 128.0.0.64 (128.0.0.64) 56(84) bytes of data.
-64 bytes from 128.0.0.64: icmp_seq=1 ttl=64 time=404 ms
-64 bytes from 128.0.0.64: icmp_seq=2 ttl=64 time=436 ms
-64 bytes from 128.0.0.64: icmp_seq=3 ttl=64 time=441 ms
-64 bytes from 128.0.0.64: icmp_seq=4 ttl=64 time=528 ms
-64 bytes from 128.0.0.64: icmp_seq=5 ttl=64 time=577 ms
-64 bytes from 128.0.0.64: icmp_seq=6 ttl=64 time=473 ms
-64 bytes from 128.0.0.64: icmp_seq=7 ttl=64 time=216 ms
-64 bytes from 128.0.0.64: icmp_seq=8 ttl=64 time=332 ms
-64 bytes from 128.0.0.64: icmp_seq=9 ttl=64 time=362 ms
-64 bytes from 128.0.0.64: icmp_seq=10 ttl=64 time=373 ms
-64 bytes from 128.0.0.64: icmp_seq=11 ttl=64 time=400 ms
-64 bytes from 128.0.0.64: icmp_seq=12 ttl=64 time=380 ms
-64 bytes from 128.0.0.64: icmp_seq=13 ttl=64 time=407 ms
-64 bytes from 128.0.0.64: icmp_seq=14 ttl=64 time=368 ms
-64 bytes from 128.0.0.64: icmp_seq=15 ttl=64 time=327 ms
-64 bytes from 128.0.0.64: icmp_seq=16 ttl=64 time=334 ms
-64 bytes from 128.0.0.64: icmp_seq=17 ttl=64 time=374 ms
-64 bytes from 128.0.0.64: icmp_seq=18 ttl=64 time=401 ms
-64 bytes from 128.0.0.64: icmp_seq=19 ttl=64 time=400 ms
-64 bytes from 128.0.0.64: icmp_seq=20 ttl=64 time=336 ms
+--- Ping Test 7 Results ---PING 128.0.2.0 (128.0.2.0) 56(84) bytes of data.
 
---- 128.0.0.64 ping statistics ---
-20 packets transmitted, 20 received, 0% packet loss, time 19037ms
-rtt min/avg/max/mdev = 216.728/393.996/577.271/74.662 ms
+--- 128.0.2.0 ping statistics ---
+3 packets transmitted, 0 received, 100% packet loss, time 2041ms
+
+
+--- Ping Test 8 Results ---PING 128.0.2.0 (128.0.2.0) 56(84) bytes of data.
+From 128.0.0.1 icmp_seq=1 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=2 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=3 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=4 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=5 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=6 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=7 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=8 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=9 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=10 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=11 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=12 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=13 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=14 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=15 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=16 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=17 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=18 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=19 Destination Host Unreachable
+From 128.0.0.1 icmp_seq=20 Destination Host Unreachable
+
+--- 128.0.2.0 ping statistics ---
+20 packets transmitted, 0 received, +20 errors, 100% packet loss, time 19449ms
+pipe 4
