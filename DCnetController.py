@@ -1,18 +1,26 @@
 from ryu.base import app_manager
 from ryu.ofproto import ofproto_v1_3, nicira_ext
+from ryu.ofproto.ofproto_protocol import ProtocolDesc
 from ryu.controller.handler import MAIN_DISPATCHER, set_ev_cls
+from ryu.controller import ofp_event
 from ryu.topology import event
+from ryu.lib import addrconv
+from ryu.lib.packet import packet
+from ryu.topology import event
+
 from ryu.app.wsgi import WSGIApplication
 #from DCnetRestAPIManager import DCnetRestAPIManager
 import time
+import array
+
 
 class	DCnetController (app_manager.RyuApp):
 	OFP_VERSIONS = [ofproto_v1_3.OFP_VERSION]
-	_CONTEXTS = {'wsgi' : WSGIApplication}
+	_CONTEXTS = {"wsgi" : WSGIApplication}
 
 	def __init__ (self, *args, **kwargs):
 		super(DCnetController, self).__init__(*args, **kwargs)
-
+		
 		# Configure switches in DB from configuration CSV file
 		self.switchDB = {}
 		switch_config = open("switch_config.csv", "r")
@@ -64,7 +72,7 @@ class	DCnetController (app_manager.RyuApp):
 		# Register the Rest API Manager
 		wsgi = kwargs["wsgi"]
 		print wsgi
-		#print wsgi.register(DCnetRestAPIManager, { "controller" : self })
+		#print wsgi.register(L2Switch, { "controller" : self })
 
 	# Handle a new switch joining
 	@set_ev_cls (event.EventSwitchEnter, MAIN_DISPATCHER)
@@ -105,6 +113,11 @@ class	DCnetController (app_manager.RyuApp):
 		#	for vm in self.vms.values():
 		#		self.create_vm(srvname = vm['server'], uid=vm['uid'], switch = self.switchDB[dpid])
 
+	# Handle translation from ID MAC to RMAC and back at leaf switch
+	@set_ev_cls(ofp_event.EventOFPPacketIn, MAIN_DISPATCHER)
+	def packet_in_handler(self, ev):
+		print "hello"
+
 	# Add flows in a data center access switch
 	def add_flows_dc (self, switch = None):
 		dp = switch.dp
@@ -114,8 +127,8 @@ class	DCnetController (app_manager.RyuApp):
 
 		# Construct ethernet address to match for each connected pod
 		eth_addr = format((config["dc"] >> 4) & 0x3F, "02x") + ":"
-		eth_addr += format((config["dc"] & 0xF, "01x"))
-		eth_addr += "0:00:00:00"
+		eth_addr += format(config["dc"] & 0xF, "01x")
+		eth_addr += "0:00:00:00:00"
 
 		# Match the Data Center ID in the RMAC and forward accordingly
 		match = parser.OFPMatch(eth_dst = (eth_addr, "ff:f0:00:00:00:00"))
@@ -295,7 +308,8 @@ class	DCnetController (app_manager.RyuApp):
 			eth_addr += format(config["leaf"] & 0xF, "01x")
 			eth_addr += format((h >> 8) & 0xF, "01x") + ":"
 			eth_addr += format(h & 0xFF, "02x")
-
+			
+			print eth_addr
 			match = parser.OFPMatch(eth_dst = eth_addr)
 			action = parser.OFPActionOutput(h + 1)
 			instr = parser.OFPInstructionActions(ofp.OFPIT_APPLY_ACTIONS, [action])
@@ -329,6 +343,10 @@ class	DCnetController (app_manager.RyuApp):
 		dp.send_msg(flowmod)
 		barrier = parser.OFPBarrierRequest(dp)
 		dp.send_msg(barrier)
+
+
+
+		
 
 """
 
