@@ -189,7 +189,7 @@ class FoldedClos(Topo):
 		
 		# Configuration file for hosts that can be used by SDN controller
 		host_config = open("host_config.csv", "w+")
-		host_config.write("name,leaf,port,rmac\n")
+		host_config.write("idmac,name,leaf,port,rmac\n")
 		
 		dc_switches = []
 		ss_switches = []
@@ -228,9 +228,7 @@ class FoldedClos(Topo):
 
 						# Construct host IPv4 address, first 8 bits are reserved,
 						# last 24 bits uniquely identify a host
-						ip_addr = "128." + str((host_count >> 16) & 0xFF)
-						ip_addr += "." + str((host_count >> 8) & 0xFF)
-						ip_addr += "." + str(host_count & 0xFF) + "/8"
+						ip_addr = "128.10.2." + str(host_count & 0xFF) + "/24"
 	
 						# Construct host UID MAC address, first 24 bits are reserved,
 						# last 24 bits uniquely identify a host
@@ -252,8 +250,8 @@ class FoldedClos(Topo):
 						rmac_addr += format(h & 0xFF, "02x")
 	
 						self.addHost(host_name, ip = ip_addr, mac = mac_addr)
-						host_config.write(host_name + "," + leaf_name + ",")
-						host_config.write(str(h) + "," + mac_addr + "\n")
+						host_config.write(ip_addr + "," + host_name + "," + leaf_name)
+						host_config.write("," + str(h) + "," + rmac_addr + "\n")
 						host_count += 1
 						self.addLink(leaf_name, host_name, cls = TCLink, bw = 10, delay = "0.1ms")
 						#self.addLink(leaf_name, host_name)
