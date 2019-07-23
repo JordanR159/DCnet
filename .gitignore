@@ -2,3 +2,5 @@
 *.csv
 *.swp
 ./*.out
+controller/onos-app-dcnet.iml
+controller/.idea/
