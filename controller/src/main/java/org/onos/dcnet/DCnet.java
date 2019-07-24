@@ -186,7 +186,7 @@ public class DCnet {
 
     private static Logger log = LoggerFactory.getLogger(DCnet.class);
 
-    private static final String configLoc = "~/DCnet/";
+    private static final String configLoc = "/home/reed226/DCnet/";
 
     private static final int DC = 0;
     private static final int SUPER = 1;
@@ -233,7 +233,7 @@ public class DCnet {
             BufferedReader switchConfig = new BufferedReader(new FileReader(configLoc + "switch_config.csv"));
             String line;
             switchConfig.readLine();
-            while (!((line = switchConfig.readLine()).equals(""))) {
+            while ((line = switchConfig.readLine()) != null) {
                 String[] config = line.split(",");
                 switchDB.put(config[0], new SwitchEntry(config[1], Integer.parseInt(config[2]),
                                                         Integer.parseInt(config[3]), Integer.parseInt(config[4]),
@@ -242,7 +242,7 @@ public class DCnet {
 
             BufferedReader hostConfig = new BufferedReader(new FileReader(configLoc + "host_config.csv"));
             hostConfig.readLine();
-            while (!((line = hostConfig.readLine()).equals(""))) {
+            while ((line = hostConfig.readLine()) != null) {
                 String[] config = line.split(",");
                 hostDB.put(config[0], new HostEntry(config[1], config[2], config[3], config[4]));
             }
