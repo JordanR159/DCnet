@@ -71,6 +71,7 @@ import static org.onosproject.net.flow.criteria.Criterion.Type.ETH_SRC;
  */
 @Component(immediate = true)
 public class DCnet {
+    /* Reference apps: oneping and group-fwd in https://github.com/opennetworkinglab/onos-app-samples */
 
     @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY)
     private CoreService coreService;
@@ -103,6 +104,7 @@ public class DCnet {
         private int pod;
         private int leaf;
         private boolean joined;
+        private Device device;
 
         public SwitchEntry(String name, int level, int dc, int pod, int leaf) {
             this.name = name;
@@ -111,6 +113,7 @@ public class DCnet {
             this.pod = pod;
             this.leaf = leaf;
             this.joined = false;
+            this.device = null;
         }
 
         public String getName() {
@@ -133,8 +136,20 @@ public class DCnet {
             return this.leaf;
         }
 
+        public Device getDevice() {
+            return this.device;
+        }
+
+        public void setDevice(Device device) {
+            this.device = device;
+        }
+
         public boolean isJoined() {
             return this.joined;
+        }
+
+        public void setJoined() {
+            this.joined = true;
         }
     }
 
@@ -173,6 +188,11 @@ public class DCnet {
 
     private static final String configLoc = "~/DCnet/";
 
+    private static final int DC = 0;
+    private static final int SUPER = 1;
+    private static final int SPINE = 2;
+    private static final int LEAF = 3;
+
     private int dcCount;
     private int dcRadixDown;
     private int ssRadixDown;
@@ -196,11 +216,9 @@ public class DCnet {
 
     private final SetMultimap<GroupKey, FlowRule> pendingFlows = HashMultimap.create();
 
-    private final HostListener hostListener = new InternalHostListener();
-
     private final DeviceListener deviceListener = new InternalDeviceListener();
 
-    private final PacketProcessor packetProcessor = new PingPacketProcessor();
+    private final PacketProcessor packetProcessor = new LeafPacketProcessor();
 
     // Selector for ICMP traffic that is to be intercepted
     private final TrafficSelector intercept = DefaultTrafficSelector.builder()
@@ -213,7 +231,8 @@ public class DCnet {
 
         try {
             BufferedReader switchConfig = new BufferedReader(new FileReader(configLoc + "switch_config.csv"));
-            String line = switchConfig.readLine();
+            String line;
+            switchConfig.readLine();
             while (!((line = switchConfig.readLine()).equals(""))) {
                 String[] config = line.split(",");
                 switchDB.put(config[0], new SwitchEntry(config[1], Integer.parseInt(config[2]),
@@ -222,14 +241,14 @@ public class DCnet {
             }
 
             BufferedReader hostConfig = new BufferedReader(new FileReader(configLoc + "host_config.csv"));
-            line = hostConfig.readLine();
+            hostConfig.readLine();
             while (!((line = hostConfig.readLine()).equals(""))) {
                 String[] config = line.split(",");
                 hostDB.put(config[0], new HostEntry(config[1], config[2], config[3], config[4]));
             }
 
             BufferedReader topConfig = new BufferedReader(new FileReader(configLoc + "top_config.csv"));
-            line = topConfig.readLine();
+            topConfig.readLine();
             String[] config = topConfig.readLine().split(",");
             dcCount = Integer.parseInt(config[0]);
             dcRadixDown = Integer.parseInt(config[1]);
@@ -251,8 +270,6 @@ public class DCnet {
         appId = coreService.registerApplication("org.onosproject.dcnet");
         packetService.addProcessor(packetProcessor, 50000);
         packetService.requestPackets(intercept, PacketPriority.CONTROL, appId, Optional.empty());
-        setupFlows();
-        hostService.addListener(hostListener);
         deviceService.addListener(deviceListener);
         log.info("Started");
     }
@@ -261,7 +278,6 @@ public class DCnet {
     public void deactivate() {
         packetService.removeProcessor(packetProcessor);
         flowRuleService.removeFlowRulesById(appId);
-        hostService.removeListener(hostListener);
         deviceService.removeListener(deviceListener);
         log.info("Stopped");
     }
@@ -291,15 +307,14 @@ public class DCnet {
     }
 
 
-    // Indicates whether the specified packet corresponds to ICMP ping.
-    private boolean isIcmpPing(Ethernet eth) {
-        return eth.getEtherType() == Ethernet.TYPE_IPV4 &&
-                ((IPv4) eth.getPayload()).getProtocol() == IPv4.PROTOCOL_ICMP;
+    // Indicates whether the specified packet corresponds IPv4
+    private boolean isIPv4(Ethernet eth) {
+        return eth.getEtherType() == Ethernet.TYPE_IPV4;
     }
 
 
     // Intercepts packets
-    private class PingPacketProcessor implements PacketProcessor {
+    private class LeafPacketProcessor implements PacketProcessor {
         @Override
         public void process(PacketContext context) {
             Ethernet eth = context.inPacket().parsed();
@@ -307,97 +322,197 @@ public class DCnet {
         }
     }
 
-    private synchronized void setupFlows() {
-        Set<Device> devices = Sets.newHashSet(deviceService.getAvailableDevices());
-        devices.forEach(this::processHostFlows);
-    }
+    private synchronized void setupFlows(Device device) {
+        String ip = device.id().uri().getHost();
 
+        if (switchDB.containsKey(ip)) {
+            SwitchEntry entry = switchDB.get(ip);
+            System.out.println("Switch " + ip + " connected");
+            System.out.println("Level: " + entry.getLevel());
+            System.out.println("DC: " + entry.getDc());
+            System.out.println("Pod: " + entry.getPod());
+            System.out.println("Leaf: " + entry.getLeaf());
 
-
-    private void processHostFlows(Device device) {
-        Set<Host> hosts = Sets.newHashSet(hostService.getHosts());
-
-        hosts.forEach(host -> {
-
-            TrafficSelector.Builder selectorBuilder = DefaultTrafficSelector.builder();
-            TrafficTreatment.Builder treatmentBuilder = DefaultTrafficTreatment.builder();
-            selectorBuilder.matchEthDst(host.mac());
-            Integer groupId = 0;
-            GroupKey groupKey = null;
-
-            if (host.location().deviceId().equals(device.id())) {
-
-            } else {
-
-            }
-
-            treatmentBuilder.deferred();
-            treatmentBuilder.group(new GroupId(groupId));
-            FlowRule flowRule = DefaultFlowRule.builder()
-                    .fromApp(appId)
-                    .makePermanent()
-                    .withSelector(selectorBuilder.build())
-                    .withTreatment(treatmentBuilder.build())
-                    .forDevice(device.id())
-                    .withPriority(50000)
-                    .build();
-            addPendingFlow(groupKey, flowRule);
-        });
-    }
-
-    private void addPendingFlow(GroupKey groupkey, FlowRule flowRule) {
-        synchronized (pendingFlows) {
-            pendingFlows.put(groupkey, flowRule);
-        }
-    }
-
-
-
-    private Set<FlowRule> fetchPendingFlows(GroupKey groupKey) {
-        Set<FlowRule> flowRules;
-
-        synchronized (pendingFlows) {
-            flowRules = pendingFlows.removeAll(groupKey);
-        }
-        return flowRules;
-    }
-
-    private PortNumber getOutPortForDeviceLink(Device sourceDevice, Device targetDevice) {
-
-        Set<Path> paths = pathService.getPaths(sourceDevice.id(), targetDevice.id());
-
-        if (paths == null || paths.isEmpty()) {
-            return null;
-        }
-
-        Path path = paths.iterator().next(); // use first path
-
-        if (path.links().isEmpty()) {
-            // XXX: will this happened ?
-            return null;
-        }
-
-        // first link should contains devive+port -> device+port
-        Link link = path.links().get(0);
-        return link.src().port();
-    }
-
-    private class InternalHostListener implements HostListener {
-        @Override
-        public void event(HostEvent hostEvent) {
-            switch (hostEvent.type()) {
-                case HOST_ADDED:
-                case HOST_UPDATED:
-                    setupFlows();
+            entry.setDevice(device);
+            switch (entry.getLevel()) {
+                case DC:
+                    addFlowsDC(device);
                     break;
-                case HOST_REMOVED:
+                case SUPER:
+                    addFlowsSuper(device);
+                    break;
+                case SPINE:
+                    addFlowsSpine(device);
+                    break;
+                case LEAF:
+                    addFlowsLeaf(device);
                     break;
                 default:
                     break;
             }
+            entry.setJoined();
+
 
         }
+    }
 
+    private void addFlowsDC(Device device) {
+        String ip = device.id().uri().getHost();
+        SwitchEntry entry = switchDB.get(ip);
+        int dc = entry.getDc();
+        byte[] bytes = new byte[6];
+        bytes[0] = (byte)((dc >> 4) & 0x3F);
+        bytes[1] = (byte)((dc & 0xF) << 4);
+        MacAddress eth = new MacAddress(bytes);
+        MacAddress mask = new MacAddress(new byte[]{(byte) 0xFF, (byte) 0xF0, 0x00, 0x00, 0x00, 0x00});
+        TrafficSelector.Builder selector = DefaultTrafficSelector.builder().matchEthDstMasked(eth, mask);
+        TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setOutput(hashSelector(1, dcRadixDown, entry));
+        FlowRule flowRule = DefaultFlowRule.builder()
+                .fromApp(appId)
+                .makePermanent()
+                .withSelector(selector.build())
+                .withTreatment(treatment.build())
+                .forDevice(device.id())
+                .withPriority(1000)
+                .build();
+        flowRuleService.applyFlowRules(flowRule);
+
+        for (int d = 0; d < dcCount; d++) {
+            bytes = new byte[6];
+            bytes[0] = (byte)((d >> 4) & 0x3F);
+            bytes[1] = (byte)((d & 0xF) << 4);
+            eth = new MacAddress(bytes);
+            selector = DefaultTrafficSelector.builder().matchEthDstMasked(eth, mask);
+            treatment = DefaultTrafficTreatment.builder().setOutput(PortNumber.portNumber(dcRadixDown + d + 1));
+            flowRule = DefaultFlowRule.builder()
+                    .fromApp(appId)
+                    .makePermanent()
+                    .withSelector(selector.build())
+                    .withTreatment(treatment.build())
+                    .forDevice(device.id())
+                    .withPriority(500)
+                    .build();
+            flowRuleService.applyFlowRules(flowRule);
+        }
+        // TODO: Forward all other traffic to internet
+    }
+
+    private void addFlowsSuper(Device device) {
+        String ip = device.id().uri().getHost();
+        SwitchEntry entry = switchDB.get(ip);
+        int dc = entry.getDc();
+        for (int p = 0; p < ssRadixDown; p++) {
+            byte[] bytes = new byte[6];
+            bytes[0] = (byte) ((dc >> 4) & 0x3F);
+            bytes[1] = (byte) (((dc & 0xF) << 4) + ((p >> 8) & 0xF));
+            bytes[2] = (byte) (p & 0xFF);
+            MacAddress eth = new MacAddress(bytes);
+            MacAddress mask = new MacAddress(new byte[]{(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, 0x00, 0x00, 0x00});
+            TrafficSelector.Builder selector = DefaultTrafficSelector.builder().matchEthDstMasked(eth, mask);
+            TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setOutput(PortNumber.portNumber(p + 1));
+            FlowRule flowRule = DefaultFlowRule.builder()
+                    .fromApp(appId)
+                    .makePermanent()
+                    .withSelector(selector.build())
+                    .withTreatment(treatment.build())
+                    .forDevice(device.id())
+                    .withPriority(1000)
+                    .build();
+            flowRuleService.applyFlowRules(flowRule);
+        }
+
+        TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setOutput(PortNumber.portNumber(ssRadixDown + 1));
+        FlowRule flowRule = DefaultFlowRule.builder()
+                .fromApp(appId)
+                .makePermanent()
+                .withTreatment(treatment.build())
+                .forDevice(device.id())
+                .withPriority(500)
+                .build();
+        flowRuleService.applyFlowRules(flowRule);
+    }
+
+    private void addFlowsSpine(Device device) {
+        String ip = device.id().uri().getHost();
+        SwitchEntry entry = switchDB.get(ip);
+        int dc = entry.getDc();
+        int pod = entry.getPod();
+        for (int l = 0; l < spRadixDown; l++) {
+            byte[] bytes = new byte[6];
+            bytes[0] = (byte) ((dc >> 4) & 0x3F);
+            bytes[1] = (byte) (((dc & 0xF) << 4) + ((pod >> 8) & 0xF));
+            bytes[2] = (byte) (pod & 0xFF);
+            bytes[3] = (byte) ((l >> 4) & 0xFF);
+            bytes[4] = (byte) ((l & 0xF) << 4);
+            MacAddress eth = new MacAddress(bytes);
+            MacAddress mask = new MacAddress(new byte[]{(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xF0, 0x00});
+            TrafficSelector.Builder selector = DefaultTrafficSelector.builder().matchEthDstMasked(eth, mask);
+            TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setOutput(PortNumber.portNumber(l + 1));
+            FlowRule flowRule = DefaultFlowRule.builder()
+                    .fromApp(appId)
+                    .makePermanent()
+                    .withSelector(selector.build())
+                    .withTreatment(treatment.build())
+                    .forDevice(device.id())
+                    .withPriority(1000)
+                    .build();
+            flowRuleService.applyFlowRules(flowRule);
+        }
+
+        TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setOutput(hashSelector(spRadixDown + 1, spRadixUp, entry));
+        FlowRule flowRule = DefaultFlowRule.builder()
+                .fromApp(appId)
+                .makePermanent()
+                .withTreatment(treatment.build())
+                .forDevice(device.id())
+                .withPriority(500)
+                .build();
+        flowRuleService.applyFlowRules(flowRule);
+    }
+
+    private void addFlowsLeaf(Device device) {
+        String ip = device.id().uri().getHost();
+        SwitchEntry entry = switchDB.get(ip);
+        int dc = entry.getDc();
+        int pod = entry.getPod();
+        int leaf = entry.getLeaf();
+        for (int h = 0; h < lfRadixDown; h++) {
+            byte[] bytes = new byte[6];
+            bytes[0] = (byte) ((dc >> 4) & 0x3F);
+            bytes[1] = (byte) (((dc & 0xF) << 4) + ((pod >> 8) & 0xF));
+            bytes[2] = (byte) (pod & 0xFF);
+            bytes[3] = (byte) ((leaf >> 4) & 0xFF);
+            bytes[4] = (byte) (((leaf & 0xF) << 4) + ((h >> 8) & 0xF));
+            bytes[2] = (byte) (h & 0xFF);
+            MacAddress eth = new MacAddress(bytes);
+            MacAddress mask = new MacAddress(new byte[]{(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF});
+            TrafficSelector.Builder selector = DefaultTrafficSelector.builder().matchEthDstMasked(eth, mask);
+            TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setOutput(PortNumber.portNumber(h + 1));
+            FlowRule flowRule = DefaultFlowRule.builder()
+                    .fromApp(appId)
+                    .makePermanent()
+                    .withSelector(selector.build())
+                    .withTreatment(treatment.build())
+                    .forDevice(device.id())
+                    .withPriority(1000)
+                    .build();
+            flowRuleService.applyFlowRules(flowRule);
+        }
+
+        TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setOutput(hashSelector(lfRadixDown + 1, lfRadixUp, entry));
+        FlowRule flowRule = DefaultFlowRule.builder()
+                .fromApp(appId)
+                .makePermanent()
+                .withTreatment(treatment.build())
+                .forDevice(device.id())
+                .withPriority(500)
+                .build();
+        flowRuleService.applyFlowRules(flowRule);
+    }
+
+    // Todo: Proper ECMP algorithm based on incoming packets
+    private PortNumber hashSelector(int portStart, int portCount, SwitchEntry entry) {
+        return PortNumber.portNumber(portStart + (int)(Math.random() * portCount));
     }
 
     private class InternalDeviceListener implements DeviceListener {
@@ -406,7 +521,7 @@ public class DCnet {
             switch (deviceEvent.type()) {
                 case DEVICE_ADDED:
                 case DEVICE_UPDATED:
-                    setupFlows();
+                    setupFlows(deviceEvent.subject());
                     break;
                 case DEVICE_REMOVED:
                 case DEVICE_SUSPENDED:
