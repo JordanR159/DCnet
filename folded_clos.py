@@ -166,6 +166,7 @@ class FoldedClos(Topo):
 
 		# Simple counter for assigning host names
 		host_count = 1
+		switch_count = 1;
 
 		# Counter with adjustable increments for switch names. Choose
 		# increment and initial values to easily identify switch types
@@ -185,11 +186,11 @@ class FoldedClos(Topo):
 
 		# Configuration file for switches that can be used by SDN controller
 		switch_config = open("switch_config.csv", "w+")
-		switch_config.write("name,level,dc,pod,leaf\n")
+		switch_config.write("id,name,level,dc,pod,leaf\n")
 		
 		# Configuration file for hosts that can be used by SDN controller
 		host_config = open("host_config.csv", "w+")
-		host_config.write("idmac,name,leaf,port,rmac\n")
+		host_config.write("ip,name,leaf,port,rmac\n")
 		
 		dc_switches = []
 		ss_switches = []
@@ -197,17 +198,21 @@ class FoldedClos(Topo):
 
 		for d in range(dc):
 			dc_name = "d" + str(dc_count)
-			self.addSwitch(dc_name)
+			ip_addr = "10.0.1.1" + format(switch_count, "02d") + "/24"
+			self.addSwitch(dc_name, ip = ip_addr)
+			switch_count += 1;
 			dc_switches.append(dc_name)
-			switch_config.write(dc_name + ",0," + str(d) + ",-1,-1\n")
+			switch_config.write(ip_addr + dc_name + ",0," + str(d) + ",-1,-1\n")
 			dc_count += increment
 
 			# Create super spines
 			for ss in range(ss_ratio * spine):
 				ss_name = "u" + str(ss_count)
-				self.addSwitch(ss_name)
+				ip_addr = "10.0.1.1" + format(switch_count, "02d") + "/24"
+				self.addSwitch(ss_name, ip = ip_addr)
+				switch_count += 1;
 				ss_switches.append(ss_name)
-				switch_config.write(ss_name + ",1," + str(d) + ",-1,-1\n")
+				switch_config.write(ip_addr + ss_name + ",1," + str(d) + ",-1,-1\n")
 				ss_count += increment
 
 			# Create a group of leaf and spine switches for every pod
@@ -216,9 +221,11 @@ class FoldedClos(Topo):
 				# Create leaves and hosts for each leaf
 				for l in range(leaf):
 					leaf_name = "l" + str(leaf_count)
-					self.addSwitch(leaf_name)
+					ip_addr = "10.0.1.1" + format(switch_count, "02d") + "/24"
+					self.addSwitch(leaf_name, ip = ip_addr)
+					switch_count += 1;
 					leaf_switches.append(leaf_name)
-					switch_config.write(leaf_name + ",3," + str(d) + ",")
+					switch_config.write(ip_addr + leaf_name + ",3," + str(d) + ",")
 					switch_config.write(str(p) + "," + str(l) + "\n")
 					leaf_count += increment
 					
@@ -228,7 +235,7 @@ class FoldedClos(Topo):
 
 						# Construct host IPv4 address, first 8 bits are reserved,
 						# last 24 bits uniquely identify a host
-						ip_addr = "128.10.2." + str(host_count & 0xFF) + "/24"
+						ip_addr = "10.0.1." + str(host_count & 0xFF) + "/24"
 	
 						# Construct host UID MAC address, first 24 bits are reserved,
 						# last 24 bits uniquely identify a host
@@ -259,8 +266,10 @@ class FoldedClos(Topo):
 				# Create spines and link to super spines and leaves
 				for s in range(spine):
 					spine_name = "s" + str(spine_count)
-					self.addSwitch(spine_name)
-					switch_config.write(spine_name + ",2," + str(d))
+					ip_addr = "10.0.1.1" + format(switch_count, "02d") + "/24"
+					self.addSwitch(spine_name, ip = ip_addr)
+					switch_count += 1;
+					switch_config.write(ip_addr + spine_name + ",2," + str(d))
 					switch_config.write("," + str(p) + ",-1\n")
 					spine_count += increment
 					for l in range(leaf):

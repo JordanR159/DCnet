@@ -268,7 +268,7 @@ public class DCnet {
     public void activate() {
         init();
         appId = coreService.registerApplication("org.onosproject.dcnet");
-        packetService.addProcessor(packetProcessor, 50000);
+        //packetService.addProcessor(packetProcessor, 50000);
         packetService.requestPackets(intercept, PacketPriority.CONTROL, appId, Optional.empty());
         deviceService.addListener(deviceListener);
         log.info("Started");
@@ -276,7 +276,7 @@ public class DCnet {
 
     @Deactivate
     public void deactivate() {
-        packetService.removeProcessor(packetProcessor);
+        //packetService.removeProcessor(packetProcessor);
         flowRuleService.removeFlowRulesById(appId);
         deviceService.removeListener(deviceListener);
         log.info("Stopped");
@@ -323,15 +323,15 @@ public class DCnet {
     }
 
     private synchronized void setupFlows(Device device) {
-        String ip = device.id().uri().getHost();
-
+        String ip = device.chassisId().toString();
+		log.info("IP " + ip + " connected");
         if (switchDB.containsKey(ip)) {
             SwitchEntry entry = switchDB.get(ip);
-            System.out.println("Switch " + ip + " connected");
-            System.out.println("Level: " + entry.getLevel());
-            System.out.println("DC: " + entry.getDc());
-            System.out.println("Pod: " + entry.getPod());
-            System.out.println("Leaf: " + entry.getLeaf());
+            log.info("Switch " + ip + " connected");
+            log.info("Level: " + entry.getLevel());
+            log.info("DC: " + entry.getDc());
+            log.info("Pod: " + entry.getPod());
+            log.info("Leaf: " + entry.getLeaf());
 
             entry.setDevice(device);
             switch (entry.getLevel()) {

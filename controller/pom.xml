@@ -42,16 +42,6 @@
         <onos.app.requires>org.onosproject.fwd</onos.app.requires>
     </properties>
 
-    <properties>
-        <onos.version>2.1.0</onos.version>
-        <onos.app.name>org.onosproject.testapp</onos.app.name>
-        <onos.app.origin>ON.Lab</onos.app.origin>
-        <onos.app.title>DCnet Test App</onos.app.title>
-        <onos.app.category>Monitoring</onos.app.category>
-        <onos.app.url>http://onosproject.org</onos.app.url>
-        <onos.app.requires>org.onosproject.fwd</onos.app.requires>
-    </properties>
-
     <dependencies>
 
         <dependency>
