@@ -201,7 +201,7 @@ public class DCnet {
     private int lfRadixUp;
     private int lfRadixDown;
 
-    /* Maps IP address to a switch entry */
+    /* Maps Chassis ID to a switch entry */
     private Map<String, SwitchEntry> switchDB = new TreeMap<>();
 
     /* Maps IP address to a host entry */
@@ -323,13 +323,11 @@ public class DCnet {
     }
 
     private synchronized void setupFlows(Device device) {
-        String ip = device.id().uri().getHost();
         String id = device.chassisId().toString();
-		log.info("IP " + ip + " connected");
         log.info("Chassis " + id + " connected");
-        if (switchDB.containsKey(ip)) {
-            SwitchEntry entry = switchDB.get(ip);
-            log.info("Switch " + ip + " connected");
+        if (switchDB.containsKey(id)) {
+            SwitchEntry entry = switchDB.get(id);
+            log.info("Switch " + id + " connected");
             log.info("Level: " + entry.getLevel());
             log.info("DC: " + entry.getDc());
             log.info("Pod: " + entry.getPod());
@@ -359,8 +357,8 @@ public class DCnet {
     }
 
     private void addFlowsDC(Device device) {
-        String ip = device.id().uri().getHost();
-        SwitchEntry entry = switchDB.get(ip);
+        String id = device.chassisId().toString();
+        SwitchEntry entry = switchDB.get(id);
         int dc = entry.getDc();
         byte[] bytes = new byte[6];
         bytes[0] = (byte)((dc >> 4) & 0x3F);
@@ -400,8 +398,8 @@ public class DCnet {
     }
 
     private void addFlowsSuper(Device device) {
-        String ip = device.id().uri().getHost();
-        SwitchEntry entry = switchDB.get(ip);
+        String id = device.chassisId().toString();
+        SwitchEntry entry = switchDB.get(id);
         int dc = entry.getDc();
         for (int p = 0; p < ssRadixDown; p++) {
             byte[] bytes = new byte[6];
@@ -435,8 +433,8 @@ public class DCnet {
     }
 
     private void addFlowsSpine(Device device) {
-        String ip = device.id().uri().getHost();
-        SwitchEntry entry = switchDB.get(ip);
+        String id = device.chassisId().toString();
+        SwitchEntry entry = switchDB.get(id);
         int dc = entry.getDc();
         int pod = entry.getPod();
         for (int l = 0; l < spRadixDown; l++) {
@@ -473,8 +471,8 @@ public class DCnet {
     }
 
     private void addFlowsLeaf(Device device) {
-        String ip = device.id().uri().getHost();
-        SwitchEntry entry = switchDB.get(ip);
+        String id = device.chassisId().toString();
+        SwitchEntry entry = switchDB.get(id);
         int dc = entry.getDc();
         int pod = entry.getPod();
         int leaf = entry.getLeaf();

@@ -90,7 +90,7 @@ public class TestApp {
     public void activate() {
         appId = coreService.registerApplication("org.onosproject.testapp",
                 () -> log.info("TestApp down"));
-        packetService.addProcessor(packetProcessor, PRIORITY);
+        //packetService.addProcessor(packetProcessor, PRIORITY);
         packetService.requestPackets(intercept, PacketPriority.CONTROL, appId,
                 Optional.empty());
         log.info("Started");
@@ -98,7 +98,7 @@ public class TestApp {
 
     @Deactivate
     public void deactivate() {
-        packetService.removeProcessor(packetProcessor);
+        //packetService.removeProcessor(packetProcessor);
         flowRuleService.removeFlowRulesById(appId);
         log.info("Stopped");
     }
