@@ -323,8 +323,10 @@ public class DCnet {
     }
 
     private synchronized void setupFlows(Device device) {
-        String ip = device.chassisId().toString();
+        String ip = device.id().uri().getHost();
+        String id = device.chassisId().toString();
 		log.info("IP " + ip + " connected");
+        log.info("Chassis " + id + " connected");
         if (switchDB.containsKey(ip)) {
             SwitchEntry entry = switchDB.get(ip);
             log.info("Switch " + ip + " connected");
