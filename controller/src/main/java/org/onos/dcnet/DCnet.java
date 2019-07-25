@@ -266,7 +266,7 @@ public class DCnet {
     public void activate() {
         init();
         appId = coreService.registerApplication("org.onosproject.dcnet");
-        //packetService.addProcessor(packetProcessor, 50000);
+        packetService.addProcessor(packetProcessor, 50000);
         packetService.requestPackets(intercept, PacketPriority.CONTROL, appId, Optional.empty());
         deviceService.addListener(deviceListener);
         log.info("Started");
@@ -274,7 +274,7 @@ public class DCnet {
 
     @Deactivate
     public void deactivate() {
-        //packetService.removeProcessor(packetProcessor);
+        packetService.removeProcessor(packetProcessor);
         flowRuleService.removeFlowRulesById(appId);
         deviceService.removeListener(deviceListener);
         log.info("Stopped");
@@ -299,17 +299,17 @@ public class DCnet {
         if (eth.getDestinationMACAddress()[0] == 0 && eth.getDestinationMACAddress()[3] == 0) {
             return;
         }
-        IPv4 ip = null;
+        IPv4 ip;
         if (eth.getEtherType() == Ethernet.TYPE_IPV4) {
             ip = (IPv4) (eth.getPayload());
         }
         else {
             return;
         }
-        Device device = deviceService.getDevice(context.inPacket().receivedFrom().deviceId());
-        String id = device.chassisId().toString();
+        DeviceId deviceId = context.inPacket().receivedFrom().deviceId();
         int ip_dst = ip.getDestinationAddress();
         MacAddress dst = eth.getDestinationMAC();
+        log.info(integerToIpStr(ip_dst));
         log.info(dst.toString());
         HostEntry host = hostDB.get(integerToIpStr(ip_dst));
         TrafficSelector.Builder selector = DefaultTrafficSelector.builder().matchEthDst(dst);
@@ -319,18 +319,11 @@ public class DCnet {
                 .makePermanent()
                 .withSelector(selector.build())
                 .withTreatment(treatment.build())
-                .forDevice(device.id())
+                .forDevice(deviceId)
                 .withPriority(2000)
                 .build();
         flowRuleService.applyFlowRules(flowRule);
     }
-
-
-    // Indicates whether the specified packet corresponds IPv4
-    private boolean isIPv4(Ethernet eth) {
-        return eth.getEtherType() == Ethernet.TYPE_IPV4;
-    }
-
 
     // Intercepts packets
     private class LeafPacketProcessor implements PacketProcessor {
@@ -532,8 +525,8 @@ public class DCnet {
                 .build();
         flowRuleService.applyFlowRules(flowRule);
 
-        TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setOutput(hashSelector(lfRadixDown + 1, lfRadixUp, entry));
-        FlowRule flowRule = DefaultFlowRule.builder()
+        treatment = DefaultTrafficTreatment.builder().setOutput(hashSelector(lfRadixDown + 1, lfRadixUp, entry));
+        flowRule = DefaultFlowRule.builder()
                 .fromApp(appId)
                 .makePermanent()
                 .withTreatment(treatment.build())
