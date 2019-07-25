@@ -296,6 +296,7 @@ public class DCnet {
     // Processes the specified ICMP ping packet.
     private void processPacket(PacketContext context, Ethernet eth) {
         /* Packet likely translated if first and fourth bytes are 0 */
+        log.info(eth.getDestinationMAC().toString());
         if (eth.getDestinationMACAddress()[0] == 0 && eth.getDestinationMACAddress()[3] == 0) {
             return;
         }
@@ -310,8 +311,11 @@ public class DCnet {
         int ip_dst = ip.getDestinationAddress();
         MacAddress dst = eth.getDestinationMAC();
         log.info(integerToIpStr(ip_dst));
-        log.info(dst.toString());
+        //log.info(dst.toString());
         HostEntry host = hostDB.get(integerToIpStr(ip_dst));
+        if (host == null) {
+            return;
+        }
         TrafficSelector.Builder selector = DefaultTrafficSelector.builder().matchEthDst(dst);
         TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setEthDst(strToMac(host.getRmac()));
         FlowRule flowRule = DefaultFlowRule.builder()
@@ -519,6 +523,7 @@ public class DCnet {
         FlowRule flowRule = DefaultFlowRule.builder()
                 .fromApp(appId)
                 .makePermanent()
+                //.withSelector(selector.build())
                 .withTreatment(treatment.build())
                 .forDevice(device.id())
                 .withPriority(500)
