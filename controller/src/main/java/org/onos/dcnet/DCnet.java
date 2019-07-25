@@ -23,9 +23,7 @@ import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Deactivate;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.ReferenceCardinality;
-import org.onlab.packet.Ethernet;
-import org.onlab.packet.IPv4;
-import org.onlab.packet.MacAddress;
+import org.onlab.packet.*;
 import org.onlab.util.KryoNamespace;
 import org.onosproject.core.ApplicationId;
 import org.onosproject.core.CoreService;
@@ -53,6 +51,7 @@ import org.onosproject.net.topology.PathService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.crypto.Mac;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -222,8 +221,7 @@ public class DCnet {
 
     // Selector for ICMP traffic that is to be intercepted
     private final TrafficSelector intercept = DefaultTrafficSelector.builder()
-            .matchEthType(Ethernet.TYPE_IPV4).matchIPProtocol(IPv4.PROTOCOL_ICMP)
-            .build();
+            .matchEthType(Ethernet.TYPE_IPV4).build();
 
     private void init() {
         switchDB = new TreeMap<>();
@@ -282,28 +280,49 @@ public class DCnet {
         log.info("Stopped");
     }
 
+    private String integerToIpStr(int ip) {
+        return String.format("%d.%d.%d.%d", (ip >> 24) & 0xFF, (ip >> 16) & 0xFF, (ip >> 8) & 0xFF, ip & 0xFF);
+    }
+
+    private MacAddress strToMac(String address) {
+        byte[] bytes = new byte[6];
+        String[] octets = address.split(":");
+        for (int i = 0; i < 6; i++) {
+            bytes[i] = (byte)(Integer.parseInt(octets[i], 16));
+        }
+        return new MacAddress(bytes);
+    }
+
     // Processes the specified ICMP ping packet.
     private void processPacket(PacketContext context, Ethernet eth) {
-        DeviceId deviceId = context.inPacket().receivedFrom().deviceId();
-        MacAddress src = eth.getSourceMAC();
+        /* Packet likely translated if first and fourth bytes are 0 */
+        if (eth.getDestinationMACAddress()[0] == 0 && eth.getDestinationMACAddress()[3] == 0) {
+            return;
+        }
+        IPv4 ip = null;
+        if (eth.getEtherType() == Ethernet.TYPE_IPV4) {
+            ip = (IPv4) (eth.getPayload());
+        }
+        else {
+            return;
+        }
+        Device device = deviceService.getDevice(context.inPacket().receivedFrom().deviceId());
+        String id = device.chassisId().toString();
+        int ip_dst = ip.getDestinationAddress();
         MacAddress dst = eth.getDestinationMAC();
         log.info(dst.toString());
-        if (dst.toString().equals("00:0E:C6:D7:38:63")) {
-            log.info("Dropping Packet");
-            TrafficSelector selector = DefaultTrafficSelector.builder()
-                    .matchEthSrc(src).matchEthDst(dst).build();
-
-            TrafficTreatment drop = DefaultTrafficTreatment.builder()
-                    .drop().build();
-
-            flowObjectiveService.forward(deviceId, DefaultForwardingObjective.builder()
-                    .fromApp(appId)
-                    .withSelector(selector)
-                    .withTreatment(drop)
-                    .withFlag(ForwardingObjective.Flag.VERSATILE)
-                    .withPriority(50000)
-                    .add());
-        }
+        HostEntry host = hostDB.get(integerToIpStr(ip_dst));
+        TrafficSelector.Builder selector = DefaultTrafficSelector.builder().matchEthDst(dst);
+        TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setEthDst(strToMac(host.getRmac()));
+        FlowRule flowRule = DefaultFlowRule.builder()
+                .fromApp(appId)
+                .makePermanent()
+                .withSelector(selector.build())
+                .withTreatment(treatment.build())
+                .forDevice(device.id())
+                .withPriority(2000)
+                .build();
+        flowRuleService.applyFlowRules(flowRule);
     }
 
 
@@ -483,7 +502,7 @@ public class DCnet {
             bytes[2] = (byte) (pod & 0xFF);
             bytes[3] = (byte) ((leaf >> 4) & 0xFF);
             bytes[4] = (byte) (((leaf & 0xF) << 4) + ((h >> 8) & 0xF));
-            bytes[2] = (byte) (h & 0xFF);
+            bytes[5] = (byte) (h & 0xFF);
             MacAddress eth = new MacAddress(bytes);
             MacAddress mask = new MacAddress(new byte[]{(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF});
             TrafficSelector.Builder selector = DefaultTrafficSelector.builder().matchEthDstMasked(eth, mask);
@@ -499,13 +518,27 @@ public class DCnet {
             flowRuleService.applyFlowRules(flowRule);
         }
 
-        TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setOutput(hashSelector(lfRadixDown + 1, lfRadixUp, entry));
+        /* Give packets with untranslated MAC addresses to controller */
+        MacAddress eth = new MacAddress(new byte[6]);
+        MacAddress mask = new MacAddress(new byte[]{(byte) 0xFF, 0x00, 0x00, (byte) 0xFF, 0x00, 0x00});
+        TrafficSelector.Builder selector = DefaultTrafficSelector.builder().matchEthDstMasked(eth, mask);
+        TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().punt();
         FlowRule flowRule = DefaultFlowRule.builder()
                 .fromApp(appId)
                 .makePermanent()
                 .withTreatment(treatment.build())
                 .forDevice(device.id())
                 .withPriority(500)
+                .build();
+        flowRuleService.applyFlowRules(flowRule);
+
+        TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setOutput(hashSelector(lfRadixDown + 1, lfRadixUp, entry));
+        FlowRule flowRule = DefaultFlowRule.builder()
+                .fromApp(appId)
+                .makePermanent()
+                .withTreatment(treatment.build())
+                .forDevice(device.id())
+                .withPriority(100)
                 .build();
         flowRuleService.applyFlowRules(flowRule);
     }
