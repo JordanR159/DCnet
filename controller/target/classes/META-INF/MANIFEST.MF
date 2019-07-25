@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1564005381443
+Bnd-LastModified: 1564078430599
 Build-Jdk: 11.0.3
 Built-By: reed226
 Bundle-Description: DCnet Test Application
@@ -9,11 +9,15 @@ Bundle-Name: onos-app-dcnet
 Bundle-SymbolicName: org.onosproject.onos-app-dcnet
 Bundle-Version: 2.1.0
 Created-By: Apache Maven Bundle Plugin
-Export-Package: org.onos.dcnet;uses:="org.onlab.util,org.onosproject.cor
- e,org.onosproject.net,org.onosproject.net.device,org.onosproject.net.fl
- ow,org.onosproject.net.flowobjective,org.onosproject.net.group,org.onos
- project.net.host,org.onosproject.net.packet,org.onosproject.net.topolog
- y";version="2.1.0"
+Export-Package: 
+ org.onos.testapp;uses:="org.onosproject.core,org.onosproject.net.flow,o
+ rg.onosproject.net.flowobjective,org.onosproject.net.packet";version="2
+ .1.0",
+ org.onos.dcnet;uses:="org.onlab.util,org.onosproject.core,org.onosproje
+ ct.net,org.onosproject.net.device,org.onosproject.net.flow,org.onosproj
+ ect.net.flowobjective,org.onosproject.net.group,org.onosproject.net.hos
+ t,org.onosproject.net.packet,org.onosproject.net.topology";version="2.1
+ .0"
 Import-Package: 
  com.google.common.collect;version="[22.0,23)",
  org.onlab.packet;version="[2.1,3)",
@@ -30,5 +34,6 @@ Import-Package:
  org.onosproject.net.topology;version="[2.1,3)",
  org.slf4j;version="[1.7,2)"
 Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.8))"
-Service-Component: OSGI-INF/org.onos.dcnet.DCnet.xml
+Service-Component: OSGI-INF/org.onos.dcnet.DCnet.xml,OSGI-INF/org.onos.t
+ estapp.TestApp.xml
 Tool: Bnd-3.5.0.201709291849

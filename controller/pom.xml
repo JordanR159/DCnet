@@ -39,7 +39,6 @@
         <onos.app.title>DCnet App</onos.app.title>
         <onos.app.category>Monitoring</onos.app.category>
         <onos.app.url>http://onosproject.org</onos.app.url>
-        <onos.app.requires>org.onosproject.fwd</onos.app.requires>
     </properties>
 
     <dependencies>

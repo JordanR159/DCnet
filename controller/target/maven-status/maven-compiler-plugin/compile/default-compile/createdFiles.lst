@@ -1,7 +1,11 @@
+org/onos/testapp/TestApp.class
 org/onos/dcnet/DCnet$1.class
+org/onos/testapp/TestApp$PingPacketProcessor.class
+org/onos/testapp/TestApp$1.class
 org/onos/dcnet/package-info.class
 org/onos/dcnet/DCnet.class
 org/onos/dcnet/DCnet$InternalDeviceListener.class
 org/onos/dcnet/DCnet$LeafPacketProcessor.class
 org/onos/dcnet/DCnet$HostEntry.class
+org/onos/testapp/package-info.class
 org/onos/dcnet/DCnet$SwitchEntry.class

@@ -202,7 +202,7 @@ class FoldedClos(Topo):
 			self.addSwitch(dc_name, ip = ip_addr)
 			switch_count += 1;
 			dc_switches.append(dc_name)
-			switch_config.write(ip_addr + dc_name + ",0," + str(d) + ",-1,-1\n")
+			switch_config.write(format(dc_count, "x") + "," + dc_name + ",0," + str(d) + ",-1,-1\n")
 			dc_count += increment
 
 			# Create super spines
@@ -212,7 +212,7 @@ class FoldedClos(Topo):
 				self.addSwitch(ss_name, ip = ip_addr)
 				switch_count += 1;
 				ss_switches.append(ss_name)
-				switch_config.write(ip_addr + ss_name + ",1," + str(d) + ",-1,-1\n")
+				switch_config.write(format(ss_count, "x") + "," + ss_name + ",1," + str(d) + ",-1,-1\n")
 				ss_count += increment
 
 			# Create a group of leaf and spine switches for every pod
@@ -225,7 +225,7 @@ class FoldedClos(Topo):
 					self.addSwitch(leaf_name, ip = ip_addr)
 					switch_count += 1;
 					leaf_switches.append(leaf_name)
-					switch_config.write(ip_addr + leaf_name + ",3," + str(d) + ",")
+					switch_config.write(format(leaf_count, "x") + "," + leaf_name + ",3," + str(d) + ",")
 					switch_config.write(str(p) + "," + str(l) + "\n")
 					leaf_count += increment
 					
@@ -269,7 +269,7 @@ class FoldedClos(Topo):
 					ip_addr = "10.0.1.1" + format(switch_count, "02d") + "/24"
 					self.addSwitch(spine_name, ip = ip_addr)
 					switch_count += 1;
-					switch_config.write(ip_addr + spine_name + ",2," + str(d))
+					switch_config.write(format(spine_count, "x") + "," + spine_name + ",2," + str(d))
 					switch_config.write("," + str(p) + ",-1\n")
 					spine_count += increment
 					for l in range(leaf):

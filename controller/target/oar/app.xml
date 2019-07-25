@@ -17,7 +17,7 @@
 <app name="org.onosproject.dcnet" origin="ON.Lab" version="2.1.0"
         title="DCnet App" category="Monitoring" url="http://onosproject.org"
         featuresRepo="mvn:org.onosproject/onos-app-dcnet/2.1.0/xml/features"
-        features="onos-app-dcnet" apps="org.onosproject.fwd">
+        features="onos-app-dcnet" apps="">
     <description>DCnet Test Application</description>
     <artifact>mvn:org.onosproject/onos-app-dcnet/2.1.0</artifact>
 </app>
