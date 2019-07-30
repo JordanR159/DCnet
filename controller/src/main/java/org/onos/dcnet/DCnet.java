@@ -501,8 +501,7 @@ public class DCnet {
             bytes[4] = (byte) (((leaf & 0xF) << 4) + ((h >> 8) & 0xF));
             bytes[5] = (byte) (h & 0xFF);
             MacAddress eth = new MacAddress(bytes);
-            MacAddress mask = new MacAddress(new byte[]{(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF});
-            TrafficSelector.Builder selector = DefaultTrafficSelector.builder().matchEthDstMasked(eth, mask);
+            TrafficSelector.Builder selector = DefaultTrafficSelector.builder().matchEthDst(eth);
             TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setOutput(PortNumber.portNumber(h + 1));
             FlowRule flowRule = DefaultFlowRule.builder()
                     .fromApp(appId)
