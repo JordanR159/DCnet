@@ -235,7 +235,7 @@ class FoldedClos(Topo):
 
 						# Construct host IPv4 address, first 8 bits are reserved,
 						# last 24 bits uniquely identify a host
-						ip_addr = "10.0.1." + str(host_count & 0xFF) + "/24"
+						ip_addr = "10.0.1." + str(host_count & 0xFF)
 	
 						# Construct host UID MAC address, first 24 bits are reserved,
 						# last 24 bits uniquely identify a host
@@ -256,7 +256,7 @@ class FoldedClos(Topo):
 						rmac_addr += format((h >> 8)& 0xF, "01x") + ":"
 						rmac_addr += format(h & 0xFF, "02x")
 	
-						self.addHost(host_name, ip = ip_addr, mac = mac_addr)
+						self.addHost(host_name, ip = ip_addr + "/24", mac = mac_addr)
 						host_config.write(ip_addr + "," + host_name + "," + leaf_name)
 						host_config.write("," + str(h) + "," + rmac_addr + "\n")
 						host_count += 1
