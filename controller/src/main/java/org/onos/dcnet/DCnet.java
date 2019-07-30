@@ -17,7 +17,6 @@ package org.onos.dcnet;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
-import com.google.common.collect.Sets;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Deactivate;
@@ -27,21 +26,14 @@ import org.onlab.packet.*;
 import org.onlab.util.KryoNamespace;
 import org.onosproject.core.ApplicationId;
 import org.onosproject.core.CoreService;
-import org.onosproject.core.GroupId;
 import org.onosproject.net.*;
 import org.onosproject.net.device.DeviceEvent;
 import org.onosproject.net.device.DeviceListener;
 import org.onosproject.net.device.DeviceService;
 import org.onosproject.net.flow.*;
-import org.onosproject.net.flow.criteria.Criterion;
-import org.onosproject.net.flow.criteria.EthCriterion;
-import org.onosproject.net.flowobjective.DefaultForwardingObjective;
 import org.onosproject.net.flowobjective.FlowObjectiveService;
-import org.onosproject.net.flowobjective.ForwardingObjective;
 import org.onosproject.net.group.GroupKey;
 import org.onosproject.net.group.GroupService;
-import org.onosproject.net.host.HostEvent;
-import org.onosproject.net.host.HostListener;
 import org.onosproject.net.host.HostService;
 import org.onosproject.net.packet.PacketContext;
 import org.onosproject.net.packet.PacketPriority;
@@ -51,27 +43,16 @@ import org.onosproject.net.topology.PathService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.crypto.Mac;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
-import static org.onlab.util.Tools.groupedThreads;
-import static org.onosproject.net.flow.FlowRuleEvent.Type.RULE_REMOVED;
-import static org.onosproject.net.flow.criteria.Criterion.Type.ETH_SRC;
 
 /**
- * Sample application that permits only one ICMP ping per minute for a unique
- * src/dst MAC pair per switch.
+ * ONOS App implementing DCnet forwarding scheme
  */
 @Component(immediate = true)
 public class DCnet {
-    /* Reference apps: oneping and group-fwd in https://github.com/opennetworkinglab/onos-app-samples */
-
     @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY)
     private CoreService coreService;
 
@@ -220,8 +201,7 @@ public class DCnet {
     private final PacketProcessor packetProcessor = new LeafPacketProcessor();
 
     // Selector for ICMP traffic that is to be intercepted
-    private final TrafficSelector intercept = DefaultTrafficSelector.builder()
-            .matchEthType(Ethernet.TYPE_IPV4).build();
+    private final TrafficSelector intercept = DefaultTrafficSelector.builder().matchEthType(Ethernet.TYPE_IPV4).build();
 
     private void init() {
         switchDB = new TreeMap<>();
@@ -266,7 +246,7 @@ public class DCnet {
     public void activate() {
         init();
         appId = coreService.registerApplication("org.onosproject.dcnet");
-        packetService.addProcessor(packetProcessor, 50000);
+        packetService.addProcessor(packetProcessor, 1000);
         packetService.requestPackets(intercept, PacketPriority.CONTROL, appId, Optional.empty());
         deviceService.addListener(deviceListener);
         log.info("Started");
@@ -307,7 +287,12 @@ public class DCnet {
         else {
             return;
         }
-        DeviceId deviceId = context.inPacket().receivedFrom().deviceId();
+        Device device = deviceService.getDevice(context.inPacket().receivedFrom().deviceId());
+        String id = device.chassisId().toString();
+        SwitchEntry entry = switchDB.get(id);
+        if (entry.getLevel() != LEAF) {
+            return;
+        }
         int ip_dst = ip.getDestinationAddress();
         MacAddress dst = eth.getDestinationMAC();
         log.info(integerToIpStr(ip_dst));
@@ -316,17 +301,36 @@ public class DCnet {
         if (host == null) {
             return;
         }
+        String[] bytes = host.getRmac().split(":");
+        int dc = Integer.parseInt(bytes[0], 16) * 16 + Integer.parseInt(bytes[1].substring(0, 1), 16);
+        int pod = Integer.parseInt(bytes[1].substring(1), 16) * 16 + Integer.parseInt(bytes[2], 16);
+        int leaf = Integer.parseInt(bytes[3], 16) * 16 + Integer.parseInt(bytes[4].substring(0, 1), 16);
         TrafficSelector.Builder selector = DefaultTrafficSelector.builder().matchEthDst(dst);
-        TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setEthDst(strToMac(host.getRmac()));
-        FlowRule flowRule = DefaultFlowRule.builder()
-                .fromApp(appId)
-                .makePermanent()
-                .withSelector(selector.build())
-                .withTreatment(treatment.build())
-                .forDevice(deviceId)
-                .withPriority(2000)
-                .build();
-        flowRuleService.applyFlowRules(flowRule);
+        if (dc == entry.getDc() && pod == entry.getPod() && leaf == entry.getLeaf()) {
+            int port = Integer.parseInt(bytes[4].substring(1), 16) * 16 + Integer.parseInt(bytes[5], 16) + 1;
+            TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setOutput(PortNumber.portNumber(port));
+            FlowRule flowRule = DefaultFlowRule.builder()
+                    .fromApp(appId)
+                    .makePermanent()
+                    .withSelector(selector.build())
+                    .withTreatment(treatment.build())
+                    .forDevice(device.id())
+                    .withPriority(1000)
+                    .build();
+            flowRuleService.applyFlowRules(flowRule);
+        }
+        else {
+            TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setEthDst(strToMac(host.getRmac())).setOutput(hashSelector(lfRadixDown + 1, lfRadixUp, entry));
+            FlowRule flowRule = DefaultFlowRule.builder()
+                    .fromApp(appId)
+                    .makePermanent()
+                    .withSelector(selector.build())
+                    .withTreatment(treatment.build())
+                    .forDevice(device.id())
+                    .withPriority(500)
+                    .build();
+            flowRuleService.applyFlowRules(flowRule);
+        }
     }
 
     // Intercepts packets
@@ -367,8 +371,6 @@ public class DCnet {
                     break;
             }
             entry.setJoined();
-
-
         }
     }
 
@@ -487,57 +489,20 @@ public class DCnet {
     }
 
     private void addFlowsLeaf(Device device) {
-        String id = device.chassisId().toString();
-        SwitchEntry entry = switchDB.get(id);
-        int dc = entry.getDc();
-        int pod = entry.getPod();
-        int leaf = entry.getLeaf();
         for (int h = 0; h < lfRadixDown; h++) {
-            byte[] bytes = new byte[6];
-            bytes[0] = (byte) ((dc >> 4) & 0x3F);
-            bytes[1] = (byte) (((dc & 0xF) << 4) + ((pod >> 8) & 0xF));
-            bytes[2] = (byte) (pod & 0xFF);
-            bytes[3] = (byte) ((leaf >> 4) & 0xFF);
-            bytes[4] = (byte) (((leaf & 0xF) << 4) + ((h >> 8) & 0xF));
-            bytes[5] = (byte) (h & 0xFF);
-            MacAddress eth = new MacAddress(bytes);
-            TrafficSelector.Builder selector = DefaultTrafficSelector.builder().matchEthDst(eth);
-            TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setOutput(PortNumber.portNumber(h + 1));
+            /* Give packets with untranslated MAC addresses coming in from connected hosts to controller */
+            TrafficSelector.Builder selector = DefaultTrafficSelector.builder().matchInPort(PortNumber.portNumber(h + 1));
+            TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().punt();
             FlowRule flowRule = DefaultFlowRule.builder()
                     .fromApp(appId)
                     .makePermanent()
                     .withSelector(selector.build())
                     .withTreatment(treatment.build())
                     .forDevice(device.id())
-                    .withPriority(1000)
+                    .withPriority(100)
                     .build();
             flowRuleService.applyFlowRules(flowRule);
         }
-
-        /* Give packets with untranslated MAC addresses to controller */
-        MacAddress eth = new MacAddress(new byte[6]);
-        MacAddress mask = new MacAddress(new byte[]{(byte) 0xFF, 0x00, 0x00, (byte) 0xFF, 0x00, 0x00});
-        TrafficSelector.Builder selector = DefaultTrafficSelector.builder().matchEthDstMasked(eth, mask);
-        TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().punt();
-        FlowRule flowRule = DefaultFlowRule.builder()
-                .fromApp(appId)
-                .makePermanent()
-                //.withSelector(selector.build())
-                .withTreatment(treatment.build())
-                .forDevice(device.id())
-                .withPriority(500)
-                .build();
-        flowRuleService.applyFlowRules(flowRule);
-
-        treatment = DefaultTrafficTreatment.builder().setOutput(hashSelector(lfRadixDown + 1, lfRadixUp, entry));
-        flowRule = DefaultFlowRule.builder()
-                .fromApp(appId)
-                .makePermanent()
-                .withTreatment(treatment.build())
-                .forDevice(device.id())
-                .withPriority(100)
-                .build();
-        flowRuleService.applyFlowRules(flowRule);
     }
 
     // Todo: Proper ECMP algorithm based on incoming packets
