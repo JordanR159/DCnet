@@ -172,6 +172,7 @@ public class DCnet {
     private static final int SUPER = 1;
     private static final int SPINE = 2;
     private static final int LEAF = 3;
+    private static final int BASE_PRIO = 50000;
 
     private int dcCount;
     private int dcRadixDown;
@@ -246,7 +247,7 @@ public class DCnet {
     public void activate() {
         init();
         appId = coreService.registerApplication("org.onosproject.dcnet");
-        packetService.addProcessor(packetProcessor, 1000);
+        packetService.addProcessor(packetProcessor, BASE_PRIO);
         packetService.requestPackets(intercept, PacketPriority.CONTROL, appId, Optional.empty());
         deviceService.addListener(deviceListener);
         log.info("Started");
@@ -315,7 +316,7 @@ public class DCnet {
                     .withSelector(selector.build())
                     .withTreatment(treatment.build())
                     .forDevice(device.id())
-                    .withPriority(1000)
+                    .withPriority(BASE_PRIO + 1000)
                     .build();
             flowRuleService.applyFlowRules(flowRule);
         }
@@ -327,7 +328,7 @@ public class DCnet {
                     .withSelector(selector.build())
                     .withTreatment(treatment.build())
                     .forDevice(device.id())
-                    .withPriority(500)
+                    .withPriority(BASE_PRIO + 500)
                     .build();
             flowRuleService.applyFlowRules(flowRule);
         }
@@ -391,7 +392,7 @@ public class DCnet {
                 .withSelector(selector.build())
                 .withTreatment(treatment.build())
                 .forDevice(device.id())
-                .withPriority(1000)
+                .withPriority(BASE_PRIO + 1000)
                 .build();
         flowRuleService.applyFlowRules(flowRule);
 
@@ -408,7 +409,7 @@ public class DCnet {
                     .withSelector(selector.build())
                     .withTreatment(treatment.build())
                     .forDevice(device.id())
-                    .withPriority(500)
+                    .withPriority(BASE_PRIO + 500)
                     .build();
             flowRuleService.applyFlowRules(flowRule);
         }
@@ -434,7 +435,7 @@ public class DCnet {
                     .withSelector(selector.build())
                     .withTreatment(treatment.build())
                     .forDevice(device.id())
-                    .withPriority(1000)
+                    .withPriority(BASE_PRIO + 1000)
                     .build();
             flowRuleService.applyFlowRules(flowRule);
         }
@@ -445,7 +446,7 @@ public class DCnet {
                 .makePermanent()
                 .withTreatment(treatment.build())
                 .forDevice(device.id())
-                .withPriority(500)
+                .withPriority(BASE_PRIO + 500)
                 .build();
         flowRuleService.applyFlowRules(flowRule);
     }
@@ -472,7 +473,7 @@ public class DCnet {
                     .withSelector(selector.build())
                     .withTreatment(treatment.build())
                     .forDevice(device.id())
-                    .withPriority(1000)
+                    .withPriority(BASE_PRIO + 1000)
                     .build();
             flowRuleService.applyFlowRules(flowRule);
         }
@@ -483,7 +484,7 @@ public class DCnet {
                 .makePermanent()
                 .withTreatment(treatment.build())
                 .forDevice(device.id())
-                .withPriority(500)
+                .withPriority(BASE_PRIO + 500)
                 .build();
         flowRuleService.applyFlowRules(flowRule);
     }
@@ -499,7 +500,7 @@ public class DCnet {
                     .withSelector(selector.build())
                     .withTreatment(treatment.build())
                     .forDevice(device.id())
-                    .withPriority(100)
+                    .withPriority(BASE_PRIO + 100)
                     .build();
             flowRuleService.applyFlowRules(flowRule);
         }
