@@ -277,7 +277,6 @@ public class DCnet {
     // Processes the specified ICMP ping packet.
     private void processPacket(PacketContext context, Ethernet eth) {
         /* Packet likely translated if first and fourth bytes are 0 */
-        log.info(eth.getDestinationMAC().toString());
         IPv4 ip;
         if (eth.getEtherType() == Ethernet.TYPE_IPV4) {
             ip = (IPv4) (eth.getPayload());
@@ -285,14 +284,13 @@ public class DCnet {
         else {
             return;
         }
-		log.info("Reach 2");
+        log.info(eth.getDestinationMAC().toString());
         Device device = deviceService.getDevice(context.inPacket().receivedFrom().deviceId());
         String id = device.chassisId().toString();
         SwitchEntry entry = switchDB.get(id);
         if (entry.getLevel() != LEAF) {
             return;
         }
-		log.info("Reach 3");
         int ip_dst = ip.getDestinationAddress();
         MacAddress dst = eth.getDestinationMAC();
         log.info(integerToIpStr(ip_dst));
@@ -301,7 +299,6 @@ public class DCnet {
         if (host == null) {
             return;
         }
-		log.info("Reach 4");
         String[] bytes = host.getRmac().split(":");
         int dc = Integer.parseInt(bytes[0], 16) * 16 + Integer.parseInt(bytes[1].substring(0, 1), 16);
         int pod = Integer.parseInt(bytes[1].substring(1), 16) * 16 + Integer.parseInt(bytes[2], 16);
@@ -492,7 +489,7 @@ public class DCnet {
     private void addFlowsLeaf(Device device) {
         for (int h = 0; h < lfRadixDown; h++) {
             /* Give packets with untranslated MAC addresses coming in from connected hosts to controller */
-            TrafficSelector.Builder selector = DefaultTrafficSelector.builder().matchInPort(PortNumber.portNumber(h + 1));
+            TrafficSelector.Builder selector = DefaultTrafficSelector.builder().matchInPort(PortNumber.portNumber(h + 1)).matchEthType(Ethernet.TYPE_IPV4).matchIPProtocol(IPv4.PROTOCOL_TCP);
             TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().punt();
             FlowRule flowRule = DefaultFlowRule.builder()
                     .fromApp(appId)
