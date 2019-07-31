@@ -258,7 +258,7 @@ class FoldedClos(Topo):
 	
 						self.addHost(host_name, ip = ip_addr + "/24", mac = mac_addr)
 						host_config.write(ip_addr + "," + host_name + "," + leaf_name)
-						host_config.write("," + str(h) + "," + rmac_addr + "\n")
+						host_config.write("," + str(h) + "," + rmac_addr + "," + mac_addr + "\n")
 						host_count += 1
 						self.addLink(leaf_name, host_name, cls = TCLink, bw = 10, delay = "0.1ms")
 						#self.addLink(leaf_name, host_name)
