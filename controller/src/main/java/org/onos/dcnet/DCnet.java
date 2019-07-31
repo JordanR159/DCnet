@@ -306,7 +306,7 @@ public class DCnet {
         int dc = Integer.parseInt(bytes[0], 16) * 16 + Integer.parseInt(bytes[1].substring(0, 1), 16);
         int pod = Integer.parseInt(bytes[1].substring(1), 16) * 16 + Integer.parseInt(bytes[2], 16);
         int leaf = Integer.parseInt(bytes[3], 16) * 16 + Integer.parseInt(bytes[4].substring(0, 1), 16);
-        TrafficSelector.Builder selector = DefaultTrafficSelector.builder().matchEthDst(dst);
+        TrafficSelector.Builder selector = DefaultTrafficSelector.builder().matchIPDst(IpPrefix.valueOf(ip_dst, 32));
         if (dc == entry.getDc() && pod == entry.getPod() && leaf == entry.getLeaf()) {
             int port = Integer.parseInt(bytes[4].substring(1), 16) * 16 + Integer.parseInt(bytes[5], 16) + 1;
             TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setOutput(PortNumber.portNumber(port));
