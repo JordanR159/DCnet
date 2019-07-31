@@ -138,12 +138,14 @@ public class DCnet {
         private String leaf;
         private String port;
         private String rmac;
+        private String idmac;
 
-        public HostEntry(String name, String leaf, String port, String rmac) {
+        public HostEntry(String name, String leaf, String port, String rmac, String idmac) {
             this.name = name;
             this.leaf = leaf;
             this.port = port;
             this.rmac = rmac;
+            this.idmac = idmac;
         }
 
         public String getName() {
@@ -160,6 +162,10 @@ public class DCnet {
 
         public String getRmac() {
             return this.rmac;
+        }
+
+        public String getIdmac() {
+            return this.idmac;
         }
 
     }
@@ -223,7 +229,7 @@ public class DCnet {
             hostConfig.readLine();
             while ((line = hostConfig.readLine()) != null) {
                 String[] config = line.split(",");
-                hostDB.put(config[0], new HostEntry(config[1], config[2], config[3], config[4]));
+                hostDB.put(config[0], new HostEntry(config[1], config[2], config[3], config[4], config[5]));
             }
 
             BufferedReader topConfig = new BufferedReader(new FileReader(configLoc + "top_config.csv"));
@@ -306,7 +312,7 @@ public class DCnet {
         TrafficSelector.Builder selector = DefaultTrafficSelector.builder().matchEthType(Ethernet.TYPE_IPV4).matchIPDst(IpPrefix.valueOf(ip_dst, 32));
         if (dc == entry.getDc() && pod == entry.getPod() && leaf == entry.getLeaf()) {
             int port = Integer.parseInt(bytes[4].substring(1), 16) * 16 + Integer.parseInt(bytes[5], 16) + 1;
-            TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setOutput(PortNumber.portNumber(port));
+            TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setEthDst(strToMac(host.getIdmac())).setOutput(PortNumber.portNumber(port));
             FlowRule flowRule = DefaultFlowRule.builder()
                     .fromApp(appId)
                     .makePermanent()
