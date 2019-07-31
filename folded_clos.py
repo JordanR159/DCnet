@@ -181,7 +181,7 @@ class FoldedClos(Topo):
 		top_config.write("dc_count,dc_radix_down,ss_radix_down,")
 		top_config.write("sp_radix_up,sp_radix_down,lf_radix_up,lf_radix_down\n")
 		top_config.write(str(dc) + "," + str(spine * ss_ratio) + ",")
-		top_config.write(str(pod * ss_ratio) + "," + str(ss_ratio) + ",")
+		top_config.write(str(pod) + "," + str(ss_ratio) + ",")
 		top_config.write(str(leaf) + "," + str(spine) + "," + str(fanout) + "\n")
 
 		# Configuration file for switches that can be used by SDN controller
