@@ -400,7 +400,11 @@ public class DCnet {
         flowRuleService.applyFlowRules(flowRule);
 
         for (int d = 0; d < dcCount; d++) {
-            if (d == dc) {
+            int port = d;
+            if (d > dc) {
+                port--;
+            }
+            else if (d == dc) {
                 continue;
             }
             bytes = new byte[6];
@@ -408,7 +412,7 @@ public class DCnet {
             bytes[1] = (byte)((d & 0xF) << 4);
             eth = new MacAddress(bytes);
             selector = DefaultTrafficSelector.builder().matchEthDstMasked(eth, mask).matchEthType(Ethernet.TYPE_IPV4);
-            treatment = DefaultTrafficTreatment.builder().setOutput(PortNumber.portNumber(dcRadixDown + d + 1));
+            treatment = DefaultTrafficTreatment.builder().setOutput(PortNumber.portNumber(dcRadixDown + port + 1));
             flowRule = DefaultFlowRule.builder()
                     .fromApp(appId)
                     .makePermanent()
