@@ -400,6 +400,9 @@ public class DCnet {
         flowRuleService.applyFlowRules(flowRule);
 
         for (int d = 0; d < dcCount; d++) {
+            if (d == dc) {
+                continue;
+            }
             bytes = new byte[6];
             bytes[0] = (byte)((d >> 4) & 0x3F);
             bytes[1] = (byte)((d & 0xF) << 4);
