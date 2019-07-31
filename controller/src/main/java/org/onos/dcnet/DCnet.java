@@ -381,7 +381,7 @@ public class DCnet {
         bytes[1] = (byte)((dc & 0xF) << 4);
         MacAddress eth = new MacAddress(bytes);
         MacAddress mask = new MacAddress(new byte[]{(byte) 0xFF, (byte) 0xF0, 0x00, 0x00, 0x00, 0x00});
-        TrafficSelector.Builder selector = DefaultTrafficSelector.builder().matchEthDstMasked(eth, mask);
+        TrafficSelector.Builder selector = DefaultTrafficSelector.builder().matchEthDstMasked(eth, mask).matchEthType(Ethernet.TYPE_IPV4);
         TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setOutput(hashSelector(1, dcRadixDown, entry));
         FlowRule flowRule = DefaultFlowRule.builder()
                 .fromApp(appId)
@@ -398,7 +398,7 @@ public class DCnet {
             bytes[0] = (byte)((d >> 4) & 0x3F);
             bytes[1] = (byte)((d & 0xF) << 4);
             eth = new MacAddress(bytes);
-            selector = DefaultTrafficSelector.builder().matchEthDstMasked(eth, mask);
+            selector = DefaultTrafficSelector.builder().matchEthDstMasked(eth, mask).matchEthType(Ethernet.TYPE_IPV4);
             treatment = DefaultTrafficTreatment.builder().setOutput(PortNumber.portNumber(dcRadixDown + d + 1));
             flowRule = DefaultFlowRule.builder()
                     .fromApp(appId)
@@ -424,7 +424,7 @@ public class DCnet {
             bytes[2] = (byte) (p & 0xFF);
             MacAddress eth = new MacAddress(bytes);
             MacAddress mask = new MacAddress(new byte[]{(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, 0x00, 0x00, 0x00});
-            TrafficSelector.Builder selector = DefaultTrafficSelector.builder().matchEthDstMasked(eth, mask);
+            TrafficSelector.Builder selector = DefaultTrafficSelector.builder().matchEthDstMasked(eth, mask).matchEthType(Ethernet.TYPE_IPV4);
             TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setOutput(PortNumber.portNumber(p + 1));
             FlowRule flowRule = DefaultFlowRule.builder()
                     .fromApp(appId)
@@ -436,11 +436,12 @@ public class DCnet {
                     .build();
             flowRuleService.applyFlowRules(flowRule);
         }
-
+        TrafficSelector.Builder selector = DefaultTrafficSelector.builder().matchEthType(Ethernet.TYPE_IPV4);
         TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setOutput(PortNumber.portNumber(ssRadixDown + 1));
         FlowRule flowRule = DefaultFlowRule.builder()
                 .fromApp(appId)
                 .makePermanent()
+                .withSelector(selector.build())
                 .withTreatment(treatment.build())
                 .forDevice(device.id())
                 .withPriority(BASE_PRIO + 500)
@@ -462,7 +463,7 @@ public class DCnet {
             bytes[4] = (byte) ((l & 0xF) << 4);
             MacAddress eth = new MacAddress(bytes);
             MacAddress mask = new MacAddress(new byte[]{(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xF0, 0x00});
-            TrafficSelector.Builder selector = DefaultTrafficSelector.builder().matchEthDstMasked(eth, mask);
+            TrafficSelector.Builder selector = DefaultTrafficSelector.builder().matchEthDstMasked(eth, mask).matchEthType(Ethernet.TYPE_IPV4);
             TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setOutput(PortNumber.portNumber(l + 1));
             FlowRule flowRule = DefaultFlowRule.builder()
                     .fromApp(appId)
@@ -474,11 +475,12 @@ public class DCnet {
                     .build();
             flowRuleService.applyFlowRules(flowRule);
         }
-
+        TrafficSelector.Builder selector = DefaultTrafficSelector.builder().matchEthType(Ethernet.TYPE_IPV4);
         TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setOutput(hashSelector(spRadixDown + 1, spRadixUp, entry));
         FlowRule flowRule = DefaultFlowRule.builder()
                 .fromApp(appId)
                 .makePermanent()
+                .withSelector(selector.build())
                 .withTreatment(treatment.build())
                 .forDevice(device.id())
                 .withPriority(BASE_PRIO + 500)
@@ -489,7 +491,7 @@ public class DCnet {
     private void addFlowsLeaf(Device device) {
         for (int h = 0; h < lfRadixDown; h++) {
             /* Give packets with untranslated MAC addresses coming in from connected hosts to controller */
-            TrafficSelector.Builder selector = DefaultTrafficSelector.builder().matchInPort(PortNumber.portNumber(h + 1)).matchEthType(Ethernet.TYPE_IPV4).matchIPProtocol(IPv4.PROTOCOL_TCP);
+            TrafficSelector.Builder selector = DefaultTrafficSelector.builder().matchInPort(PortNumber.portNumber(h + 1)).matchEthType(Ethernet.TYPE_IPV4);
             TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().punt();
             FlowRule flowRule = DefaultFlowRule.builder()
                     .fromApp(appId)
