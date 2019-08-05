@@ -31,9 +31,13 @@ import org.onosproject.net.device.DeviceEvent;
 import org.onosproject.net.device.DeviceListener;
 import org.onosproject.net.device.DeviceService;
 import org.onosproject.net.flow.*;
+import org.onosproject.net.flow.criteria.Criterion;
+import org.onosproject.net.flow.criteria.IPCriterion;
 import org.onosproject.net.flowobjective.FlowObjectiveService;
 import org.onosproject.net.group.GroupKey;
 import org.onosproject.net.group.GroupService;
+import org.onosproject.net.host.HostEvent;
+import org.onosproject.net.host.HostListener;
 import org.onosproject.net.host.HostService;
 import org.onosproject.net.packet.PacketContext;
 import org.onosproject.net.packet.PacketPriority;
@@ -194,6 +198,9 @@ public class DCnet {
     /* Maps IP address to a host entry */
     private Map<String, HostEntry> hostDB = new TreeMap<>();
 
+    /* List of currently active flow rules */
+    private List<FlowRule> installedFlows = new ArrayList<>();
+
     private ApplicationId appId;
 
     protected static KryoNamespace appKryo = new KryoNamespace.Builder()
@@ -205,16 +212,21 @@ public class DCnet {
 
     private final DeviceListener deviceListener = new InternalDeviceListener();
 
+    private final HostListener hostListener = new InternalHostListener();
+
     private final PacketProcessor packetProcessor = new LeafPacketProcessor();
 
-    // Selector for ICMP traffic that is to be intercepted
+    /* Selector for IPv4 traffic to intercept */
     private final TrafficSelector intercept = DefaultTrafficSelector.builder().matchEthType(Ethernet.TYPE_IPV4).build();
 
+    /* Initializes application by reading configuration files for hosts, switches, and topology design */
     private void init() {
+
         switchDB = new TreeMap<>();
         hostDB = new TreeMap<>();
 
         try {
+            /* Setup switch database by reading fields in switch configuration file */
             BufferedReader switchConfig = new BufferedReader(new FileReader(configLoc + "switch_config.csv"));
             String line;
             switchConfig.readLine();
@@ -224,14 +236,18 @@ public class DCnet {
                                                         Integer.parseInt(config[3]), Integer.parseInt(config[4]),
                                                         Integer.parseInt(config[5])));
             }
+            switchConfig.close();
 
+            /* Setup host database by reading fields in host configuration file */
             BufferedReader hostConfig = new BufferedReader(new FileReader(configLoc + "host_config.csv"));
             hostConfig.readLine();
             while ((line = hostConfig.readLine()) != null) {
                 String[] config = line.split(",");
                 hostDB.put(config[0], new HostEntry(config[1], config[2], config[3], config[4], config[5]));
             }
+            hostConfig.close();
 
+            /* Setup topology specifications by reading fields in topology configuration file */
             BufferedReader topConfig = new BufferedReader(new FileReader(configLoc + "top_config.csv"));
             topConfig.readLine();
             String[] config = topConfig.readLine().split(",");
@@ -242,6 +258,7 @@ public class DCnet {
             spRadixDown = Integer.parseInt(config[4]);
             lfRadixUp = Integer.parseInt(config[5]);
             lfRadixDown = Integer.parseInt(config[6]);
+            topConfig.close();
         }
 
         catch (IOException e) {
@@ -249,29 +266,38 @@ public class DCnet {
         }
     }
 
+    /* Allows application to be started by ONOS controller */
     @Activate
     public void activate() {
+
         init();
         appId = coreService.registerApplication("org.onosproject.dcnet");
         packetService.addProcessor(packetProcessor, BASE_PRIO);
         packetService.requestPackets(intercept, PacketPriority.CONTROL, appId, Optional.empty());
         deviceService.addListener(deviceListener);
+        hostService.addListener(hostListener);
         log.info("Started");
     }
 
+    /* Allows application to be stopped by ONOS controller */
     @Deactivate
     public void deactivate() {
+
         packetService.removeProcessor(packetProcessor);
         flowRuleService.removeFlowRulesById(appId);
         deviceService.removeListener(deviceListener);
+        hostService.removeListener(hostListener);
         log.info("Stopped");
     }
 
+    /* Helper function to translate int version of IP (used by ONOS) into String (used in this application) */
     private String integerToIpStr(int ip) {
         return String.format("%d.%d.%d.%d", (ip >> 24) & 0xFF, (ip >> 16) & 0xFF, (ip >> 8) & 0xFF, ip & 0xFF);
     }
 
+    /* Helper function to translate String version of MAC (used in this application) into byte[] (used by ONOS) */
     private MacAddress strToMac(String address) {
+
         byte[] bytes = new byte[6];
         String[] octets = address.split(":");
         for (int i = 0; i < 6; i++) {
@@ -280,9 +306,10 @@ public class DCnet {
         return new MacAddress(bytes);
     }
 
-    // Processes the specified ICMP ping packet.
+    /* Creates rules for packets with new IPv4 destination that a leaf switch receives */
     private void processPacket(PacketContext context, Ethernet eth) {
-        /* Packet likely translated if first and fourth bytes are 0 */
+
+        /* Check that packet should be translated by sending device */
         IPv4 ip;
         if (eth.getEtherType() == Ethernet.TYPE_IPV4) {
             ip = (IPv4) (eth.getPayload());
@@ -298,18 +325,20 @@ public class DCnet {
             return;
         }
         int ip_dst = ip.getDestinationAddress();
-        MacAddress dst = eth.getDestinationMAC();
         log.info(integerToIpStr(ip_dst));
-        //log.info(dst.toString());
         HostEntry host = hostDB.get(integerToIpStr(ip_dst));
         if (host == null) {
             return;
         }
+
+        /* Obtain location information from RMAC address corresponding to IP destination */
         String[] bytes = host.getRmac().split(":");
         int dc = Integer.parseInt(bytes[0], 16) * 16 + Integer.parseInt(bytes[1].substring(0, 1), 16);
         int pod = Integer.parseInt(bytes[1].substring(1), 16) * 16 + Integer.parseInt(bytes[2], 16);
         int leaf = Integer.parseInt(bytes[3], 16) * 16 + Integer.parseInt(bytes[4].substring(0, 1), 16);
         TrafficSelector.Builder selector = DefaultTrafficSelector.builder().matchEthType(Ethernet.TYPE_IPV4).matchIPDst(IpPrefix.valueOf(ip_dst, 32));
+
+        /* If recipient is directly connected to leaf, translate ethernet destination back to recipients's and forward to it */
         if (dc == entry.getDc() && pod == entry.getPod() && leaf == entry.getLeaf()) {
             int port = Integer.parseInt(bytes[4].substring(1), 16) * 16 + Integer.parseInt(bytes[5], 16) + 1;
             TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setEthDst(strToMac(host.getIdmac())).setOutput(PortNumber.portNumber(port));
@@ -322,7 +351,10 @@ public class DCnet {
                     .withPriority(BASE_PRIO + 1000)
                     .build();
             flowRuleService.applyFlowRules(flowRule);
+            installedFlows.add(flowRule);
         }
+
+        /* If recipient is connected to another leaf, translate ethernet destination to RMAC and forward to spines */
         else {
             TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setEthDst(strToMac(host.getRmac())).setOutput(hashSelector(lfRadixDown + 1, lfRadixUp, entry));
             FlowRule flowRule = DefaultFlowRule.builder()
@@ -334,10 +366,11 @@ public class DCnet {
                     .withPriority(BASE_PRIO + 500)
                     .build();
             flowRuleService.applyFlowRules(flowRule);
+            installedFlows.add(flowRule);
         }
     }
 
-    // Intercepts packets
+    /* Intercepts packets sent to controller */
     private class LeafPacketProcessor implements PacketProcessor {
         @Override
         public void process(PacketContext context) {
@@ -346,7 +379,9 @@ public class DCnet {
         }
     }
 
+    /* Initializes flow rules for switch based on its level in topology */
     private synchronized void setupFlows(Device device) {
+
         String id = device.chassisId().toString();
         log.info("Chassis " + id + " connected");
         if (switchDB.containsKey(id)) {
@@ -378,9 +413,13 @@ public class DCnet {
         }
     }
 
+    /* Adds flows for data center switch to forward down to super spines and towards other data center switches */
     private void addFlowsDC(Device device) {
+
         String id = device.chassisId().toString();
         SwitchEntry entry = switchDB.get(id);
+
+        /* Add rule to ECMP packets belonging in this data center towards super spines */
         int dc = entry.getDc();
         byte[] bytes = new byte[6];
         bytes[0] = (byte)((dc >> 4) & 0x3F);
@@ -399,6 +438,7 @@ public class DCnet {
                 .build();
         flowRuleService.applyFlowRules(flowRule);
 
+        /* Add rules to forward packets belonging to another data center to the correct one */
         for (int d = 0; d < dcCount; d++) {
             int port = d;
             if (d > dc) {
@@ -426,10 +466,14 @@ public class DCnet {
         // TODO: Forward all other traffic to internet
     }
 
+    /* Adds flows for super spine switches to forward down to spines and up to the data center switch */
     private void addFlowsSuper(Device device) {
+
         String id = device.chassisId().toString();
         SwitchEntry entry = switchDB.get(id);
         int dc = entry.getDc();
+
+        /* Add rules to forward packets belonging in this data center down towards the correct spine based on pod destination */
         for (int p = 0; p < ssRadixDown; p++) {
             byte[] bytes = new byte[6];
             bytes[0] = (byte) ((dc >> 4) & 0x3F);
@@ -449,6 +493,8 @@ public class DCnet {
                     .build();
             flowRuleService.applyFlowRules(flowRule);
         }
+
+        /* Add rule to forward packets belonging to another data center up to the data center switch */
         TrafficSelector.Builder selector = DefaultTrafficSelector.builder().matchEthType(Ethernet.TYPE_IPV4);
         TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setOutput(PortNumber.portNumber(ssRadixDown + 1));
         FlowRule flowRule = DefaultFlowRule.builder()
@@ -462,11 +508,14 @@ public class DCnet {
         flowRuleService.applyFlowRules(flowRule);
     }
 
+    /* Adds flows for spine switches to forward down to leaves and up to super spines */
     private void addFlowsSpine(Device device) {
         String id = device.chassisId().toString();
         SwitchEntry entry = switchDB.get(id);
         int dc = entry.getDc();
         int pod = entry.getPod();
+
+        /* Add rules to forward packets belonging in this pod down towards the correct leaf based on ToR destination */
         for (int l = 0; l < spRadixDown; l++) {
             byte[] bytes = new byte[6];
             bytes[0] = (byte) ((dc >> 4) & 0x3F);
@@ -488,6 +537,8 @@ public class DCnet {
                     .build();
             flowRuleService.applyFlowRules(flowRule);
         }
+
+        /* Add rule to ECMP packets belonging to another pod up to super spines */
         TrafficSelector.Builder selector = DefaultTrafficSelector.builder().matchEthType(Ethernet.TYPE_IPV4);
         TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setOutput(hashSelector(spRadixDown + 1, spRadixUp, entry));
         FlowRule flowRule = DefaultFlowRule.builder()
@@ -501,9 +552,9 @@ public class DCnet {
         flowRuleService.applyFlowRules(flowRule);
     }
 
+    /* Adds default flows for leaf to hand all IPv4 packets to controller if it hasn't seen the IP destination before */
     private void addFlowsLeaf(Device device) {
-        for (int h = 0; h < lfRadixDown; h++) {
-            /* Give packets with untranslated MAC addresses coming in from connected hosts to controller */
+        for (int h = 0; h < lfRadixDown + lfRadixUp; h++) {
             TrafficSelector.Builder selector = DefaultTrafficSelector.builder().matchInPort(PortNumber.portNumber(h + 1)).matchEthType(Ethernet.TYPE_IPV4);
             TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().punt();
             FlowRule flowRule = DefaultFlowRule.builder()
@@ -518,11 +569,31 @@ public class DCnet {
         }
     }
 
+    private void removeSwitch(Device device) {
+
+    }
+
+    /* Invalidate all flows using the IP address of a host that was moved */
+    private void removeHostFlows(Host host) {
+        Set<IpAddress> ips = host.ipAddresses();
+        List<FlowRule> temp = new ArrayList<>(installedFlows);
+        for (IpAddress ip : ips) {
+            for (FlowRule flow : installedFlows) {
+                if (((IPCriterion)flow.selector().getCriterion(Criterion.Type.IPV4_DST)).ip().address().equals(ip)) {
+                    flowRuleService.removeFlowRules(flow);
+                    temp.remove(flow);
+                }
+            }
+        }
+        installedFlows = temp;
+    }
+
     // Todo: Proper ECMP algorithm based on incoming packets
     private PortNumber hashSelector(int portStart, int portCount, SwitchEntry entry) {
         return PortNumber.portNumber(portStart + (int)(Math.random() * portCount));
     }
 
+    /* Listen for switches that are added to topology */
     private class InternalDeviceListener implements DeviceListener {
         @Override
         public void event(DeviceEvent deviceEvent) {
@@ -533,6 +604,23 @@ public class DCnet {
                     break;
                 case DEVICE_REMOVED:
                 case DEVICE_SUSPENDED:
+                    removeSwitch(deviceEvent.subject());
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    /* Listed for hosts that are moved or removed from network */
+    private class InternalHostListener implements HostListener {
+        @Override
+        public void event(HostEvent hostEvent) {
+            switch (hostEvent.type()) {
+                case HOST_MOVED:
+                case HOST_REMOVED:
+                    removeHostFlows(hostEvent.subject());
+                    break;
                 default:
                     break;
             }
