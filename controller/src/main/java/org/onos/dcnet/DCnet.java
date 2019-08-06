@@ -16,6 +16,7 @@
 package org.onos.dcnet;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.SetMultimap;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
@@ -26,6 +27,7 @@ import org.onlab.packet.*;
 import org.onlab.util.KryoNamespace;
 import org.onosproject.core.ApplicationId;
 import org.onosproject.core.CoreService;
+import org.onosproject.core.GroupId;
 import org.onosproject.net.*;
 import org.onosproject.net.device.DeviceEvent;
 import org.onosproject.net.device.DeviceListener;
@@ -34,8 +36,7 @@ import org.onosproject.net.flow.*;
 import org.onosproject.net.flow.criteria.Criterion;
 import org.onosproject.net.flow.criteria.IPCriterion;
 import org.onosproject.net.flowobjective.FlowObjectiveService;
-import org.onosproject.net.group.GroupKey;
-import org.onosproject.net.group.GroupService;
+import org.onosproject.net.group.*;
 import org.onosproject.net.host.HostEvent;
 import org.onosproject.net.host.HostListener;
 import org.onosproject.net.host.HostService;
@@ -427,7 +428,21 @@ public class DCnet {
         MacAddress eth = new MacAddress(bytes);
         MacAddress mask = new MacAddress(new byte[]{(byte) 0xFF, (byte) 0xF0, 0x00, 0x00, 0x00, 0x00});
         TrafficSelector.Builder selector = DefaultTrafficSelector.builder().matchEthDstMasked(eth, mask).matchEthType(Ethernet.TYPE_IPV4);
-        TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setOutput(hashSelector(1, dcRadixDown, entry));
+        List<GroupBucket> buckets = new ArrayList<>();
+        for(int i = 1; i <= dcRadixDown; i++) {
+            TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setOutput(PortNumber.portNumber(i));
+            buckets.add(DefaultGroupBucket.createSelectGroupBucket(treatment.build()));
+        }
+        GroupDescription groupDescription = new DefaultGroupDescription(
+                device.id(),
+                GroupDescription.Type.SELECT,
+                new GroupBuckets(buckets),
+                new DefaultGroupKey(appKryo.serialize(Objects.hash(device))),
+                null,
+                appId
+        );
+        groupService.addGroup(groupDescription);
+        TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().group(new GroupId(groupDescription.givenGroupId()));
         FlowRule flowRule = DefaultFlowRule.builder()
                 .fromApp(appId)
                 .makePermanent()
