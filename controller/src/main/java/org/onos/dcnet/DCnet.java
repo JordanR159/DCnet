@@ -357,7 +357,21 @@ public class DCnet {
 
         /* If recipient is connected to another leaf, translate ethernet destination to RMAC and forward to spines */
         else {
-            TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setEthDst(strToMac(host.getRmac())).setOutput(hashSelector(lfRadixDown + 1, lfRadixUp, entry));
+            List<GroupBucket> buckets = new ArrayList<>();
+            for(int i = 1; i <= lfRadixUp; i++) {
+                TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setEthDst(strToMac(host.getRmac())).setOutput(PortNumber.portNumber(lfRadixDown + i));
+                buckets.add(DefaultGroupBucket.createSelectGroupBucket(treatment.build()));
+            }
+            GroupDescription groupDescription = new DefaultGroupDescription(
+                    device.id(),
+                    GroupDescription.Type.SELECT,
+                    new GroupBuckets(buckets),
+                    new DefaultGroupKey(appKryo.serialize(Objects.hash(device))),
+                    null,
+                    appId
+            );
+            groupService.addGroup(groupDescription);
+            TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().group(new GroupId(groupDescription.givenGroupId()));
             FlowRule flowRule = DefaultFlowRule.builder()
                     .fromApp(appId)
                     .makePermanent()
@@ -555,7 +569,21 @@ public class DCnet {
 
         /* Add rule to ECMP packets belonging to another pod up to super spines */
         TrafficSelector.Builder selector = DefaultTrafficSelector.builder().matchEthType(Ethernet.TYPE_IPV4);
-        TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setOutput(hashSelector(spRadixDown + 1, spRadixUp, entry));
+        List<GroupBucket> buckets = new ArrayList<>();
+        for(int i = 1; i <= spRadixUp; i++) {
+            TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setOutput(PortNumber.portNumber(spRadixDown + i));
+            buckets.add(DefaultGroupBucket.createSelectGroupBucket(treatment.build()));
+        }
+        GroupDescription groupDescription = new DefaultGroupDescription(
+                device.id(),
+                GroupDescription.Type.SELECT,
+                new GroupBuckets(buckets),
+                new DefaultGroupKey(appKryo.serialize(Objects.hash(device))),
+                null,
+                appId
+        );
+        groupService.addGroup(groupDescription);
+        TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().group(new GroupId(groupDescription.givenGroupId()));
         FlowRule flowRule = DefaultFlowRule.builder()
                 .fromApp(appId)
                 .makePermanent()
@@ -569,8 +597,8 @@ public class DCnet {
 
     /* Adds default flows for leaf to hand all IPv4 packets to controller if it hasn't seen the IP destination before */
     private void addFlowsLeaf(Device device) {
-        for (int h = 0; h < lfRadixDown + lfRadixUp; h++) {
-            TrafficSelector.Builder selector = DefaultTrafficSelector.builder().matchInPort(PortNumber.portNumber(h + 1)).matchEthType(Ethernet.TYPE_IPV4);
+        for (int h = 1; h <= lfRadixDown + lfRadixUp; h++) {
+            TrafficSelector.Builder selector = DefaultTrafficSelector.builder().matchInPort(PortNumber.portNumber(h)).matchEthType(Ethernet.TYPE_IPV4);
             TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().punt();
             FlowRule flowRule = DefaultFlowRule.builder()
                     .fromApp(appId)
@@ -601,11 +629,6 @@ public class DCnet {
             }
         }
         installedFlows = temp;
-    }
-
-    // Todo: Proper ECMP algorithm based on incoming packets
-    private PortNumber hashSelector(int portStart, int portCount, SwitchEntry entry) {
-        return PortNumber.portNumber(portStart + (int)(Math.random() * portCount));
     }
 
     /* Listen for switches that are added to topology */
