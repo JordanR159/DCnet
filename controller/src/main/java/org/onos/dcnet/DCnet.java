@@ -362,16 +362,18 @@ public class DCnet {
                 TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setEthDst(strToMac(host.getRmac())).setOutput(PortNumber.portNumber(lfRadixDown + i));
                 buckets.add(DefaultGroupBucket.createSelectGroupBucket(treatment.build()));
             }
+            GroupKey key = new DefaultGroupKey(appKryo.serialize(Objects.hash(device)));
             GroupDescription groupDescription = new DefaultGroupDescription(
                     device.id(),
                     GroupDescription.Type.SELECT,
                     new GroupBuckets(buckets),
-                    new DefaultGroupKey(appKryo.serialize(Objects.hash(device))),
+                    key,
                     null,
                     appId
             );
             groupService.addGroup(groupDescription);
-            TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().group(new GroupId(groupDescription.givenGroupId()));
+            Group ECMP = groupService.getGroup(device.id(), key);
+            TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().group(ECMP.id());
             FlowRule flowRule = DefaultFlowRule.builder()
                     .fromApp(appId)
                     .makePermanent()
@@ -447,16 +449,18 @@ public class DCnet {
             TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setOutput(PortNumber.portNumber(i));
             buckets.add(DefaultGroupBucket.createSelectGroupBucket(treatment.build()));
         }
+        GroupKey key = new DefaultGroupKey(appKryo.serialize(Objects.hash(device)));
         GroupDescription groupDescription = new DefaultGroupDescription(
                 device.id(),
                 GroupDescription.Type.SELECT,
                 new GroupBuckets(buckets),
-                new DefaultGroupKey(appKryo.serialize(Objects.hash(device))),
+                key,
                 null,
                 appId
         );
         groupService.addGroup(groupDescription);
-        TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().group(new GroupId(groupDescription.givenGroupId()));
+        Group ECMP = groupService.getGroup(device.id(), key);
+        TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().group(ECMP.id());
         FlowRule flowRule = DefaultFlowRule.builder()
                 .fromApp(appId)
                 .makePermanent()
@@ -574,16 +578,18 @@ public class DCnet {
             TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setOutput(PortNumber.portNumber(spRadixDown + i));
             buckets.add(DefaultGroupBucket.createSelectGroupBucket(treatment.build()));
         }
+        GroupKey key = new DefaultGroupKey(appKryo.serialize(Objects.hash(device)));
         GroupDescription groupDescription = new DefaultGroupDescription(
                 device.id(),
                 GroupDescription.Type.SELECT,
                 new GroupBuckets(buckets),
-                new DefaultGroupKey(appKryo.serialize(Objects.hash(device))),
+                key,
                 null,
                 appId
         );
         groupService.addGroup(groupDescription);
-        TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().group(new GroupId(groupDescription.givenGroupId()));
+        Group ECMP = groupService.getGroup(device.id(), key);
+        TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().group(ECMP.id());
         FlowRule flowRule = DefaultFlowRule.builder()
                 .fromApp(appId)
                 .makePermanent()
