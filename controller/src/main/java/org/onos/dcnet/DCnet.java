@@ -276,7 +276,7 @@ public class DCnet {
         packetService.addProcessor(packetProcessor, BASE_PRIO);
         packetService.requestPackets(intercept, PacketPriority.CONTROL, appId, Optional.empty());
         deviceService.addListener(deviceListener);
-        hostService.addListener(hostListener);
+        //hostService.addListener(hostListener);
         log.info("Started");
     }
 
@@ -287,7 +287,7 @@ public class DCnet {
         packetService.removeProcessor(packetProcessor);
         flowRuleService.removeFlowRulesById(appId);
         deviceService.removeListener(deviceListener);
-        hostService.removeListener(hostListener);
+        //hostService.removeListener(hostListener);
         log.info("Stopped");
     }
 
@@ -359,7 +359,7 @@ public class DCnet {
         else {
             List<GroupBucket> buckets = new ArrayList<>();
             for(int i = 1; i <= lfRadixUp; i++) {
-                TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setEthDst(strToMac(host.getRmac())).setOutput(PortNumber.portNumber(lfRadixDown + i));
+                TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setOutput(PortNumber.portNumber(lfRadixDown + i));
                 buckets.add(DefaultGroupBucket.createSelectGroupBucket(treatment.build()));
             }
             GroupKey key = new DefaultGroupKey(appKryo.serialize(Objects.hash(device)));
@@ -373,7 +373,7 @@ public class DCnet {
             );
             groupService.addGroup(groupDescription);
             Group ECMP = groupService.getGroup(device.id(), key);
-            TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().group(ECMP.id());
+            TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setEthDst(strToMac(host.getRmac())).group(ECMP.id());
             FlowRule flowRule = DefaultFlowRule.builder()
                     .fromApp(appId)
                     .makePermanent()
