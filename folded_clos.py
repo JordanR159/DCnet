@@ -180,9 +180,10 @@ class FoldedClos(Topo):
 		top_config = open("top_config.csv", "w+")
 		top_config.write("dc_count,dc_radix_down,ss_radix_down,")
 		top_config.write("sp_radix_up,sp_radix_down,lf_radix_up,lf_radix_down\n")
-		top_config.write(str(dc) + "," + str(spine * ss_ratio) + ",")
-		top_config.write(str(pod) + "," + str(ss_ratio) + ",")
-		top_config.write(str(leaf) + "," + str(spine) + "," + str(fanout) + "\n")
+		for i in range(dc):
+			top_config.write(str(dc) + "," + str(spine * ss_ratio) + ",")
+			top_config.write(str(pod) + "," + str(ss_ratio) + ",")
+			top_config.write(str(leaf) + "," + str(spine) + "," + str(fanout) + "\n")
 
 		# Configuration file for switches that can be used by SDN controller
 		switch_config = open("switch_config.csv", "w+")
@@ -198,7 +199,8 @@ class FoldedClos(Topo):
 
 		for d in range(dc):
 			dc_name = "d" + str(dc_count)
-			ip_addr = "10.0.1.1" + format(switch_count, "02d") + "/24"
+			ip_addr = "10.0.1" + format(switch_count >> 8, "02d") + "."
+			ip_addr += format(switch_count & 0xFF, "d") + "/12"
 			self.addSwitch(dc_name, ip = ip_addr)
 			switch_count += 1;
 			dc_switches.append(dc_name)
@@ -208,7 +210,8 @@ class FoldedClos(Topo):
 			# Create super spines
 			for ss in range(ss_ratio * spine):
 				ss_name = "u" + str(ss_count)
-				ip_addr = "10.0.1.1" + format(switch_count, "02d") + "/24"
+				ip_addr = "10.0.1" + format(switch_count >> 8, "02d") + "."
+				ip_addr += format(switch_count & 0xFF, "d") + "/12"
 				self.addSwitch(ss_name, ip = ip_addr)
 				switch_count += 1;
 				ss_switches.append(ss_name)
@@ -221,7 +224,8 @@ class FoldedClos(Topo):
 				# Create leaves and hosts for each leaf
 				for l in range(leaf):
 					leaf_name = "l" + str(leaf_count)
-					ip_addr = "10.0.1.1" + format(switch_count, "02d") + "/24"
+					ip_addr = "10.0.1" + format(switch_count >> 8, "02d") + "."
+					ip_addr += format(switch_count & 0xFF, "d") + "/12"
 					self.addSwitch(leaf_name, ip = ip_addr)
 					switch_count += 1;
 					leaf_switches.append(leaf_name)
@@ -236,6 +240,8 @@ class FoldedClos(Topo):
 						# Construct host IPv4 address, first 8 bits are reserved,
 						# last 24 bits uniquely identify a host
 						ip_addr = "10.0.1." + str(host_count & 0xFF)
+						ip_addr = "10.0." + format(host_count >> 8, "d") + "."
+						ip_addr += format(host_count & 0xFF, "d")
 	
 						# Construct host UID MAC address, first 24 bits are reserved,
 						# last 24 bits uniquely identify a host
@@ -256,7 +262,7 @@ class FoldedClos(Topo):
 						rmac_addr += format((h >> 8)& 0xF, "01x") + ":"
 						rmac_addr += format(h & 0xFF, "02x")
 	
-						self.addHost(host_name, ip = ip_addr + "/24", mac = mac_addr)
+						self.addHost(host_name, ip = ip_addr + "/12", mac = mac_addr)
 						host_config.write(ip_addr + "," + host_name + "," + leaf_name)
 						host_config.write("," + str(h) + "," + rmac_addr + "," + mac_addr + "\n")
 						host_count += 1
@@ -266,7 +272,8 @@ class FoldedClos(Topo):
 				# Create spines and link to super spines and leaves
 				for s in range(spine):
 					spine_name = "s" + str(spine_count)
-					ip_addr = "10.0.1.1" + format(switch_count, "02d") + "/24"
+					ip_addr = "10.0.1" + format(switch_count >> 8, "02d") + "."
+					ip_addr += format(switch_count & 0xFF, "d") + "/12"
 					self.addSwitch(spine_name, ip = ip_addr)
 					switch_count += 1;
 					switch_config.write(format(spine_count, "x") + "," + spine_name + ",2," + str(d))
