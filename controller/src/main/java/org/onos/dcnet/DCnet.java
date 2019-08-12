@@ -185,13 +185,13 @@ public class DCnet {
     private static final int LEAF = 3;
     private static final int BASE_PRIO = 50000;
 
-    private int dcCount;
-    private int dcRadixDown;
-    private int ssRadixDown;
-    private int spRadixUp;
-    private int spRadixDown;
-    private int lfRadixUp;
-    private int lfRadixDown;
+    private int dcCount = 0;
+    private List<Integer> dcRadixDown = new ArrayList<>();
+    private List<Integer> ssRadixDown = new ArrayList<>();
+    private List<Integer> spRadixUp = new ArrayList<>();
+    private List<Integer> spRadixDown = new ArrayList<>();
+    private List<Integer> lfRadixUp = new ArrayList<>();
+    private List<Integer> lfRadixDown = new ArrayList<>();
 
     private List<GroupBucket> leafBuckets = new ArrayList<>();
     private List<GroupBucket> spineBuckets = new ArrayList<>();
@@ -227,8 +227,20 @@ public class DCnet {
     /* Initializes application by reading configuration files for hosts, switches, and topology design */
     private void init() {
 
+        dcRadixDown = new ArrayList<>();
+        ssRadixDown = new ArrayList<>();
+        spRadixUp = new ArrayList<>();
+        spRadixDown = new ArrayList<>();
+        lfRadixUp = new ArrayList<>();
+        lfRadixDown = new ArrayList<>();
+
+        leafBuckets = new ArrayList<>();
+        spineBuckets = new ArrayList<>();
+        dcBuckets = new ArrayList<>();
+
         switchDB = new TreeMap<>();
         hostDB = new TreeMap<>();
+        installedFlows = new ArrayList<>();
 
         try {
             /* Setup switch database by reading fields in switch configuration file */
@@ -255,27 +267,31 @@ public class DCnet {
             /* Setup topology specifications by reading fields in topology configuration file */
             BufferedReader topConfig = new BufferedReader(new FileReader(configLoc + "top_config.csv"));
             topConfig.readLine();
-            String[] config = topConfig.readLine().split(",");
-            dcCount = Integer.parseInt(config[0]);
-            dcRadixDown = Integer.parseInt(config[1]);
-            ssRadixDown = Integer.parseInt(config[2]);
-            spRadixUp = Integer.parseInt(config[3]);
-            spRadixDown = Integer.parseInt(config[4]);
-            lfRadixUp = Integer.parseInt(config[5]);
-            lfRadixDown = Integer.parseInt(config[6]);
+            while ((line = topConfig.readLine()) != null) {
+                String[] config = line.split(",");
+                dcCount = Integer.parseInt(config[0]);
+                dcRadixDown.add(Integer.parseInt(config[1]));
+                ssRadixDown.add(Integer.parseInt(config[2]));
+                spRadixUp.add(Integer.parseInt(config[3]));
+                spRadixDown.add(Integer.parseInt(config[4]));
+                lfRadixUp.add(Integer.parseInt(config[5]));
+                lfRadixDown.add(Integer.parseInt(config[6]));
+            }
             topConfig.close();
 
-            for(int i = 1; i <= lfRadixUp; i++) {
-                TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setOutput(PortNumber.portNumber(lfRadixDown + i));
-                leafBuckets.add(DefaultGroupBucket.createSelectGroupBucket(treatment.build()));
-            }
-            for(int i = 1; i <= spRadixUp; i++) {
-                TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setOutput(PortNumber.portNumber(spRadixDown + i));
-                spineBuckets.add(DefaultGroupBucket.createSelectGroupBucket(treatment.build()));
-            }
-            for(int i = 1; i <= dcRadixDown; i++) {
-                TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setOutput(PortNumber.portNumber(i));
-                dcBuckets.add(DefaultGroupBucket.createSelectGroupBucket(treatment.build()));
+            for (int d = 0; d < dcCount; d++) {
+                for (int i = 1; i <= lfRadixUp.get(d); i++) {
+                    TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setOutput(PortNumber.portNumber(lfRadixDown.get(d) + i));
+                    leafBuckets.add(DefaultGroupBucket.createSelectGroupBucket(treatment.build()));
+                }
+                for (int i = 1; i <= spRadixUp.get(d); i++) {
+                    TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setOutput(PortNumber.portNumber(spRadixDown.get(d) + i));
+                    spineBuckets.add(DefaultGroupBucket.createSelectGroupBucket(treatment.build()));
+                }
+                for (int i = 1; i <= dcRadixDown.get(d); i++) {
+                    TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setOutput(PortNumber.portNumber(i));
+                    dcBuckets.add(DefaultGroupBucket.createSelectGroupBucket(treatment.build()));
+                }
             }
         }
 
@@ -476,7 +492,7 @@ public class DCnet {
             bytes[1] = (byte)((d & 0xF) << 4);
             eth = new MacAddress(bytes);
             selector = DefaultTrafficSelector.builder().matchEthDstMasked(eth, mask).matchEthType(Ethernet.TYPE_IPV4);
-            treatment = DefaultTrafficTreatment.builder().setOutput(PortNumber.portNumber(dcRadixDown + port + 1));
+            treatment = DefaultTrafficTreatment.builder().setOutput(PortNumber.portNumber(dcRadixDown.get(dc) + port + 1));
             flowRule = DefaultFlowRule.builder()
                     .fromApp(appId)
                     .makePermanent()
@@ -498,7 +514,7 @@ public class DCnet {
         int dc = entry.getDc();
 
         /* Add rules to forward packets belonging in this data center down towards the correct spine based on pod destination */
-        for (int p = 0; p < ssRadixDown; p++) {
+        for (int p = 0; p < ssRadixDown.get(dc); p++) {
             byte[] bytes = new byte[6];
             bytes[0] = (byte) ((dc >> 4) & 0x3F);
             bytes[1] = (byte) (((dc & 0xF) << 4) + ((p >> 8) & 0xF));
@@ -520,7 +536,7 @@ public class DCnet {
 
         /* Add rule to forward packets belonging to another data center up to the data center switch */
         TrafficSelector.Builder selector = DefaultTrafficSelector.builder().matchEthType(Ethernet.TYPE_IPV4);
-        TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setOutput(PortNumber.portNumber(ssRadixDown + 1));
+        TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setOutput(PortNumber.portNumber(ssRadixDown.get(dc) + 1));
         FlowRule flowRule = DefaultFlowRule.builder()
                 .fromApp(appId)
                 .makePermanent()
@@ -540,7 +556,7 @@ public class DCnet {
         int pod = entry.getPod();
 
         /* Add rules to forward packets belonging in this pod down towards the correct leaf based on ToR destination */
-        for (int l = 0; l < spRadixDown; l++) {
+        for (int l = 0; l < spRadixDown.get(dc); l++) {
             byte[] bytes = new byte[6];
             bytes[0] = (byte) ((dc >> 4) & 0x3F);
             bytes[1] = (byte) (((dc & 0xF) << 4) + ((pod >> 8) & 0xF));
@@ -581,7 +597,12 @@ public class DCnet {
 
     /* Adds default flows for leaf to hand all IPv4 packets to controller if it hasn't seen the IP destination before */
     private void addFlowsLeaf(Device device) {
-        for (int h = 1; h <= lfRadixDown + lfRadixUp; h++) {
+
+        String id = device.chassisId().toString();
+        SwitchEntry entry = switchDB.get(id);
+        int dc = entry.getDc();
+
+        for (int h = 1; h <= lfRadixDown.get(dc) + lfRadixUp.get(dc); h++) {
             TrafficSelector.Builder selector = DefaultTrafficSelector.builder().matchInPort(PortNumber.portNumber(h)).matchEthType(Ethernet.TYPE_IPV4);
             TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().punt();
             FlowRule flowRule = DefaultFlowRule.builder()
