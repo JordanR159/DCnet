@@ -1,6 +1,6 @@
 # Ignore generated configuration files
-*.csv
 *.swp
+./*.csv
 ./*.out
 controller/onos-app-dcnet.iml
 controller/.idea/
