@@ -193,9 +193,9 @@ public class DCnet {
     private List<Integer> lfRadixUp = new ArrayList<>();
     private List<Integer> lfRadixDown = new ArrayList<>();
 
-    private List<GroupBucket> leafBuckets = new ArrayList<>();
-    private List<GroupBucket> spineBuckets = new ArrayList<>();
-    private List<GroupBucket> dcBuckets = new ArrayList<>();
+    private List<List<GroupBucket>> leafBuckets = new ArrayList<>();
+    private List<List<GroupBucket>> spineBuckets = new ArrayList<>();
+    private List<List<GroupBucket>> dcBuckets = new ArrayList<>();
 
     /* Maps Chassis ID to a switch entry */
     private Map<String, SwitchEntry> switchDB = new TreeMap<>();
@@ -280,17 +280,20 @@ public class DCnet {
             topConfig.close();
 
             for (int d = 0; d < dcCount; d++) {
+                leafBuckets.add(new ArrayList<>());
                 for (int i = 1; i <= lfRadixUp.get(d); i++) {
                     TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setOutput(PortNumber.portNumber(lfRadixDown.get(d) + i));
-                    leafBuckets.add(DefaultGroupBucket.createSelectGroupBucket(treatment.build()));
+                    leafBuckets.get(d).add(DefaultGroupBucket.createSelectGroupBucket(treatment.build()));
                 }
+                spineBuckets.add(new ArrayList<>());
                 for (int i = 1; i <= spRadixUp.get(d); i++) {
                     TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setOutput(PortNumber.portNumber(spRadixDown.get(d) + i));
-                    spineBuckets.add(DefaultGroupBucket.createSelectGroupBucket(treatment.build()));
+                    spineBuckets.get(d).add(DefaultGroupBucket.createSelectGroupBucket(treatment.build()));
                 }
+                dcBuckets.add(new ArrayList<>());
                 for (int i = 1; i <= dcRadixDown.get(d); i++) {
                     TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setOutput(PortNumber.portNumber(i));
-                    dcBuckets.add(DefaultGroupBucket.createSelectGroupBucket(treatment.build()));
+                    dcBuckets.get(d).add(DefaultGroupBucket.createSelectGroupBucket(treatment.build()));
                 }
             }
         }
@@ -397,10 +400,16 @@ public class DCnet {
 
         /* If recipient is connected to another leaf, translate ethernet destination to RMAC and forward to spines */
         else {
+            GroupDescription groupDescription = null;
+            for(GroupDescription g : groupService.getGroups(device.id())) {
+                groupDescription = g;
+            }
             GroupKey key = new DefaultGroupKey(appKryo.serialize(Objects.hash(device)));
-            GroupDescription groupDescription = new DefaultGroupDescription(device.id(), GroupDescription.Type.SELECT, new GroupBuckets(leafBuckets), key, BASE_PRIO + LEAF, appId);
-            groupService.addGroup(groupDescription);
-            TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setEthDst(strToMac(hostDst.getRmac())).group(new GroupId(BASE_PRIO + LEAF));
+            if(groupDescription == null) {
+                groupDescription = new DefaultGroupDescription(device.id(), GroupDescription.Type.SELECT, new GroupBuckets(leafBuckets.get(entry.getDc())), key, key.hashCode(), appId);
+                groupService.addGroup(groupDescription);
+            }
+            TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setEthDst(strToMac(hostDst.getRmac())).group(new GroupId(key.hashCode()));
             FlowRule flowRule = DefaultFlowRule.builder()
                     .fromApp(appId)
                     .makePermanent()
@@ -431,10 +440,16 @@ public class DCnet {
 
         /* If sender is connected to another leaf, translate ethernet destination to RMAC and forward to spines */
         else {
+            GroupDescription groupDescription = null;
+            for(GroupDescription g : groupService.getGroups(device.id())) {
+                groupDescription = g;
+            }
             GroupKey key = new DefaultGroupKey(appKryo.serialize(Objects.hash(device)));
-            GroupDescription groupDescription = new DefaultGroupDescription(device.id(), GroupDescription.Type.SELECT, new GroupBuckets(leafBuckets), key, BASE_PRIO + LEAF, appId);
-            groupService.addGroup(groupDescription);
-            TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setEthDst(strToMac(hostSrc.getRmac())).group(new GroupId(BASE_PRIO + LEAF));
+            if(groupDescription == null) {
+                groupDescription = new DefaultGroupDescription(device.id(), GroupDescription.Type.SELECT, new GroupBuckets(leafBuckets.get(entry.getDc())), key, key.hashCode(), appId);
+                groupService.addGroup(groupDescription);
+            }
+            TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setEthDst(strToMac(hostSrc.getRmac())).group(new GroupId(key.hashCode()));
             FlowRule flowRule = DefaultFlowRule.builder()
                     .fromApp(appId)
                     .makePermanent()
@@ -505,10 +520,16 @@ public class DCnet {
         MacAddress eth = new MacAddress(bytes);
         MacAddress mask = new MacAddress(new byte[]{(byte) 0xFF, (byte) 0xF0, 0x00, 0x00, 0x00, 0x00});
         TrafficSelector.Builder selector = DefaultTrafficSelector.builder().matchEthDstMasked(eth, mask).matchEthType(Ethernet.TYPE_IPV4);
+        GroupDescription groupDescription = null;
+        for(GroupDescription g : groupService.getGroups(device.id())) {
+            groupDescription = g;
+        }
         GroupKey key = new DefaultGroupKey(appKryo.serialize(Objects.hash(device)));
-        GroupDescription groupDescription = new DefaultGroupDescription(device.id(), GroupDescription.Type.SELECT, new GroupBuckets(dcBuckets), key, BASE_PRIO + DC, appId);
-        groupService.addGroup(groupDescription);
-        TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().group(new GroupId(BASE_PRIO + DC));
+        if(groupDescription == null) {
+            groupDescription = new DefaultGroupDescription(device.id(), GroupDescription.Type.SELECT, new GroupBuckets(dcBuckets.get(entry.getDc())), key, key.hashCode(), appId);
+            groupService.addGroup(groupDescription);
+        }
+        TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().group(new GroupId(key.hashCode()));
         FlowRule flowRule = DefaultFlowRule.builder()
                 .fromApp(appId)
                 .makePermanent()
@@ -621,10 +642,16 @@ public class DCnet {
 
         /* Add rule to ECMP packets belonging to another pod up to super spines */
         TrafficSelector.Builder selector = DefaultTrafficSelector.builder().matchEthType(Ethernet.TYPE_IPV4);
+        GroupDescription groupDescription = null;
+        for (GroupDescription g : groupService.getGroups(device.id())) {
+            groupDescription = g;
+        }
         GroupKey key = new DefaultGroupKey(appKryo.serialize(Objects.hash(device)));
-        GroupDescription groupDescription = new DefaultGroupDescription(device.id(), GroupDescription.Type.SELECT, new GroupBuckets(spineBuckets), key, BASE_PRIO + SPINE, appId);
-        groupService.addGroup(groupDescription);
-        TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().group(new GroupId(BASE_PRIO + SPINE));
+        if (groupDescription == null) {
+            groupDescription = new DefaultGroupDescription(device.id(), GroupDescription.Type.SELECT, new GroupBuckets(spineBuckets.get(entry.getDc())), key, key.hashCode(), appId);
+            groupService.addGroup(groupDescription);
+        }
+        TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().group(new GroupId(key.hashCode()));
         FlowRule flowRule = DefaultFlowRule.builder()
                 .fromApp(appId)
                 .makePermanent()
