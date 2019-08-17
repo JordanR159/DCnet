@@ -368,20 +368,20 @@ public class DCnet {
         }
 
         /* Obtain location information from RMAC address corresponding to IP destination */
-        String[] bytes = hostDst.getRmac().split(":");
-        int dcDst = Integer.parseInt(bytes[0], 16) * 16 + Integer.parseInt(bytes[1].substring(0, 1), 16);
-        int podDst = Integer.parseInt(bytes[1].substring(1), 16) * 16 + Integer.parseInt(bytes[2], 16);
-        int leafDst = Integer.parseInt(bytes[3], 16) * 16 + Integer.parseInt(bytes[4].substring(0, 1), 16);
-        bytes = hostSrc.getRmac().split(":");
-        int dcSrc = Integer.parseInt(bytes[0], 16) * 16 + Integer.parseInt(bytes[1].substring(0, 1), 16);
-        int podSrc = Integer.parseInt(bytes[1].substring(1), 16) * 16 + Integer.parseInt(bytes[2], 16);
-        int leafSrc = Integer.parseInt(bytes[3], 16) * 16 + Integer.parseInt(bytes[4].substring(0, 1), 16);
+        String[] bytesDst = hostDst.getRmac().split(":");
+        int dcDst = Integer.parseInt(bytesDst[0], 16) * 16 + Integer.parseInt(bytesDst[1].substring(0, 1), 16);
+        int podDst = Integer.parseInt(bytesDst[1].substring(1), 16) * 16 + Integer.parseInt(bytesDst[2], 16);
+        int leafDst = Integer.parseInt(bytesDst[3], 16) * 16 + Integer.parseInt(bytesDst[4].substring(0, 1), 16);
+        String[] bytesSrc = hostSrc.getRmac().split(":");
+        int dcSrc = Integer.parseInt(bytesSrc[0], 16) * 16 + Integer.parseInt(bytesSrc[1].substring(0, 1), 16);
+        int podSrc = Integer.parseInt(bytesSrc[1].substring(1), 16) * 16 + Integer.parseInt(bytesSrc[2], 16);
+        int leafSrc = Integer.parseInt(bytesSrc[3], 16) * 16 + Integer.parseInt(bytesSrc[4].substring(0, 1), 16);
         TrafficSelector.Builder selectorDst = DefaultTrafficSelector.builder().matchEthType(Ethernet.TYPE_IPV4).matchIPDst(IpPrefix.valueOf(ipDst, 32));
         TrafficSelector.Builder selectorSrc = DefaultTrafficSelector.builder().matchEthType(Ethernet.TYPE_IPV4).matchIPDst(IpPrefix.valueOf(ipSrc, 32));
 
         /* If recipient is directly connected to leaf, translate ethernet destination back to recipients's and forward to it */
         if (dcDst == entry.getDc() && podDst == entry.getPod() && leafDst == entry.getLeaf()) {
-            int port = Integer.parseInt(bytes[4].substring(1), 16) * 16 + Integer.parseInt(bytes[5], 16) + 1;
+            int port = Integer.parseInt(bytesDst[4].substring(1), 16) * 16 + Integer.parseInt(bytesDst[5], 16) + 1;
             TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setEthDst(strToMac(hostDst.getIdmac())).setOutput(PortNumber.portNumber(port));
             FlowRule flowRule = DefaultFlowRule.builder()
                     .fromApp(appId)
@@ -415,7 +415,7 @@ public class DCnet {
 
         /* If sender is directly connected to leaf, translate ethernet destination back to recipients's and forward to it */
         if (dcSrc == entry.getDc() && podSrc == entry.getPod() && leafSrc == entry.getLeaf()) {
-            int port = Integer.parseInt(bytes[4].substring(1), 16) * 16 + Integer.parseInt(bytes[5], 16) + 1;
+            int port = Integer.parseInt(bytesSrc[4].substring(1), 16) * 16 + Integer.parseInt(bytesSrc[5], 16) + 1;
             TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setEthDst(strToMac(hostSrc.getIdmac())).setOutput(PortNumber.portNumber(port));
             FlowRule flowRule = DefaultFlowRule.builder()
                     .fromApp(appId)
