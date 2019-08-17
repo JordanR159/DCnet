@@ -393,9 +393,8 @@ public class DCnet {
                     .build();
             flowRuleService.applyFlowRules(flowRule);
             installedFlows.add(flowRule);
-            context.inPacket().parsed().setDestinationMACAddress(strToMac(hostDst.getIdmac()));
             OutboundPacket packet = new DefaultOutboundPacket(device.id(), treatment.build(), context.inPacket().unparsed());
-            packetService.emit(packet);
+            //packetService.emit(packet);
         }
 
         /* If recipient is connected to another leaf, translate ethernet destination to RMAC and forward to spines */
@@ -420,9 +419,8 @@ public class DCnet {
                     .build();
             flowRuleService.applyFlowRules(flowRule);
             installedFlows.add(flowRule);
-            context.inPacket().parsed().setDestinationMACAddress(strToMac(hostDst.getRmac()));
             OutboundPacket packet = new DefaultOutboundPacket(device.id(), treatment.build(), context.inPacket().unparsed());
-            packetService.emit(packet);
+            //packetService.emit(packet);
         }
 
         /* If sender is directly connected to leaf, translate ethernet destination back to recipients's and forward to it */
