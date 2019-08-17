@@ -416,7 +416,7 @@ public class DCnet {
         /* If sender is directly connected to leaf, translate ethernet destination back to recipients's and forward to it */
         if (dcSrc == entry.getDc() && podSrc == entry.getPod() && leafSrc == entry.getLeaf()) {
             int port = Integer.parseInt(bytes[4].substring(1), 16) * 16 + Integer.parseInt(bytes[5], 16) + 1;
-            TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setEthSrc(strToMac(hostSrc.getIdmac())).setOutput(PortNumber.portNumber(port));
+            TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setEthDst(strToMac(hostSrc.getIdmac())).setOutput(PortNumber.portNumber(port));
             FlowRule flowRule = DefaultFlowRule.builder()
                     .fromApp(appId)
                     .makePermanent()
@@ -434,7 +434,7 @@ public class DCnet {
             GroupKey key = new DefaultGroupKey(appKryo.serialize(Objects.hash(device)));
             GroupDescription groupDescription = new DefaultGroupDescription(device.id(), GroupDescription.Type.SELECT, new GroupBuckets(leafBuckets), key, BASE_PRIO + LEAF, appId);
             groupService.addGroup(groupDescription);
-            TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setEthSrc(strToMac(hostSrc.getRmac())).group(new GroupId(BASE_PRIO + LEAF));
+            TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setEthDst(strToMac(hostSrc.getRmac())).group(new GroupId(BASE_PRIO + LEAF));
             FlowRule flowRule = DefaultFlowRule.builder()
                     .fromApp(appId)
                     .makePermanent()
