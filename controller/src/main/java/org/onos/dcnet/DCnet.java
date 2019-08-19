@@ -403,8 +403,6 @@ public class DCnet {
                     .build();
             flowRuleService.applyFlowRules(flowRule);
             installedFlows.add(flowRule);
-            OutboundPacket packet = new DefaultOutboundPacket(device.id(), treatment.build(), context.inPacket().unparsed());
-            packetService.emit(packet);
         }
 
         /* If recipient is connected to another leaf, translate ethernet destination to RMAC and forward to spines */
@@ -429,8 +427,6 @@ public class DCnet {
                     .build();
             flowRuleService.applyFlowRules(flowRule);
             installedFlows.add(flowRule);
-            OutboundPacket packet = new DefaultOutboundPacket(device.id(), treatment.build(), context.inPacket().unparsed());
-            packetService.emit(packet);
         }
 
         /* If sender is directly connected to leaf, translate ethernet destination back to recipients's and forward to it */
@@ -472,6 +468,9 @@ public class DCnet {
             flowRuleService.applyFlowRules(flowRule);
             installedFlows.add(flowRule);
         }
+        TrafficTreatment treatment = DefaultTrafficTreatment.builder().setOutput(context.inPacket().receivedFrom().port()).build();
+        OutboundPacket packet = new DefaultOutboundPacket(device.id(), treatment, context.inPacket().unparsed());
+        packetService.emit(packet);
     }
 
     /* Intercepts packets sent to controller */
