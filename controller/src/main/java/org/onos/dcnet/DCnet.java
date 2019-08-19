@@ -428,7 +428,7 @@ public class DCnet {
                     .build();
             flowRuleService.applyFlowRules(flowRule);
             installedFlows.add(flowRule);
-            context.treatmentBuilder().setEthDst(strToMac(hostDst.getRmac())).group(new GroupId(groupDescription.givenGroupId()));
+            context.treatmentBuilder().setEthDst(strToMac(hostDst.getRmac())).setOutput(PortNumber.portNumber(lfRadixDown.get(entry.getDc()) + 1));
         }
 
         /* If sender is directly connected to leaf, translate ethernet destination back to recipients's and forward to it */
