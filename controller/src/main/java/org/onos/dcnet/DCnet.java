@@ -409,7 +409,7 @@ public class DCnet {
             }
             GroupKey key = new DefaultGroupKey(appKryo.serialize(Objects.hash(device)));
             if(groupDescription == null) {
-                groupDescription = new DefaultGroupDescription(device.id(), GroupDescription.Type.SELECT, new GroupBuckets(leafBuckets.get(entry.getDc())), key, groupCount, appId);
+                groupDescription = new DefaultGroupDescription(device.id(), GroupDescription.Type.SELECT, new GroupBuckets(leafBuckets.get(entry.getDc())), key, groupCount++, appId);
                 groupService.addGroup(groupDescription);
             }
             TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setEthDst(strToMac(hostDst.getRmac())).group(new GroupId(groupDescription.givenGroupId()));
@@ -451,7 +451,7 @@ public class DCnet {
             }
             GroupKey key = new DefaultGroupKey(appKryo.serialize(Objects.hash(device)));
             if(groupDescription == null) {
-                groupDescription = new DefaultGroupDescription(device.id(), GroupDescription.Type.SELECT, new GroupBuckets(leafBuckets.get(entry.getDc())), key, groupCount, appId);
+                groupDescription = new DefaultGroupDescription(device.id(), GroupDescription.Type.SELECT, new GroupBuckets(leafBuckets.get(entry.getDc())), key, groupCount++, appId);
                 groupService.addGroup(groupDescription);
             }
             TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setEthDst(strToMac(hostSrc.getRmac())).group(new GroupId(groupDescription.givenGroupId()));
@@ -531,7 +531,7 @@ public class DCnet {
         }
         GroupKey key = new DefaultGroupKey(appKryo.serialize(Objects.hash(device)));
         if(groupDescription == null) {
-            groupDescription = new DefaultGroupDescription(device.id(), GroupDescription.Type.SELECT, new GroupBuckets(dcBuckets.get(entry.getDc())), key, groupCount, appId);
+            groupDescription = new DefaultGroupDescription(device.id(), GroupDescription.Type.SELECT, new GroupBuckets(dcBuckets.get(entry.getDc())), key, groupCount++, appId);
             groupService.addGroup(groupDescription);
         }
         TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().group(new GroupId(groupDescription.givenGroupId()));
@@ -653,7 +653,7 @@ public class DCnet {
         }
         GroupKey key = new DefaultGroupKey(appKryo.serialize(Objects.hash(device)));
         if (groupDescription == null) {
-            groupDescription = new DefaultGroupDescription(device.id(), GroupDescription.Type.SELECT, new GroupBuckets(spineBuckets.get(entry.getDc())), key, groupCount, appId);
+            groupDescription = new DefaultGroupDescription(device.id(), GroupDescription.Type.SELECT, new GroupBuckets(spineBuckets.get(entry.getDc())), key, groupCount++, appId);
             groupService.addGroup(groupDescription);
         }
         TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().group(new GroupId(groupDescription.givenGroupId()));
