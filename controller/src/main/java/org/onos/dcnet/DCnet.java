@@ -443,7 +443,7 @@ public class DCnet {
                     .setSourceMACAddress(context.inPacket().parsed().getSourceMACAddress())
                     .setDestinationMACAddress(strToMac(hostDst.getRmac()))
                     .setPayload(context.inPacket().parsed().getPayload());
-            treatment = DefaultTrafficTreatment.builder().group(new GroupId(groupDescription.givenGroupId()));
+            treatment = DefaultTrafficTreatment.builder().setOutput(PortNumber.portNumber(lfRadixDown.get(entry.getDc()) + 1 + (int)(Math.random() * lfRadixUp.get(entry.getDc()))));
             OutboundPacket packet = new DefaultOutboundPacket(device.id(), treatment.build(), ByteBuffer.wrap(modifiedMac.serialize()));
             packetService.emit(packet);
         }
