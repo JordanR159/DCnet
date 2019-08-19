@@ -205,6 +205,8 @@ public class DCnet {
     /* List of currently active flow rules */
     private List<FlowRule> installedFlows = new ArrayList<>();
 
+    private List<DeviceId> addedDevices = new ArrayList<>();
+
     private ApplicationId appId;
 
     protected static KryoNamespace appKryo = new KryoNamespace.Builder()
@@ -240,6 +242,7 @@ public class DCnet {
         switchDB = new TreeMap<>();
         hostDB = new TreeMap<>();
         installedFlows = new ArrayList<>();
+        addedDevices = new ArrayList<>();
 
         groupCount = 0;
 
@@ -325,6 +328,9 @@ public class DCnet {
         flowRuleService.removeFlowRulesById(appId);
         deviceService.removeListener(deviceListener);
         //hostService.removeListener(hostListener);
+        for (DeviceId d : addedDevices) {
+            groupService.purgeGroupEntries(d);
+        }
         log.info("Stopped");
     }
 
@@ -508,6 +514,7 @@ public class DCnet {
                     break;
             }
             entry.setJoined();
+            addedDevices.add(device.id());
         }
     }
 
