@@ -469,6 +469,7 @@ public class DCnet {
             installedFlows.add(flowRule);
         }
         TrafficTreatment treatment = DefaultTrafficTreatment.builder().setOutput(context.inPacket().receivedFrom().port()).build();
+        System.out.println(context.inPacket().receivedFrom().port());
         OutboundPacket packet = new DefaultOutboundPacket(device.id(), treatment, context.inPacket().unparsed());
         packetService.emit(packet);
     }
