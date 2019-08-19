@@ -403,6 +403,7 @@ public class DCnet {
                     .build();
             flowRuleService.applyFlowRules(flowRule);
             installedFlows.add(flowRule);
+            context.inPacket().parsed().setDestinationMACAddress(strToMac(hostDst.getIdmac()));
             context.treatmentBuilder().setEthDst(strToMac(hostDst.getIdmac())).setOutput(PortNumber.portNumber(port));
         }
 
@@ -428,6 +429,7 @@ public class DCnet {
                     .build();
             flowRuleService.applyFlowRules(flowRule);
             installedFlows.add(flowRule);
+            context.inPacket().parsed().setDestinationMACAddress(strToMac(hostDst.getRmac()));
             context.treatmentBuilder().setEthDst(strToMac(hostDst.getRmac())).setOutput(PortNumber.portNumber(lfRadixDown.get(entry.getDc()) + 1));
         }
 
