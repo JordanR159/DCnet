@@ -48,6 +48,7 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.*;
 
 /**
@@ -403,8 +404,15 @@ public class DCnet {
                     .build();
             flowRuleService.applyFlowRules(flowRule);
             installedFlows.add(flowRule);
-            context.inPacket().parsed().setDestinationMACAddress(strToMac(hostDst.getIdmac()));
-            context.treatmentBuilder().setEthDst(strToMac(hostDst.getIdmac())).setOutput(PortNumber.portNumber(port));
+
+            Ethernet modifiedMac = new Ethernet();
+            modifiedMac.setEtherType(Ethernet.TYPE_IPV4)
+                    .setSourceMACAddress(context.inPacket().parsed().getSourceMACAddress())
+                    .setDestinationMACAddress(strToMac(hostDst.getIdmac()))
+                    .setPayload(context.inPacket().parsed().getPayload());
+            treatment = DefaultTrafficTreatment.builder().setOutput(PortNumber.portNumber(port));
+            OutboundPacket packet = new DefaultOutboundPacket(device.id(), treatment.build(), ByteBuffer.wrap(modifiedMac.serialize()));
+            packetService.emit(packet);
         }
 
         /* If recipient is connected to another leaf, translate ethernet destination to RMAC and forward to spines */
@@ -429,8 +437,15 @@ public class DCnet {
                     .build();
             flowRuleService.applyFlowRules(flowRule);
             installedFlows.add(flowRule);
-            context.inPacket().parsed().setDestinationMACAddress(strToMac(hostDst.getRmac()));
-            context.treatmentBuilder().setEthDst(strToMac(hostDst.getRmac())).setOutput(PortNumber.portNumber(lfRadixDown.get(entry.getDc()) + 1));
+
+            Ethernet modifiedMac = new Ethernet();
+            modifiedMac.setEtherType(Ethernet.TYPE_IPV4)
+                    .setSourceMACAddress(context.inPacket().parsed().getSourceMACAddress())
+                    .setDestinationMACAddress(strToMac(hostDst.getRmac()))
+                    .setPayload(context.inPacket().parsed().getPayload());
+            treatment = DefaultTrafficTreatment.builder().setOutput(PortNumber.portNumber(lfRadixDown.get(entry.getDc()) + 1));
+            OutboundPacket packet = new DefaultOutboundPacket(device.id(), treatment.build(), ByteBuffer.wrap(modifiedMac.serialize()));
+            packetService.emit(packet);
         }
 
         /* If sender is directly connected to leaf, translate ethernet destination back to recipients's and forward to it */
@@ -472,7 +487,6 @@ public class DCnet {
             flowRuleService.applyFlowRules(flowRule);
             installedFlows.add(flowRule);
         }
-        context.send();
     }
 
     /* Intercepts packets sent to controller */
