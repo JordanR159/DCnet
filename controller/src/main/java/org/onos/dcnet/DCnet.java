@@ -194,6 +194,8 @@ public class DCnet {
     private List<List<GroupBucket>> spineBuckets = new ArrayList<>();
     private List<List<GroupBucket>> dcBuckets = new ArrayList<>();
 
+    private int groupCount = 0;
+
     /* Maps Chassis ID to a switch entry */
     private Map<String, SwitchEntry> switchDB = new TreeMap<>();
 
@@ -238,6 +240,8 @@ public class DCnet {
         switchDB = new TreeMap<>();
         hostDB = new TreeMap<>();
         installedFlows = new ArrayList<>();
+
+        groupCount = 0;
 
         try {
             /* Setup switch database by reading fields in switch configuration file */
@@ -405,10 +409,10 @@ public class DCnet {
             }
             GroupKey key = new DefaultGroupKey(appKryo.serialize(Objects.hash(device)));
             if(groupDescription == null) {
-                groupDescription = new DefaultGroupDescription(device.id(), GroupDescription.Type.SELECT, new GroupBuckets(leafBuckets.get(entry.getDc())), key, BASE_PRIO + LEAF, appId);
+                groupDescription = new DefaultGroupDescription(device.id(), GroupDescription.Type.SELECT, new GroupBuckets(leafBuckets.get(entry.getDc())), key, groupCount, appId);
                 groupService.addGroup(groupDescription);
             }
-            TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setEthDst(strToMac(hostDst.getRmac())).group(new GroupId(BASE_PRIO + LEAF));
+            TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setEthDst(strToMac(hostDst.getRmac())).group(new GroupId(groupDescription.givenGroupId()));
             FlowRule flowRule = DefaultFlowRule.builder()
                     .fromApp(appId)
                     .makePermanent()
@@ -447,10 +451,10 @@ public class DCnet {
             }
             GroupKey key = new DefaultGroupKey(appKryo.serialize(Objects.hash(device)));
             if(groupDescription == null) {
-                groupDescription = new DefaultGroupDescription(device.id(), GroupDescription.Type.SELECT, new GroupBuckets(leafBuckets.get(entry.getDc())), key, BASE_PRIO + LEAF, appId);
+                groupDescription = new DefaultGroupDescription(device.id(), GroupDescription.Type.SELECT, new GroupBuckets(leafBuckets.get(entry.getDc())), key, groupCount, appId);
                 groupService.addGroup(groupDescription);
             }
-            TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setEthDst(strToMac(hostSrc.getRmac())).group(new GroupId(BASE_PRIO + LEAF));
+            TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().setEthDst(strToMac(hostSrc.getRmac())).group(new GroupId(groupDescription.givenGroupId()));
             FlowRule flowRule = DefaultFlowRule.builder()
                     .fromApp(appId)
                     .makePermanent()
@@ -527,10 +531,10 @@ public class DCnet {
         }
         GroupKey key = new DefaultGroupKey(appKryo.serialize(Objects.hash(device)));
         if(groupDescription == null) {
-            groupDescription = new DefaultGroupDescription(device.id(), GroupDescription.Type.SELECT, new GroupBuckets(dcBuckets.get(entry.getDc())), key, BASE_PRIO + DC, appId);
+            groupDescription = new DefaultGroupDescription(device.id(), GroupDescription.Type.SELECT, new GroupBuckets(dcBuckets.get(entry.getDc())), key, groupCount, appId);
             groupService.addGroup(groupDescription);
         }
-        TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().group(new GroupId(BASE_PRIO + DC));
+        TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().group(new GroupId(groupDescription.givenGroupId()));
         FlowRule flowRule = DefaultFlowRule.builder()
                 .fromApp(appId)
                 .makePermanent()
@@ -649,10 +653,10 @@ public class DCnet {
         }
         GroupKey key = new DefaultGroupKey(appKryo.serialize(Objects.hash(device)));
         if (groupDescription == null) {
-            groupDescription = new DefaultGroupDescription(device.id(), GroupDescription.Type.SELECT, new GroupBuckets(spineBuckets.get(entry.getDc())), key, BASE_PRIO + SPINE, appId);
+            groupDescription = new DefaultGroupDescription(device.id(), GroupDescription.Type.SELECT, new GroupBuckets(spineBuckets.get(entry.getDc())), key, groupCount, appId);
             groupService.addGroup(groupDescription);
         }
-        TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().group(new GroupId(BASE_PRIO + SPINE));
+        TrafficTreatment.Builder treatment = DefaultTrafficTreatment.builder().group(new GroupId(groupDescription.givenGroupId()));
         FlowRule flowRule = DefaultFlowRule.builder()
                 .fromApp(appId)
                 .makePermanent()
