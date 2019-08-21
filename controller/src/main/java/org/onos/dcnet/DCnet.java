@@ -284,6 +284,7 @@ public class DCnet {
             }
             topConfig.close();
 
+            /* Create buckets for each switch type in each data center describing ports to use for ECMP */
             for (int d = 0; d < dcCount; d++) {
                 leafBuckets.add(new ArrayList<>());
                 for (int i = 1; i <= lfRadixUp.get(d); i++) {
@@ -405,6 +406,7 @@ public class DCnet {
             flowRuleService.applyFlowRules(flowRule);
             installedFlows.add(flowRule);
 
+            /* Send packet to destination host */
             Ethernet modifiedMac = new Ethernet();
             modifiedMac.setEtherType(Ethernet.TYPE_IPV4)
                     .setSourceMACAddress(context.inPacket().parsed().getSourceMACAddress())
@@ -438,6 +440,7 @@ public class DCnet {
             flowRuleService.applyFlowRules(flowRule);
             installedFlows.add(flowRule);
 
+            /* Send packet to a random spine switch */
             Ethernet modifiedMac = new Ethernet();
             modifiedMac.setEtherType(Ethernet.TYPE_IPV4)
                     .setSourceMACAddress(context.inPacket().parsed().getSourceMACAddress())
@@ -716,7 +719,7 @@ public class DCnet {
 
     }
 
-    /* Invalidate all flows using the IP address of a host that was moved */
+    /* Invalidate all flows that use the IP address of a host that was moved */
     private void removeHostFlows(Host host) {
         Set<IpAddress> ips = host.ipAddresses();
         List<FlowRule> temp = new ArrayList<>(installedFlows);
